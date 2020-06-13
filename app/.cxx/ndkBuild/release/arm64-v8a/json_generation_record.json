@@ -1,0 +1,80 @@
+[
+  {
+    "level": "INFO",
+    "message": "Start JSON generation. Platform version: 16 min SDK version: arm64-v8a",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "rebuilding JSON E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\arm64-v8a\\android_gradle_build.json due to:",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "- command changed from previous, will remove stale json folder",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "removing stale contents from \u0027E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\arm64-v8a\u0027",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "created folder \u0027E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\arm64-v8a\u0027",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "executing ndkBuild Executable : C:\\android-ndk-r21\\ndk-build.cmd\narguments : \nNDK_PROJECT_PATH\u003dnull\nAPP_BUILD_SCRIPT\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk\nNDK_APPLICATION_MK\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk\nAPP_ABI\u003darm64-v8a\nNDK_ALL_ABIS\u003darm64-v8a\nNDK_DEBUG\u003d0\nAPP_PLATFORM\u003dandroid-16\nNDK_OUT\u003dE:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/release/obj\nNDK_LIBS_OUT\u003dE:\\Kuaisho\\AndHook\\app\\build\\intermediates\\ndkBuild\\release\\lib\nAPP_SHORT_COMMANDS\u003dfalse\nLOCAL_SHORT_COMMANDS\u003dfalse\n-B\n-n\njvmArgs : \n\n",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Executable : C:\\android-ndk-r21\\ndk-build.cmd\narguments : \nNDK_PROJECT_PATH\u003dnull\nAPP_BUILD_SCRIPT\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk\nNDK_APPLICATION_MK\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk\nAPP_ABI\u003darm64-v8a\nNDK_ALL_ABIS\u003darm64-v8a\nNDK_DEBUG\u003d0\nAPP_PLATFORM\u003dandroid-16\nNDK_OUT\u003dE:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/release/obj\nNDK_LIBS_OUT\u003dE:\\Kuaisho\\AndHook\\app\\build\\intermediates\\ndkBuild\\release\\lib\nAPP_SHORT_COMMANDS\u003dfalse\nLOCAL_SHORT_COMMANDS\u003dfalse\n-B\n-n\njvmArgs : \n\n",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "done executing ndkBuild",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "write build output E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\arm64-v8a\\build_output.txt",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "parse and convert ndk-build output to build configuration JSON",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "found application make file E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "write command file E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\arm64-v8a\\build_command.txt",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed without problems",
+    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "tag": "release|arm64-v8a"
+  }
+]

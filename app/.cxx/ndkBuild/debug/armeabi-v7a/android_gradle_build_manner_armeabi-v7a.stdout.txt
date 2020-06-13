@@ -1,0 +1,4 @@
+APP_OPTIM is release ...
+[armeabi-v7a] Compile++ thumb: manner <= myjnihook.cpp
+[armeabi-v7a] Prebuilt       : libAK.so <= E:/Kuaisho/AndHook/app/src/main/jni/../../../../lib/src/main/jniLibs/armeabi-v7a/
+[armeabi-v7a] SharedLibrary  : libmanner.so

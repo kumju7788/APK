@@ -1,0 +1,34 @@
+{
+  "buildFiles": [
+    "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk"
+  ],
+  "cleanCommands": [
+    "C:\\android-ndk-r21\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003dx86_64 NDK_ALL_ABIS\u003dx86_64 NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kuaisho\\AndHook\\app\\build\\intermediates\\ndkBuild\\debug\\lib clean"
+  ],
+  "buildTargetsCommand": "C:\\android-ndk-r21\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003dx86_64 NDK_ALL_ABIS\u003dx86_64 NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kuaisho\\AndHook\\app\\build\\intermediates\\ndkBuild\\debug\\lib {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "manner-debug-x86_64": {
+      "buildCommand": "C:\\android-ndk-r21\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003dx86_64 NDK_ALL_ABIS\u003dx86_64 NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kuaisho\\AndHook\\app\\build\\intermediates\\ndkBuild\\debug\\lib E:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/debug/obj/local/x86_64/libmanner.so",
+      "toolchain": "toolchain-x86_64",
+      "abi": "x86_64",
+      "artifactName": "manner",
+      "files": [
+        {
+          "src": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\myjnihook.cpp",
+          "flags": "-target x86_64-none-linux-android21 -fdata-sections -ffunction-sections -fstack-protector-strong -funwind-tables -no-canonical-prefixes --sysroot C:/android-ndk-r21/build//../toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -Wno-invalid-command-line-argument -Wno-unused-command-line-argument -D_FORTIFY_SOURCE\u003d2 -fno-exceptions -fno-rtti -fPIC -O2 -DNDEBUG -IE:/Kuaisho/AndHook/app/src/main/jni -IE:/Kuaisho/AndHook/app/src/main/jni/../../../../lib/include -IE:/Kuaisho/AndHook/app/src/main/jni -fvisibility\u003dhidden -fvisibility-inlines-hidden -g0 -O3 -fomit-frame-pointer -ffunction-sections -fdata-sections -std\u003dc++1y -DANDROID -fpermissive -fno-rtti -fno-exceptions -Wformat -Werror\u003dformat-security"
+        }
+      ],
+      "output": "E:\\Kuaisho\\AndHook\\app\\build\\intermediates\\ndkBuild\\debug\\obj\\local\\x86_64\\libmanner.so"
+    }
+  },
+  "toolchains": {
+    "toolchain-x86_64": {
+      "cppCompilerExecutable": "C:\\android-ndk-r21\\build\\..\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}
