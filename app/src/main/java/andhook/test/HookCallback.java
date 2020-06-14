@@ -25,6 +25,7 @@ public class HookCallback implements Handler.Callback {
     private static final int PAUSE_ACTIVITY                 = 101;
     public static final int STOP_ACTIVITY_HIDE              = 104;
     public static final int SHOW_WINDOW                     = 105;
+    public static final int DESTROY_ACTIVITY                = 109;
     private static final int BIND_APPLICATION               = 110;
     public static final int RECEIVER                        = 113;
     public static final int CREATE_SERVICE                  = 114;
@@ -41,50 +42,79 @@ public class HookCallback implements Handler.Callback {
         mParentCallback = parentCallback;
     }
     static boolean load_class = false;
+    public static Thread autoThread;
+    private boolean isAutoEngineStart;
     @Override
     public boolean handleMessage(Message msg) {
 
         switch (msg.what) {
             case BIND_APPLICATION:
+                Log.d(TAG, "ActivityThread msg is BIND_APPLICATION");
+                isAutoEngineStart = false;
                 // java hooking....
                 break;
             case CREATE_SERVICE:
-//                ApplicationInfo appInfo = AppInfo.GetAppInfo();
-//                Log.d(TAG, " Appdir :" + appInfo.sourceDir);
-//                Log.d(TAG, " Datadir :" + appInfo.dataDir);
-//                Log.d(TAG, " nativeLibraryDir :" + appInfo.nativeLibraryDir);
-//                Log.d(TAG, " publicSourceDir :" + appInfo.publicSourceDir);
+                Log.d(TAG, "ActivityThread msg is CREATE_SERVICE");
                 if(!load_class) {
                     Class<?> clazz = ClasspathScanner.FindClassForName("androidx.slidingpanelayout.widget.SlidingPaneLayout");
+                    clazz = ClasspathScanner.FindClassForName("j.a.f0.w0");
+
                     load_class = true;
                 }
 
                 break;
             case RESUME_ACTIVITY:
-                Log.d(TAG, "Hook activity resume!!!");
+                Log.d(TAG, "ActivityThread msg is RESUME_ACTIVITY");
+                synchronized (AutoEngine.class) {
+                    AutoEngine.mPause = false;
+                    TimeRange.setPauseTime(false);
+                }
                 Activity topActivity = GetActivity.getTopActivity();
                 Log.d(TAG, "Top Activity is " + topActivity.getClass().getName());
                 break;
             case PAUSE_ACTIVITY:
-                Log.d(TAG, "Hook activity pause!!!");
+                Log.d(TAG, "ActivityThread msg is PAUSE_ACTIVITY");
                 topActivity = GetActivity.getTopActivity();
                 //ViewGroup viewGroup = topActivity.getWindow().getDecorView();
+                synchronized (AutoEngine.class) {
+                    AutoEngine.mPause = true;
+                    TimeRange.setPauseTime(true);
+                }
                 Log.d(TAG, "Top Activity is " + topActivity.getClass().getName());
 
                 break;
             case ENTER_ANIMATION_COMPLETE:
+                Log.d(TAG, "ActivityThread msg is ENTER_ANIMATION_COMPLETE");
                 topActivity = GetActivity.getRunningActivity();
                 Log.d(TAG, "Top Activity is " + topActivity.getClass().getName());
-//                ViewGroup viewGroup = (ViewGroup) topActivity.getWindow().getDecorView();
-//                ArrayList<View> vList = new ArrayList<>();
-//                AppHooking.findChildren(viewGroup, vList);
+                if(!isAutoEngineStart) {
+                    autoThread = new Thread(new AutoEngine());
+                    autoThread.start();
+                    isAutoEngineStart = true;
+                }
+
+                ViewGroup vs =(ViewGroup)topActivity.getWindow().getDecorView();
+                View v = AppHooking.findViewContainID("menu_layout_container");
+                if(v != null)
+                {
+                    int[] loc;
+                    loc = EventAction.getViewLocation(v);
+                    for(int n : loc) {
+                        Log.d(TAG,"menu : " + n);
+                    }
+
+                }
+                break;
+            case DESTROY_ACTIVITY:
+                Log.d(TAG, "ActivityThread msg is DESTROY_ACTIVITY");
+                autoThread.interrupt();
                 break;
             default:
+                Log.d(TAG, "ActivityThread msg is " + msg.what);
                 break;
 
         }
 
-        Log.d(TAG, "Hook a " + msg.what);
         if (mParentCallback != null){
             return mParentCallback.handleMessage(msg);
         }else{

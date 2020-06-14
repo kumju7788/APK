@@ -17,29 +17,30 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class EventAction {
     private static final String TAG = HookInit.TAG;
 
     static void swipeUp() {
-        DYBaseOperation.fling(200, 200, 500, 20, 10);
+        BaseOperation.fling(200, 200, 500, 50, 10);
     }
 
     static void swipeDown() {
-        DYBaseOperation.fling(200, 200, 100, 500, 10);
+        BaseOperation.fling(200, 200, 100, 500, 10);
     }
 
     static void swipeRight() {
-        DYBaseOperation.fling(50, 400, 200, 200, 10);
+        BaseOperation.fling(50, 400, 200, 200, 10);
     }
 
     static void swipeLeft() {
-        DYBaseOperation.fling(400, 40, 200, 200, 10);
+        BaseOperation.fling(400, 40, 200, 200, 10);
     }
 
     static ArrayList<View> findChildrenWithId(View v, String strId) {
         ArrayList<View> chVArray = new ArrayList<View>();
-        DYBaseOperation.findChildren(v, chVArray);
+        BaseOperation.findChildren(v, chVArray);
         ArrayList<View> chVArrayWithId = new ArrayList<View>();
 
         for (View chV : chVArray) {
@@ -53,7 +54,7 @@ public class EventAction {
 
     static ArrayList<View> findChildrenWithOnClickListener(View v) {
         ArrayList<View> chVArray = new ArrayList<View>();
-        DYBaseOperation.findChildren(v, chVArray);
+        BaseOperation.findChildren(v, chVArray);
         ArrayList<View> chVArrayWithOnClickListener = new ArrayList<View>();
 
         Log.d(TAG, "*** View Count: " + Integer.toString(chVArray.size()));
@@ -71,19 +72,19 @@ public class EventAction {
     }
 
     static void tapOnScreen(float x, float y) {
-        DYBaseOperation.touching(x, y);
+        BaseOperation.touching(x, y);
     }
 
     static int getScrHeight() {
-        return DYBaseOperation.getScreenHeight();
+        return BaseOperation.getScreenHeight();
     }
 
     static int getScrWidth() {
-        return DYBaseOperation.getScreenWidth();
+        return BaseOperation.getScreenWidth();
     }
 
-    private static int[] getViewLocation(View tv) {
-        return DYBaseOperation.getViewLocationOnScreen(tv);
+    static int[] getViewLocation(View tv) {
+        return BaseOperation.getViewLocationOnScreen(tv);
     }
 
     static void actionClick(Activity activity, int vID) {
@@ -98,18 +99,18 @@ public class EventAction {
     }
 
     static void moveAppToBackFromActivity(Activity topActivity) {
-        DYBaseOperation.moveAppToBackFromActivity(topActivity);
+        BaseOperation.moveAppToBackFromActivity(topActivity);
     }
 
     static void bringAppToForeground(Activity topActivity) {
-        DYBaseOperation.bringAppToForeground(topActivity);
+        BaseOperation.bringAppToForeground(topActivity);
     }
 
     /**
      * Pushed by Jin Weiyi
      * Base class for Operation
      */
-    private static class DYBaseOperation {
+    private static class BaseOperation {
         /**
          * Pushed by Jin Weiyi
          * Get all views in a parent view
@@ -122,15 +123,21 @@ public class EventAction {
                 View chV = viewGroup.getChildAt(i);
                 if (chV instanceof ViewGroup) {
                     findChildren(chV, chVArray);
-                    Log.d(TAG, "*** Group View " + chV.toString() + " ID is: " + Integer.toString(chV.getId()));
+                    //Log.d(TAG, "*** Group View " + chV.toString() + " ID is: " + Integer.toString(chV.getId()));
                 } else {
-                    String viewClassName = chV.getClass().getName();
-                    Log.d(TAG, "*** Single View " + viewClassName + " ID is: " + Integer.toString(chV.getId()));
+                    //String viewClassName = chV.getClass().getName();
+                    //Log.d(TAG, "*** Single View " + viewClassName + " ID is: " + Integer.toString(chV.getId()));
                 }
                 chVArray.add(chV);
             }
         }
 
+        static float getRandom(int min, int max) {
+            Random r = new Random();
+            int rnd = r.nextInt(max - min + 1) + min;
+            double rndDouble = r.nextDouble();
+            return (float) (rnd + rndDouble);
+        }
         /**
          * Pushed by Jin Weiyi
          * Trigger Swipe event
@@ -143,19 +150,20 @@ public class EventAction {
             long downTime = SystemClock.uptimeMillis();
             long eventTime = SystemClock.uptimeMillis();
 
-            float y = fromY;
-            float x = fromX;
+            float y = getRandom((int)fromY-50, (int)fromY+50);
+            float x = getRandom((int)fromX-50, (int)fromX+100);
 
-            float yStep = (toY - fromY) / stepCount;
-            float xStep = (toX - fromX) / stepCount;
+            float yStep = (getRandom((int)toY-5, (int)toY+5) - y) / stepCount;
+            float xStep = (getRandom((int)toX-10, (int)toX+10) - x) / stepCount;
 
             MotionEvent event = MotionEvent.obtain(
                     downTime, eventTime,
-                    MotionEvent.ACTION_DOWN, fromX, fromY, 0
+                    MotionEvent.ACTION_DOWN, x, y, 0
             );
 
             event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
             inst.sendPointerSync(event);
+            event.recycle();
 
             for (int i=0; i<stepCount; i++) {
                 y += yStep;
@@ -167,16 +175,23 @@ public class EventAction {
                 );
                 event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
                 inst.sendPointerSync(event);
+                event.recycle();
             }
 
             eventTime = SystemClock.uptimeMillis() + (long)stepCount + 2;
             event = MotionEvent.obtain(
                     downTime, eventTime,
-                    MotionEvent.ACTION_UP, toX, toY, 0
+                    MotionEvent.ACTION_UP, x, y, 0
             );
 
             event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
             inst.sendPointerSync(event);
+            event.recycle();
+            try {
+                Thread.sleep((int)getRandom(100, 150));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         /**
@@ -191,8 +206,9 @@ public class EventAction {
             long downTime = SystemClock.uptimeMillis();
             long eventTime = SystemClock.uptimeMillis();
 
-            float y = tY;
-            float x = tX;
+            float y = getRandom((int)tY-20, (int)tY+20);
+            float x = getRandom((int)tX-20, (int)tX+20);
+            Log.d(TAG, "x=" + x + ", y=" + y);
 
             MotionEvent event = MotionEvent.obtain(
                     downTime, eventTime,
@@ -201,9 +217,18 @@ public class EventAction {
 
             event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
             inst.sendPointerSync(event);
+            event.recycle();
+            Log.d(TAG, "MotionEvent Down");
+
+            try {
+                Thread.sleep((int)getRandom(200, 350));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             downTime = SystemClock.uptimeMillis();
             eventTime = SystemClock.uptimeMillis();
+            Log.d(TAG, "MotionEvent Up - 1");
 
             event = MotionEvent.obtain(
                     downTime, eventTime,
@@ -212,6 +237,8 @@ public class EventAction {
 
             event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
             inst.sendPointerSync(event);
+            Log.d(TAG, "MotionEvent Up - 2");
+            event.recycle();
         }
 
         /**
@@ -241,7 +268,7 @@ public class EventAction {
          * Pushed by Jin Weiyi
          * Get absolute position in x, y coordinate on screen
          */
-        static int[] getViewLocationOnScreen(View v) {
+        public static int[] getViewLocationOnScreen(View v) {
             int[] viewLocation = new int[2];
             v.getLocationOnScreen(viewLocation);
             return viewLocation;

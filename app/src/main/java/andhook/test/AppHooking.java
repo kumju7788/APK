@@ -63,9 +63,10 @@ public final class AppHooking {
         HookHelper.invokeVoidOrigin(clazz, paramCls, str);
     }
 
-    public static void onLikeClick(final Class<?> clazz, View view){
-        Log.d(TAG, "MAINACTIVITY : onClick ------");
-        HookHelper.invokeVoidOrigin(clazz, view);
+    public static void myCheckFullScreen(final Class<?> clazz, boolean enable, int flag){
+        Log.d(TAG, "myCheckFullScreen : enable = " + enable + ", flag = " + flag);
+        HookHelper.invokeVoidOrigin(clazz, enable, flag);
+        settFullScreenMode(enable, flag);
     }
 
     public static void myCrashEvent(final Class<?> clazz) throws NoSuchFieldException, IllegalAccessException {
@@ -97,17 +98,8 @@ public final class AppHooking {
         Log.d(TAG, "+++++++ CheckSlidingPanOpened +++++++");
 //        new Throwable().printStackTrace();
         isSlidingPanOpened = HookHelper.invokeBooleanOrigin(clazz, view, n);
+        setScreenModeIconPos();
         Log.d(TAG, "isSlidingPanOpened = " + isSlidingPanOpened );
-        View v = findViewContainID("bottom_logo");
-        if(v != null) {
-            //Log.d(TAG, "found view for 'menu_layout_container;" );
-            Log.d(TAG, "*** Single View " + v.toString() +
-                    " Left = " + v.getLeft() + ", TranslationX = " + v.getTranslationX());
-
-        }
-        else {
-            Log.d(TAG, "Not found view for 'menu_layout_container;" );
-        }
         return isSlidingPanOpened;
     }
 
@@ -121,22 +113,22 @@ public final class AppHooking {
         return isSlidingPanOpened;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static void myDoBindView(final Class<?> clazz, View view) {
+    public static void my_logDbg(final Class<?> clazz, String str1, String str2) {
         boolean ret;
-        Log.d(TAG, "+++++++ myDoBindView +++++++");
-        HookHelper.invokeVoidOrigin(clazz, view);
-        try {
-            Field sFid = SlidingPaneLayout.getDeclaredField("s");
-            sFid.setAccessible(true);
-            ViewGroup vg = (ViewGroup)sFid.get(SlidingPaneLayout);
-            for(int i = 0; i < vg.getChildCount(); i++){
-                View v = vg.getChildAt(i);
-                Log.d(TAG, "child view : id " + v.getId() + ", " + v.toString());
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        Log.d(TAG, "DBG : " + str1 + " => " + str2);
+        HookHelper.invokeVoidOrigin(clazz, str1, str2);
+    }
+
+    public static void my_logInfo(final Class<?> clazz, String str1, String str2) {
+        boolean ret;
+        Log.d(TAG, "INFO : " + str1 + " => " + str2);
+        HookHelper.invokeVoidOrigin(clazz, str1, str2);
+    }
+
+    public static void my_logVerb(final Class<?> clazz, String str1, String str2) {
+        boolean ret;
+        Log.d(TAG, "VERBOSE : " + str1 + " => " + str2);
+        HookHelper.invokeVoidOrigin(clazz, str1, str2);
     }
 
 
@@ -231,34 +223,60 @@ public final class AppHooking {
         }
     }
 
-    public static View findViewContainID(View v, String id) {
-        ViewGroup viewGroup = (ViewGroup)v;
-        for (int i=0; i<viewGroup.getChildCount(); i++) {
-            View chV = viewGroup.getChildAt(i);
-            if (chV instanceof ViewGroup) {
-                findViewContainID(chV, id);
-                //Log.d(TAG, "*** Group View " + chV.toString() + " ID is: " + Integer.toString(chV.getId()));
-            } else {
-                if(chV instanceof TextView) {
-                    TextView tv = (TextView)chV;
-                    Log.d(TAG, "TextView " + tv.getText());
-                    if(tv.getText().equals(id))
-                        return chV;
-                }
-            }
-            if(chV.toString().contains(id))
-                return chV;
-        }
-        return null;
-    }
-
-
     public static View findViewContainID(String id) {
         Activity topActivity;
         topActivity = GetActivity.getRunningActivity();
         ViewGroup viewGroup = (ViewGroup) topActivity.getWindow().getDecorView();
-        return findViewContainID(viewGroup, id);
+        ArrayList<View> lv = new ArrayList<>();
+        findChildren(viewGroup, lv);
+        for(int i = 0; i < lv.size(); i++) {
+            View tmv = lv.get(i);
+            if( tmv instanceof TextView) {
+                TextView tv = (TextView)tmv;
+                int[] loc = EventAction.getViewLocation(tv);
+                //Log.d(TAG, "TextView " + tv.getText() + ", x=" + loc[0] + " y=" + loc[1]);
+                if(tv.getText().equals(id))
+                    return tmv;
+            }
+            if(tmv.toString().contains(id)) {
+                //Log.d(TAG, "FindView " + tmv.toString());
+                return tmv;
+            }
+            //int[] tt = EventAction.getViewLocation(tmv);
+            //Log.d(TAG, "TextView " + tmv.toString() + ", x=" + tt[0] + " y=" + tt[1]);
+
+        }
+        return null;
     }
+
+    static void settFullScreenMode(boolean enable, int flag) {
+        synchronized (AutoEngine.class) {
+            if(enable && flag == 2) {
+                AutoEngine.isScreenModeChanged = true;
+            }
+            else if(enable && flag == 4)
+                AutoEngine.isScreenModeChanged = false;
+        }
+    }
+
+    static void setScreenModeIconPos() {
+        View v = findViewContainID("browse_settings_notify");
+        if(v != null) {
+            synchronized (AutoEngine.class) {
+                AutoEngine.posScreenModeIcon = EventAction.getViewLocation(v);
+            }
+        }
+    }
+
+    static void setMainMenuIconPos() {
+        View v = findViewContainID("home_sliding_menu_layout");
+        if(v != null) {
+            synchronized (AutoEngine.class) {
+                AutoEngine.posMainMenuIcon = EventAction.getViewLocation(v);
+            }
+        }
+    }
+
 }
 
 

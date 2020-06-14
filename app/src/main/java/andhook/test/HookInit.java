@@ -25,7 +25,7 @@ import andhook.lib.AndHook;
 
 public class HookInit {
     public static final String TAG = "JAVA";
-    private static Context mContext;
+    //private static TimeRange playTime;
 
     @TargetApi(Build.VERSION_CODES.O)
     public static void Inite_Hook() throws Exception {

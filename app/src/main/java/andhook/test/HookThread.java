@@ -19,9 +19,9 @@ import static andhook.lib.HookHelper.findMethodHierarchically;
 
 public class HookThread extends Thread {
     private static final int HOOK_TOUCH_LIVE_PLAZA          = 1;
-    private static final int HOOK_CHECK_IS_SLIDINGPAN_OPEN  = 2;
+    private static final int HOOK_LOG                       = 2;
     private static final int HOOK_JSON_OBJECT_CLASS         = 3;
-    private static final int HOOK_MAIN_ACTIVITY_LIKE_CLICK  = 4;
+    private static final int HOOK_FULL_SCREEN_CHECK         = 4;
     private static final int HOOK_LIKE_CLICK_TEST           = 5;
     private static final int HOOK_TTNET_CHECK               = 6;
 
@@ -83,39 +83,45 @@ public class HookThread extends Thread {
 
                 break;
 
-            case HOOK_CHECK_IS_SLIDINGPAN_OPEN:
-//                Log.d(TAG, "[===] doBindView(View) hooking.");
-//                orgMethod = findMethodHierarchically(clazz, "doBindView", View.class);
-//                replaceMethod = findMethodHierarchically( AppHooking.class, "myDoBindView", Class.class, View.class);
-//                HookHelper.hook(orgMethod, replaceMethod);
-//                AppHooking.SlidingPaneLayout = clazz;
-//                Log.d(TAG, "[===] doBindView(View) hooking success.");
+            case HOOK_LOG:
+                Log.d(TAG, "[===] HOOK_LOG signal input...");
+                orgMethod = findMethodHierarchically(clazz, "a", String.class, String.class);
+                replaceMethod = findMethodHierarchically( AppHooking.class, "my_logDbg", Class.class, String.class, String.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchically(clazz, "c", String.class, String.class);
+                replaceMethod = findMethodHierarchically( AppHooking.class, "my_logInfo", Class.class, String.class, String.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchically(clazz, "d", String.class, String.class);
+                replaceMethod = findMethodHierarchically( AppHooking.class, "my_logVerb", Class.class, String.class, String.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_LOG hooking success...");
                 break;
 
             case HOOK_JSON_OBJECT_CLASS:
-                Log.d(TAG, "[===] HOOK_JSON_OBJECT_CLASS signal input...");
-                orgMethod = findMethodHierarchically(clazz, "put", String.class, Object.class);
-                Log.d(TAG, "orgMethod : " + orgMethod.getName());
-                replaceMethod = findMethodHierarchically(AppHooking.class,"my_JsonObjectPut", Class.class, String.class, Object.class);
-                Log.d(TAG, "replaceMethod : " + replaceMethod.getName());
-                HookHelper.hook(orgMethod, replaceMethod);
-
-                orgMethod = findMethodHierarchically(clazz, "put", String.class, boolean.class);
-                Log.d(TAG, "orgMethod : " + orgMethod.getName());
-                replaceMethod = findMethodHierarchically(AppHooking.class,"my_JsonBooleanPut", Class.class, String.class, boolean.class);
-                Log.d(TAG, "replaceMethod : " + replaceMethod.getName());
-                HookHelper.hook(orgMethod, replaceMethod);
-
-                Log.d(TAG, "[===] HOOK_JSON_OBJECT_CLASS hooking success...");
+//                Log.d(TAG, "[===] HOOK_JSON_OBJECT_CLASS signal input...");
+//                orgMethod = findMethodHierarchically(clazz, "put", String.class, Object.class);
+//                Log.d(TAG, "orgMethod : " + orgMethod.getName());
+//                replaceMethod = findMethodHierarchically(AppHooking.class,"my_JsonObjectPut", Class.class, String.class, Object.class);
+//                Log.d(TAG, "replaceMethod : " + replaceMethod.getName());
+//                HookHelper.hook(orgMethod, replaceMethod);
+//
+//                orgMethod = findMethodHierarchically(clazz, "put", String.class, boolean.class);
+//                Log.d(TAG, "orgMethod : " + orgMethod.getName());
+//                replaceMethod = findMethodHierarchically(AppHooking.class,"my_JsonBooleanPut", Class.class, String.class, boolean.class);
+//                Log.d(TAG, "replaceMethod : " + replaceMethod.getName());
+//                HookHelper.hook(orgMethod, replaceMethod);
+//
+//                Log.d(TAG, "[===] HOOK_JSON_OBJECT_CLASS hooking success...");
                 break;
 
-            case HOOK_MAIN_ACTIVITY_LIKE_CLICK:
-                Log.d(TAG, "[===] HOOK_MAIN_ACTIVITY_LIKE_CLICK signal input...");
-                orgMethod = findMethodHierarchically(clazz, "onClick", View.class);
-                replaceMethod = findMethodHierarchically(AppHooking.class,"onLikeClick", Class.class, View.class);
-                Log.d(TAG, "[HOOK_MAIN_ACTIVITY_LIKE_CLICK]  org : " + orgMethod.getName() + ", rep : " + replaceMethod.getName());
+            case HOOK_FULL_SCREEN_CHECK:
+                Log.d(TAG, "[===] HOOK_FULL_SCREEN_CHECK signal input...");
+                orgMethod = findMethodHierarchically(clazz, "a", boolean.class, int.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class,"myCheckFullScreen", Class.class, boolean.class, int.class);
                 HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_MAIN_ACTIVITY_LIKE_CLICK hooking success...");
+                Log.d(TAG, "[===] HOOK_FULL_SCREEN_CHECK hooking success...");
                 break;
 
             case HOOK_LIKE_CLICK_TEST:
