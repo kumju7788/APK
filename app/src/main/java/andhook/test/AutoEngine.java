@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.util.Random;
@@ -60,6 +61,7 @@ public class AutoEngine implements Runnable {
                     }
                 }
             }
+            SystemClock.sleep(100);
         }
     }
 

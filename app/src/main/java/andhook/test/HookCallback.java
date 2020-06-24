@@ -56,8 +56,9 @@ public class HookCallback implements Handler.Callback {
             case CREATE_SERVICE:
                 Log.d(TAG, "ActivityThread msg is CREATE_SERVICE");
                 if(!load_class) {
-                    Class<?> clazz = ClasspathScanner.FindClassForName("androidx.slidingpanelayout.widget.SlidingPaneLayout");
-                    clazz = ClasspathScanner.FindClassForName("j.a.f0.w0");
+                    // 후킹할 클라스가 로드되지 않는 경우 여기에서 수동으로 먼저 로드해준다.
+                    //Class<?>  preloadClass = ClasspathScanner.FindClassForName("j.a.f0.w0");
+                    //preloadClass = ClasspathScanner.FindClassForName("androidx.slidingpanelayout.widget.SlidingPaneLayout");
 
                     load_class = true;
                 }
@@ -88,9 +89,10 @@ public class HookCallback implements Handler.Callback {
                 topActivity = GetActivity.getRunningActivity();
                 Log.d(TAG, "Top Activity is " + topActivity.getClass().getName());
                 if(!isAutoEngineStart) {
-                    autoThread = new Thread(new AutoEngine());
-                    autoThread.start();
-                    isAutoEngineStart = true;
+                    // 오토엔진 실행
+                    //autoThread = new Thread(new AutoEngine());
+                    //autoThread.start();
+                    //isAutoEngineStart = true;
                 }
 
                 ViewGroup vs =(ViewGroup)topActivity.getWindow().getDecorView();
@@ -107,7 +109,7 @@ public class HookCallback implements Handler.Callback {
                 break;
             case DESTROY_ACTIVITY:
                 Log.d(TAG, "ActivityThread msg is DESTROY_ACTIVITY");
-                autoThread.interrupt();
+                //autoThread.interrupt();
                 break;
             default:
                 Log.d(TAG, "ActivityThread msg is " + msg.what);

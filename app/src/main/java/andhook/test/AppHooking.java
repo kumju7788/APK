@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.os.Build;
@@ -19,49 +20,92 @@ import android.widget.TextView;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLStreamHandler;
+import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import andhook.lib.HookHelper;
+
+import static andhook.test.BytesUtil.serialize;
 
 
 public final class AppHooking {
 
     private static final int HOOK_APP_HOOKING_CLASS         = 0;
-
+    private static int requestIndex = 0;
+    private static int responseIndex = 0;
     static Class<?>[] rClasses;
     static int rClassCount;
     public static boolean isSlidingPanOpened = false;
     private static final String TAG = HookInit.TAG;
 
     public static Class<?> SlidingPaneLayout;
+    private static final Object critical = new Object();
 
-    public static void init()
-    {
+    private static boolean logStart = false;
+    public static String logPath;
+
+    public static void init() {
         Log.d(TAG, "Java <AppHooking>..");
+        AppHooking.logPath = createLogPath();
+        Log.d(TAG, "log path = " + logPath);
+
     }
 
-    public static void setRelationClass(Class<?>[] relationClasses, int length) {
-        rClasses = relationClasses;
-        rClassCount = length;
-        for (int i = 0; i < length; i++) {
-            Log.d(TAG, "[setRelationClass] Relation Class : " + rClasses[i].getName());
+    public static void onRelationClassLoad(Class<?>[] relationClasses, int length) {
+        synchronized (critical) {
+            rClasses = relationClasses;
+            rClassCount = length;
         }
+//        for (int i = 0; i < length; i++) {
+//            Log.d(TAG, "[setRelationClass] Relation Class : " + rClasses[i].getName());
+//        }
     }
 
+    public static synchronized Class<?> getRelationClass(String clsName) {
+        synchronized (critical) {
+            for (int i = 0; i < rClassCount; i++) {
+                if (rClasses[i].getName().equals(clsName)) {
+                    Log.d(TAG, "[Relation class] : " + clsName);
+                    return rClasses[i];
+                }
+            }
+        }
+        return null;
+    }
 
-    public static void awemeHook(Class<?> clazz, int index){
+    public static void onHook(Class<?> clazz, int index){
         HookThread hkt = new HookThread(clazz, index);
-        hkt.setRelationClass(rClasses, rClassCount);
+        //hkt.setRelationClass(rClasses, rClassCount);
         hkt.start();
-        Log.d(TAG, "[awemeHook] Java hook : " + clazz.getName());
+        Log.d(TAG, "[onHook] Java hook : " + clazz.getName());
     }
 
-    public static void aFunc1(final Class<?> clazz, Class<?> paramCls, String str){
-        Log.d(TAG, "a(Class, String) callee ------");
-        HookHelper.invokeVoidOrigin(clazz, paramCls, str);
+    public static Object myFromJSon(final Class<?> clazz, String str, Class<?> paramCls){
+        //Log.d(TAG, "Gson:(From)JSon ==> cls=" + paramCls.getName() + ", str=" + str);
+        return HookHelper.invokeObjectOrigin(clazz, str, paramCls);
     }
+
+    public static String myToJSon(final Class<?> clazz, Object paramCls){
+        String jsonStr = HookHelper.invokeObjectOrigin(clazz, paramCls);
+        //Log.d(TAG, "Gson:(To)JSon <== cls=" + paramCls.getClass().getName() + ", str=" + jsonStr);
+        if(jsonStr.contains("pokeConditionId")) {
+            logStart = true;
+        }
+        //new Throwable().printStackTrace();
+        return jsonStr;
+    }
+
 
     public static void myCheckFullScreen(final Class<?> clazz, boolean enable, int flag){
         Log.d(TAG, "myCheckFullScreen : enable = " + enable + ", flag = " + flag);
@@ -74,19 +118,12 @@ public final class AppHooking {
         HookHelper.invokeVoidOrigin(clazz);
     }
 
-    public static boolean myTTNetCheck(final Class<?> clazz){
-        Log.d(TAG, ">> myTTNetCheck : a() callee ------");
-
-        boolean ret = HookHelper.invokeBooleanOrigin(clazz);
-        if(ret)
-            Log.d(TAG, ">> Depend : a() : true");
-        else {
-            ret = true;
-            Log.d(TAG, ">> Depend : a() : false ==> true");
-        }
-        new Throwable().printStackTrace();
-        return ret;
+    public static Object myURLOpenConnection(final Class<?> clazz){
+        Log.d(TAG, ">> myURLOpenConnection : ");
+        //new Throwable().printStackTrace();
+        return HookHelper.invokeObjectOrigin(clazz);
     }
+
 
     public static boolean LivePlaza_Click(final Class<?> clazz, MotionEvent motion) {
         Log.d(TAG, "+++++++ myGetHomeActivityClass +++++++");
@@ -126,20 +163,86 @@ public final class AppHooking {
     }
 
     public static void my_logVerb(final Class<?> clazz, String str1, String str2) {
-        boolean ret;
         Log.d(TAG, "VERBOSE : " + str1 + " => " + str2);
         HookHelper.invokeVoidOrigin(clazz, str1, str2);
     }
 
+    public static Object myOkhttp3_HttpProceed(final Class<?> clazz, Object request, Class<?> fVar, Class<?> cVar, Class<?> aVar){
+        if(logStart) {
+            Log.d("HTTP", ">>>" + request.hashCode() + "-[S:--myOkhttp3_HttpProceed()  start" + request.toString());
+            //getResponseInfo(request, HookThread.HOOK_OKHTTP3_HTTP_PROCEED, request.hashCode());
+        }
+        Object obj = HookHelper.invokeObjectOrigin(clazz, request, fVar, cVar, aVar);
+        //Log.d("HTTP", ">>>-[S:--myOkhttp3_HttpProceed()  end");
+        return obj;
+    }
+
+    public static Object myRetrofitExecute(final Class<?> clazz){
+        Log.d(TAG, "<<<-[R:" + String.format("%04d", responseIndex) + "[---myRetrofitExecute build() start");
+        Object response = HookHelper.invokeObjectOrigin(clazz);
+//        if(logStart) {
+            getResponseInfo(response, HookThread.HOOK_RETROFIT_RESPONSE, response.hashCode());
+//        }
+        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "[---myRetrofitExecute build() end");
+        responseIndex++;
+        return response;
+    }
+
+    public static Object myOkhttpExecute(final Class<?> clazz) {
+        Log.d(TAG, "<<<-[R:" + String.format("%04d", responseIndex) + "]---myOkhttpExecute _start ");
+        Object response = HookHelper.invokeObjectOrigin(clazz);
+//        if(logStart) {
+            getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
+//        }
+        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "]---myOkhttpExecute end  ");
+        responseIndex ++;
+        return response;
+    }
+
+    public static Object myRetrofitResponseConstructor(final Class<?> clazz, Class<?>response, Class<?>body, Class<?>errBody) {
+        Log.d(TAG, "<<<-[R:" + String.format("%04d", responseIndex) + "]---myRetrofitResponseConstructor _start ");
+        Object objResponse = HookHelper.invokeObjectOrigin(clazz, response, body, errBody);
+        //getResponseInfo(cloneResponse, HookThread.HOOK_RETROFIT_RESPONSE_ASYNC, cloneResponse.hashCode());
+        Log.d(TAG, "<<<-" + objResponse.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "]---myRetrofitResponseConstructor end  ");
+        responseIndex ++;
+        return objResponse;
+    }
+
+    public static Object myRequestBuilder_builder(final Class<?> clazz) {
+        Log.d(TAG, ">>>-[S:" + String.format("%04d", requestIndex) + "[---myRequestBuilder build() start");
+        Object request = HookHelper.invokeObjectOrigin(clazz);
+//        if(logStart) {
+//            RequestInfo requestInfo = new RequestInfo(request);
+//            requestInfo.start();
+//        }
+        Log.d(TAG, ">>>-[S:" + String.format("%04d", requestIndex) + "]---myRequestBuilder build() end");
+        requestIndex ++;
+        return request;
+    }
+
+    private static void getResponseInfo(Object response, int responseType, int identify){
+        if(responseType == HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER) {
+//            Log.d("HTTP", "\t" + identify + "-[" + "OKHTTP" + "-RESPONSE] : " + response.toString());
+            ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
+            responseInfo.start();
+        }
+        else if(responseType == HookThread.HOOK_RETROFIT_RESPONSE) {
+//            Log.d("HTTP", "\t" + identify + "-[" + "RETROFIT" + "-RESPONSE] : " + response.toString());
+            Retrofit retrofitInfo = new Retrofit(response, identify, "RETROFIT");
+            retrofitInfo.start();
+        }
+        else if(responseType == HookThread.HOOK_RETROFIT_RESPONSE_ASYNC) {
+//            Retrofit retrofitInfo = new Retrofit(response, identify, "RETROFIT_ASYNC");
+//            retrofitInfo.start();
+        }
+        else if(responseType == HookThread.HOOK_OKHTTP3_HTTP_PROCEED) {
+            ResponseInfo requestInfo = new ResponseInfo(response, identify, "OKHTTP_PROCEES");
+            requestInfo.setOnlyRequest(true);
+            requestInfo.start();
+        }
+    }
 
     public static JSONObject my_JsonObjectPut(final Class<?> clazz, String key, Object value){
-        boolean find = false;
-
-        // 메소드 Trace정보를 보기위한 조작
-//        if(key.equals("activity") && value.equals("SF2020")) {
-//            Log.d(TAG, ">>> JSONObject Trace.... \n");
-//            new Throwable().printStackTrace();
-//        }
         Log.d(TAG, "JSONObject put :" + key + " = " + value + "\n");
         return HookHelper.invokeObjectOrigin(clazz, key, value);
     }
@@ -156,6 +259,7 @@ public final class AppHooking {
         Log.d(TAG, "Class : " + clazz.getName());
         StringBuffer sb = new StringBuffer();
         Method[] methods = clazz.getMethods();
+        Log.d(TAG, "Methos : find");
         for (Method md: methods) {
             sb.append(md.getName());
             Class<?>[] argTypes = md.getParameterTypes();
@@ -276,6 +380,34 @@ public final class AppHooking {
             }
         }
     }
+
+
+    public static String createLogPath() {
+        try {
+//            ApplicationInfo ai = AppInfo.GetAppInfo();
+//            String logPath = ai.dataDir + "/log";
+            @SuppressLint("SdCardPath")
+            String logPath = "/data/user/0/com.smile.gifmaker/log";
+            Log.d(TAG, "path = " + logPath);
+            File dir = new File(logPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            File[] files = dir.listFiles();
+            for (File f: files) {
+                if(f.getName().contains("-1") || f.getName().contains("-2")) {
+                    f.delete();
+                }
+            }
+            Log.d(TAG, "folder create success : " + logPath);
+            return logPath;
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
+        return "/data/local/tmp";
+    }
+
 
 }
 

@@ -18,7 +18,7 @@ public final class AndHook {
     public final static String LOG_TAG = "AndHook";
 
     @SuppressWarnings("all")
-    public static void ensureNativeLibraryLoaded(final File lib_dir) {
+    public static void ensureNativeLibraryLoaded(final String lib_dir) {
         try {
             getVersionInfo();
             return;
@@ -37,26 +37,10 @@ public final class AndHook {
             Log.w(LOG_TAG, "Can't excutable temp directory : " + tmpdir);
         }
 
-        try {
-            if (lib_dir == null) {
-                System.loadLibrary(LIB_NAME);
-            } else {
-                System.load(new File(lib_dir, "lib" + LIB_NAME + ".so")
-                        .getAbsolutePath());
-            }
-        } catch (final UnsatisfiedLinkError e) {
-            try {
-                // compatible with libhoudini
-                if (lib_dir == null) {
-                    System.loadLibrary(LIB_NAME + "Compat");
-                } else {
-                    System.load(new File(lib_dir, "lib" + LIB_NAME + "Compat"
-                            + ".so").getAbsolutePath());
-                }
-            } catch (final UnsatisfiedLinkError ignored) {
-                throw new RuntimeException("Incompatible platform "
-                        + android.os.Build.VERSION.SDK_INT, e);
-            }
+        if (lib_dir == null) {
+            System.loadLibrary(LIB_NAME);
+        } else {
+            System.load(lib_dir);
         }
     }
 

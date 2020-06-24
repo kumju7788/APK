@@ -3,6 +3,7 @@ package andhook.test;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 
 import andhook.lib.AndHook;
@@ -37,6 +39,9 @@ public class HookInit {
         String hkFile = "libAK.so";
         filecopy(srcDir + hkFile, targrtDir + hkFile);
         AndHook.ensureNativeLibraryLoaded(null);
+
+
+//        AndHook.ensureNativeLibraryLoaded("ata/local/tmp/libhook.so");
 
         //java층 후크를 실행하기 위해서 처음에 로드한다.
         AppHooking.init();
@@ -68,6 +73,7 @@ public class HookInit {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+
     }
 
     private static void filecopy(String from, String to) throws Exception{
@@ -143,5 +149,7 @@ public class HookInit {
             return method.invoke(base,args);
         }
     }
+
+
 
 }

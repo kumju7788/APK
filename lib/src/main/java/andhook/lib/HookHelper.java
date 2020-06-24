@@ -235,6 +235,67 @@ public final class HookHelper {
         return m;
     }
 
+    public static Constructor<?> findConstructorHierarchicallyForString(
+            final Class<?> clazz, final String... parameterTypes) {
+        Constructor<?> m = null;
+        boolean equal = false;
+        int i = 0;
+
+        Constructor[] cs = clazz.getDeclaredConstructors();
+        int orgParamNUm = parameterTypes.length;
+
+        for(Constructor c : cs) {
+            Class<?>[] argTypes = c.getParameterTypes();
+            int size = argTypes.length;
+            if(orgParamNUm == size) {
+                for( String arg : parameterTypes ){
+                    String argName = argTypes[i].getName();
+                    if(!argName.equals(arg)){
+                        equal = false;
+                        break;
+                    }
+                    equal = true;
+                    i++;
+                }
+                if(equal) {
+                    m = c;
+                    break;
+                }
+            }
+        }
+        return m;
+    }
+
+    public static Method findMethodHierarchicallyForString(final Class<?> clazz,
+                                                  final String name, final String... parameterTypes) {
+        Method m = null;
+        boolean equal = false;
+        int i = 0;
+        Class<?> c = clazz;
+        Method[] ms = c.getDeclaredMethods();
+        int orgParamNUm = parameterTypes.length;
+
+        for(Method method : ms) {
+            Class<?>[] argTypes = method.getParameterTypes();
+            int size = argTypes.length;
+            if(orgParamNUm == size) {
+                for( String arg : parameterTypes ){
+                    String argName = argTypes[i].getName();
+                    if(!argName.equals(arg)){
+                        equal = false;
+                        break;
+                    }
+                    equal = true;
+                    i++;
+                }
+                if(equal) {
+                    m = method;
+                    break;
+                }
+            }
+        }
+        return m;
+    }
     public static Method findMethodHierarchically(final Class<?> clazz,
                                                   final String name, final Class<?>... parameterTypes) {
         Method m = null;

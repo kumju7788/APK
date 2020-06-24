@@ -27,7 +27,6 @@ public class ClasspathScanner {
 
         try {
             PathClassLoader classLoader = (PathClassLoader) Thread.currentThread().getContextClassLoader();
-
             dex = new DexFile(classPath);
             Enumeration<String> entries = dex.entries();
             while (entries.hasMoreElements()) {
@@ -36,7 +35,7 @@ public class ClasspathScanner {
                     Log.d(TAG, "Entry: " + entry);
                     entryClass = dex.loadClass(entry, classLoader);
                     if (entryClass != null) {
-                        Log.d(TAG, className + "Class found in dex file. ClassName is " + entryClass.getSimpleName());
+                       // Log.d(TAG, className + " Class found in dex file. ClassName is " + entryClass.getSimpleName());
                     }
                     else
                         Log.d(TAG, className + " not found.");
