@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
@@ -55,13 +57,12 @@ public class HookCallback implements Handler.Callback {
                 break;
             case CREATE_SERVICE:
                 Log.d(TAG, "ActivityThread msg is CREATE_SERVICE");
-                if(!load_class) {
+//                if(!load_class) {
                     // 후킹할 클라스가 로드되지 않는 경우 여기에서 수동으로 먼저 로드해준다.
-                    //Class<?>  preloadClass = ClasspathScanner.FindClassForName("j.a.f0.w0");
-                    //preloadClass = ClasspathScanner.FindClassForName("androidx.slidingpanelayout.widget.SlidingPaneLayout");
+                    Class<?>  preloadClass = ClasspathScanner.FindClassForName("j.h0.q.a.j.i");
 
                     load_class = true;
-                }
+//                }
 
                 break;
             case RESUME_ACTIVITY:

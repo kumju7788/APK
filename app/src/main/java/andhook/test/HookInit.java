@@ -21,7 +21,13 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.FileChannel;
+import java.security.cert.CertificateFactory;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.HttpsURLConnection;
 
 import andhook.lib.AndHook;
 
@@ -29,26 +35,29 @@ public class HookInit {
     public static final String TAG = "JAVA";
     //private static TimeRange playTime;
 
-    @TargetApi(Build.VERSION_CODES.O)
     public static void Inite_Hook() throws Exception {
         Log.d(TAG, "[--]Inite_JAVA Hook");
 
         Log.d(TAG, "This is dex code. Start hooking process in Java world.");
-        String targrtDir = "/data/data/com.smile.gifmaker/files/";
-        String srcDir = "/data/local/tmp/";
-        String hkFile = "libAK.so";
-        filecopy(srcDir + hkFile, targrtDir + hkFile);
+//        String targrtDir = "/data/data/com.smile.gifmaker/files/";
+//        String srcDir = "/data/local/tmp/";
+//        String hkFile = "libAK.so";
+//        filecopy(srcDir + hkFile, targrtDir + hkFile);
         AndHook.ensureNativeLibraryLoaded(null);
 
 
 //        AndHook.ensureNativeLibraryLoaded("ata/local/tmp/libhook.so");
 
         //java층 후크를 실행하기 위해서 처음에 로드한다.
+        //File test = new File("test");
         AppHooking.init();
-
-
+        //byte[] by = new byte[8];
+        //SecretKeySpec secretKeySpec = new SecretKeySpec(by, "HmacSHA256");
+        //Mac instance = Mac.getInstance(secretKeySpec.getAlgorithm());
         // 디버그용으로 클라스인스턴스 얻음.
         JSONObject json = new JSONObject();
+        CertificateFactory certificateFactory =  CertificateFactory.getInstance("X.509");
+        Log.d(TAG, "class preload..... end");
 
         try {
             final Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");

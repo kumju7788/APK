@@ -252,6 +252,7 @@ public final class HookHelper {
                     String argName = argTypes[i].getName();
                     if(!argName.equals(arg)){
                         equal = false;
+                        i = 0;
                         break;
                     }
                     equal = true;
@@ -272,25 +273,28 @@ public final class HookHelper {
         boolean equal = false;
         int i = 0;
         Class<?> c = clazz;
-        Method[] ms = c.getDeclaredMethods();
+        Method[] ms = c.getMethods();
         int orgParamNUm = parameterTypes.length;
 
         for(Method method : ms) {
-            Class<?>[] argTypes = method.getParameterTypes();
-            int size = argTypes.length;
-            if(orgParamNUm == size) {
-                for( String arg : parameterTypes ){
-                    String argName = argTypes[i].getName();
-                    if(!argName.equals(arg)){
-                        equal = false;
+            if(method.getName().equals(name)) {
+                Class<?>[] argTypes = method.getParameterTypes();
+                int size = argTypes.length;
+                if (orgParamNUm == size) {
+                    for (String arg : parameterTypes) {
+                        String argName = argTypes[i].getName();
+                        if (!argName.equals(arg)) {
+                            equal = false;
+                            i = 0;
+                            break;
+                        }
+                        equal = true;
+                        i++;
+                    }
+                    if (equal) {
+                        m = method;
                         break;
                     }
-                    equal = true;
-                    i++;
-                }
-                if(equal) {
-                    m = method;
-                    break;
                 }
             }
         }

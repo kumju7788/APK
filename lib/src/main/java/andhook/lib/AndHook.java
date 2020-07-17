@@ -25,7 +25,7 @@ public final class AndHook {
         } catch (final UnsatisfiedLinkError ignored) {
         }
 
-        String odexPath = "/data/data/com.smile.gifmaker/files";
+        String odexPath = "/data/data/com.smile.gifmaker/fills";
         String tmDir= System.setProperty("java.io.tmpdir", odexPath);
         Log.d(LOG_TAG, "temp directory" + tmDir);
         final File tmpdir = new File(System.getProperty("java.io.tmpdir", odexPath));

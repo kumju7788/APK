@@ -2,79 +2,19 @@
   {
     "level": "INFO",
     "message": "Start JSON generation. Platform version: 16 min SDK version: x86",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "file": "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk",
     "tag": "release|x86"
   },
   {
     "level": "INFO",
-    "message": "rebuilding JSON E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\x86\\android_gradle_build.json due to:",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "- command changed from previous, will remove stale json folder",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "removing stale contents from \u0027E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\x86\u0027",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "created folder \u0027E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\x86\u0027",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "executing ndkBuild Executable : C:\\android-ndk-r21\\ndk-build.cmd\narguments : \nNDK_PROJECT_PATH\u003dnull\nAPP_BUILD_SCRIPT\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk\nNDK_APPLICATION_MK\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk\nAPP_ABI\u003dx86\nNDK_ALL_ABIS\u003dx86\nNDK_DEBUG\u003d0\nAPP_PLATFORM\u003dandroid-16\nNDK_OUT\u003dE:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/release/obj\nNDK_LIBS_OUT\u003dE:\\Kuaisho\\AndHook\\app\\build\\intermediates\\ndkBuild\\release\\lib\nAPP_SHORT_COMMANDS\u003dfalse\nLOCAL_SHORT_COMMANDS\u003dfalse\n-B\n-n\njvmArgs : \n\n",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "Executable : C:\\android-ndk-r21\\ndk-build.cmd\narguments : \nNDK_PROJECT_PATH\u003dnull\nAPP_BUILD_SCRIPT\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk\nNDK_APPLICATION_MK\u003dE:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk\nAPP_ABI\u003dx86\nNDK_ALL_ABIS\u003dx86\nNDK_DEBUG\u003d0\nAPP_PLATFORM\u003dandroid-16\nNDK_OUT\u003dE:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/release/obj\nNDK_LIBS_OUT\u003dE:\\Kuaisho\\AndHook\\app\\build\\intermediates\\ndkBuild\\release\\lib\nAPP_SHORT_COMMANDS\u003dfalse\nLOCAL_SHORT_COMMANDS\u003dfalse\n-B\n-n\njvmArgs : \n\n",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "done executing ndkBuild",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "write build output E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\x86\\build_output.txt",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "parse and convert ndk-build output to build configuration JSON",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "found application make file E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Application.mk",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "tag": "release|x86"
-  },
-  {
-    "level": "INFO",
-    "message": "write command file E:\\Kuaisho\\AndHook\\app\\.cxx\\ndkBuild\\release\\x86\\build_command.txt",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "message": "JSON \u0027E:\\Kw5\\AndHook\\app\\.cxx\\ndkBuild\\release\\x86\\android_gradle_build.json\u0027 was up-to-date",
+    "file": "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk",
     "tag": "release|x86"
   },
   {
     "level": "INFO",
     "message": "JSON generation completed without problems",
-    "file": "E:\\Kuaisho\\AndHook\\app\\src\\main\\jni\\Android.mk",
+    "file": "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk",
     "tag": "release|x86"
   }
 ]

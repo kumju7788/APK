@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 
-public class BytesUtil implements Serializable {
-
+public class ByteUtil implements Serializable {
     public static byte[] serialize(Object value) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try(ObjectOutputStream outputStream = new ObjectOutputStream(out)) {

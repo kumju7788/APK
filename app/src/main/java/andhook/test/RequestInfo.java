@@ -11,7 +11,7 @@ import java.util.List;
 
 import andhook.lib.HookHelper;
 
-public class RequestInfo{
+public class RequestInfo extends Thread{
 
     private static final String TAG = "HTTP";
     private int mIdentifyCode = 0;
@@ -24,6 +24,21 @@ public class RequestInfo{
         mSource = source;
     }
 
+    RequestInfo(Object obj, int identifyCode) {
+        mRequest = obj;
+        mIdentifyCode = identifyCode;
+        mSource = "";
+    }
+
+    @Override
+    public void run() {
+        try {
+            getRequestInfo();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void putInfo() throws IOException {
         getRequestInfo();
     }
@@ -31,9 +46,11 @@ public class RequestInfo{
 
     private void getRequestInfo() throws IOException {
         byte[] requestBytes;
+        StringBuilder logMsg = new StringBuilder();
         Class<?> cls = mRequest.getClass();
-        Log.d(TAG, "-----" + mIdentifyCode + "-[---REQUEST---] --> start ++++++++++++++++++++");
-        Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] : " + mRequest.toString());
+
+        logMsg.append("-----" + mIdentifyCode + "-[---REQUEST---] --> start ++++++++++++++++++++\n");
+        logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] : " + mRequest.toString() + "\n");
 
         Field fld = HookHelper.findFieldHierarchically(cls, "headers");
         if(fld != null) {
@@ -41,12 +58,12 @@ public class RequestInfo{
                 Object hd = (Object)fld.get(mRequest);
                 Method toStringMethod = HookHelper.findMethodHierarchically(hd.getClass(), "toString");
                 String header = (String) toStringMethod.invoke(hd);
-                Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] Header : " + header);
+                logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Header : " + header + "\n");
             } catch (IllegalAccessException e) {
-                Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] Error : 'headers' field get() error");
+                logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Error : 'headers' field get() error\n");
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
-                Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] Error : 'headers' toString() error");
+                logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Error : 'headers' toString() error\n");
                 e.printStackTrace();
             }
         }
@@ -57,14 +74,15 @@ public class RequestInfo{
                 Object body = (Object) fld.get(mRequest);
                 if(body != null) {
                     Class<?> clazz = body.getClass();
-                    getBodyInfo(body);
+                    String msg = getBodyInfo(body);
+                    logMsg.append(msg);
 
                     if (clazz.getName().equals("w0.v")) {
                         Field field = HookHelper.findFieldHierarchically(clazz, "d");
                         if (field != null) {
                             List<Object> d = (List<Object>) field.get(body);
-                            Log.d(TAG, "multiplex body count : " + d.size());
-                            Log.d(TAG, "=======================================");
+                            logMsg.append("multiplex body count : " + d.size() + "\n");
+                            logMsg.append("=======================================\n");
                             for(int i = 0; i < d.size(); i++)
                             {
                                 Object b = d.get(i);
@@ -72,12 +90,13 @@ public class RequestInfo{
                                 Object q = a.get(b);
                                 Method toStringMethod = HookHelper.findMethodHierarchically(q.getClass(), "toString");
                                 String contStr = (String) toStringMethod.invoke(q);
-                                Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] Body" + i + " : " + contStr);
+                                logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body" + i + " : " + contStr + "\n");
 
                                 Field bf = HookHelper.findFieldHierarchically(b.getClass(), "b");
                                 Object z = bf.get(b);
-                                getBodyInfo(z);
-                                Log.d(TAG, "=======================================");
+                                msg = getBodyInfo(z);
+                                logMsg.append(msg);
+                                logMsg.append("=======================================\n");
                             }
                         }
                     } else {
@@ -91,31 +110,38 @@ public class RequestInfo{
             }
         }
 
-        Log.d(TAG, "-----" + mIdentifyCode + "-[---REQUEST---] --> end ++++++++++++++++++++");
+        logMsg.append("-----" + mIdentifyCode + "-[---REQUEST---] --> end ++++++++++++++++++++\n");
+        Log.d(TAG, String.valueOf(logMsg));
     }
 
-    private void getBodyInfo(Object body) throws
+    private String getBodyInfo(Object body) throws
             IllegalAccessException, IOException, InvocationTargetException {
         Class<?> clazz = body.getClass();
         List<String> encodedNames = null;
         List<String> encodedValues = null;
+        StringBuilder logMsg = new StringBuilder();
+
         long conLength = 0;
         Object contentType = null;
-        Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] Body-Class Name : " + clazz.getName());
+        logMsg.append("\t")
+                .append(mIdentifyCode)
+                .append("-[---REQUEST---] Body-Class Name : ")
+                .append(clazz.getName())
+                .append("\n");
 
         Method method = HookHelper.findMethodHierarchically(clazz, "contentType");
         if (method != null) {
             contentType = (Object) method.invoke(body);
         }
         if( contentType != null ) {
-            Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] Body-Content Type : " + contentType.toString());
+            logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body-Content Type : " + contentType.toString() + "\n");
         }
 
         method = HookHelper.findMethodHierarchically(clazz, "contentLength");
         if (method != null) {
             conLength = (long) method.invoke(body);
         }
-        Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] Body-Content Length : " + conLength);
+        logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body-Content Length : " + conLength + "\n");
 
 
         if (clazz.getName().equals("okhttp3.FormBody")) {
@@ -130,7 +156,7 @@ public class RequestInfo{
             assert encodedNames != null;
             assert encodedValues != null;
             for (int i = 0; i < encodedNames.size(); i++) {
-                Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] Body:" + encodedNames.get(i) +"=" + encodedValues.get(i));
+                logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body:" + encodedNames.get(i) +"=" + encodedValues.get(i) + "\n");
             }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
         } else if (clazz.getName().equals("w0.z$b")) {
@@ -139,6 +165,7 @@ public class RequestInfo{
             if (nameFld != null) {
                 buffer = (byte[]) nameFld.get(body);
                 if (buffer.length > 0) {
+                    logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body: byte array " + buffer.length + "bytes\n");
                     //DbgLog hexLog = new DbgLog(TAG, buffer, hashCode);
                     //hexLog.start();
                 }
@@ -149,8 +176,9 @@ public class RequestInfo{
             Field field = HookHelper.findFieldHierarchically(clazz, "b");
             if (field != null) {
                 Object b = (Object) field.get(body);
-                bData = BytesUtil.serialize(b);
+                bData = ByteUtil.serialize(b);
                 if (bData.length > 0) {
+                    logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body: Object byte array " + bData.length + "bytes\n");
                     //DbgLog hexLog = new DbgLog(TAG, bData, hashCode);
                    // hexLog.start();
                 }
@@ -160,10 +188,12 @@ public class RequestInfo{
             Field field = HookHelper.findFieldHierarchically(clazz, "b");
             if (field != null) {
                 File b = (File) field.get(body);
-                Log.d(TAG,  "\t" + mIdentifyCode + "-[---REQUEST---] File : " + b.getName());
+                logMsg.append("\t"+ mIdentifyCode + "-[---REQUEST---] File : " + b.getName() + "\n");
             }
         } else {
 
         }
+
+        return String.valueOf(logMsg);
     }
 }

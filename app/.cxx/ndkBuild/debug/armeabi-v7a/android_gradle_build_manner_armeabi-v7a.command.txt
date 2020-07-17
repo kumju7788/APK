@@ -1,14 +1,14 @@
 Executable : C:\android-ndk-r21\ndk-build.cmd
 arguments : 
 NDK_PROJECT_PATH=null
-APP_BUILD_SCRIPT=E:\Kuaisho\AndHook\app\src\main\jni\Android.mk
-NDK_APPLICATION_MK=E:\Kuaisho\AndHook\app\src\main\jni\Application.mk
+APP_BUILD_SCRIPT=E:\Kw5\AndHook\app\src\main\jni\Android.mk
+NDK_APPLICATION_MK=E:\Kw5\AndHook\app\src\main\jni\Application.mk
 APP_ABI=armeabi-v7a
 NDK_ALL_ABIS=armeabi-v7a
 NDK_DEBUG=1
 APP_PLATFORM=android-16
-NDK_OUT=E:/Kuaisho/AndHook/app/build/intermediates/ndkBuild/debug/obj
-NDK_LIBS_OUT=E:\Kuaisho\AndHook\app\build\intermediates\ndkBuild\debug\lib
+NDK_OUT=E:/Kw5/AndHook/app/build/intermediates/ndkBuild/debug/obj
+NDK_LIBS_OUT=E:\Kw5\AndHook\app\build\intermediates\ndkBuild\debug\lib
 manner
 jvmArgs : 
 

@@ -1,12 +1,18 @@
 package andhook.test;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import andhook.lib.HookHelper;
 import static andhook.lib.HookHelper.findConstructorHierarchically;
 import static andhook.lib.HookHelper.findConstructorHierarchicallyForString;
@@ -22,9 +28,16 @@ public class HookThread extends Thread {
     public static final int HOOK_RETROFIT_RESPONSE                  = 6;
     public static final int HOOK_OKHTTP3_REQUEST_BUILDER_BUILD      = 7;
     public static final int HOOK_OKHTTP3_RESPONSE_BUILDER           = 8;
-    public static final int HOOK_RETROFIT_RESPONSE_ASYNC            = 9;
+    public static final int HOOK_SET_RESPONSE_BODY                  = 9;
     public static final int HOOK_OKHTTP3_HTTP_PROCEED               = 10;
-
+    public static final int HOOK_NSTOKENSIG_PARAM                   = 11;
+    public static final int HOOK_HASH_VALUE                         = 12;
+    public static final int HOOK_FUNCTION_TEST_1                    = 13;
+    public static final int HOOK_FUNCTION_TEST_2                    = 14;
+    public static final int HOOK_FUNCTION_TEST_3                    = 15;
+    public static final int HOOK_FUNCTION_TEST_4                    = 16;
+    public static final int HOOK_FUNCTION_TEST_5                    = 17;
+    public static final int HOOK_FUNCTION_TEST_6                    = 18;
 
     private static final int HOOK_PRELOAD_CLASSES                   = 101;
 
@@ -157,24 +170,97 @@ public class HookThread extends Thread {
                 orgMethod = findMethodHierarchically(clazz, "execute");
                 replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttpExecute", Class.class);
                 HookHelper.hook(orgMethod, replaceMethod);
+
                 Log.d(TAG, "[===] HOOK_OKHTTP3_RESPONSE_BUILDER hooking success...");
                 break;
 
             case HOOK_OKHTTP3_HTTP_PROCEED:
-                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED signal input...");
-                orgMethod = findMethodHierarchicallyForString(clazz, "proceed", "okhttp3.Request", "w0.e0.e.f", "w0.e0.f.c", "w0.e0.e.c");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttp3_HttpProceed", Class.class,Object.class, Class.class, Class.class, Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED hooking success...");
+//                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED signal input...");
+//                orgMethod = findMethodHierarchicallyForString(clazz, "proceed", "okhttp3.Request", "w0.e0.e.f", "w0.e0.f.c", "w0.e0.e.c");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttp3_HttpProceed", Class.class,Object.class, Class.class, Class.class, Class.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED hooking success...");
 
                 break;
 
-            case HOOK_RETROFIT_RESPONSE_ASYNC:
-//                Log.d(TAG, "[===] HOOK_RETROFIT_RESPONSE_ASYNC signal input...");
-//                Member org = findConstructorHierarchicallyForString(clazz, "w0.a0", "java.lang.Object", "w0.b0");
-//                replaceMethod = findMethodHierarchically(AppHooking.class, "myRetrofitResponseConstructor", Class.class, Class.class, Class.class, Class.class);
+            case HOOK_SET_RESPONSE_BODY:
+//                Log.d(TAG, "[===] HOOK_SET_RESPONSE_BODY signal input...");
+//                Member org = findConstructorHierarchicallyForString(clazz, "w0.t", "long", "x0.i");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "mySetResponseBody", Class.class, Class.class, long.class, Class.class);
 //                HookHelper.hook(org, replaceMethod);
-//                Log.d(TAG, "[===] HOOK_RETROFIT_RESPONSE_ASYNC hooking success...");
+//                Log.d(TAG, "[===] HOOK_SET_RESPONSE_BODY hooking success...");
+                break;
+
+            case HOOK_NSTOKENSIG_PARAM:
+//                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking input...");
+//                orgMethod = findMethodHierarchicallyForString(clazz, "a", "okhttp3.Request", "java.util.Map", "java.util.Map");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "NStokensigParam", Class.class, Class.class, Map.class, Map.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking success...");
+
+//                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking input...");
+//                orgMethod = findMethodHierarchically(clazz, "a", byte[].class);
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "NStokensigParam1", Class.class, byte[].class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking success...");
+                break;
+
+            case HOOK_HASH_VALUE:
+//                Log.d(TAG, "[===] HOOK_HASH_VALUE signal input...");
+//                //AppHooking.appClassTest(clazz, 0);
+//                orgMethod = findMethodHierarchicallyForString(clazz, "a", "j.a.z.g$b", "java.lang.String", "java.lang.String");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myNStokenHashVal", Class.class, Object.class, String.class, String.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_HASH_VALUE hooking success...");
+                break;
+
+            case HOOK_FUNCTION_TEST_1:  //egid 얻어오는 URL에 들어가는 장치정보얻는 부분
+//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_1 signal input...");
+//                //AppHooking.appClassTest(clazz, 0);
+//                orgMethod = findMethodHierarchically(clazz, "a", Map.class);
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_1", Class.class, Map.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_1 hooking success...");
+                break;
+
+            case HOOK_FUNCTION_TEST_2:
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_2 signal input..." + clazz.getName());
+                orgMethod = findMethodHierarchically(clazz, "a", String.class, String.class, Map.class, Map.class, String.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_2", Class.class, String.class, String.class, Map.class, Map.class, String.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_2 hooking success...");
+                break;
+
+            case HOOK_FUNCTION_TEST_3:
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 signal input..." + clazz.getName());
+                Member org = findConstructorHierarchically(clazz, byte[].class, String.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_3", Class.class, byte[].class, String.class);
+                HookHelper.hook(org, replaceMethod);
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 hooking success...");
+                break;
+            case HOOK_FUNCTION_TEST_4:
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_4 signal input..." + clazz.getName());
+                orgMethod = findMethodHierarchically(clazz, "doFinal", byte[].class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_4", Class.class, byte[].class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_4 hooking success...");
+                break;
+            case HOOK_FUNCTION_TEST_5:
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_5 signal input..." + clazz.getName());
+                org = findMethodHierarchicallyForString(clazz, "a", "j.a.z.u.b", "java.lang.String");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_5", Class.class,Class.class, String.class);
+                HookHelper.hook(org, replaceMethod);
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_5 hooking success...");
+                break;
+            case HOOK_FUNCTION_TEST_6:
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_6 signal input..." + clazz.getName());
+
+                /*
+                orgMethod = findMethodHierarchically(clazz, "a");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_6", Class.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_6 hooking success...");
+                 */
                 break;
 
         }
