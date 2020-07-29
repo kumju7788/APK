@@ -32,7 +32,7 @@ public class DbgLog extends Thread {
 
     public void LogByteArray(byte[] bytes, long hashCode) {
         int length = bytes.length;
-        int max_length = 1024;
+        int max_length = 2048;
         int col = 0, cur_row = 0;
         int row = ((Math.min(length, max_length)) / 16) + 1;
         boolean start = false;

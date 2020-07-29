@@ -7,8 +7,11 @@ import android.view.View;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,11 +36,18 @@ public class HookThread extends Thread {
     public static final int HOOK_NSTOKENSIG_PARAM                   = 11;
     public static final int HOOK_HASH_VALUE                         = 12;
     public static final int HOOK_FUNCTION_TEST_1                    = 13;
-    public static final int HOOK_FUNCTION_TEST_2                    = 14;
-    public static final int HOOK_FUNCTION_TEST_3                    = 15;
+    public static final int HOOK_DEVICE_CARRY_INFO                  = 14;
+    public static final int HOOK_KEYPAIR_CREATE                     = 15;
     public static final int HOOK_FUNCTION_TEST_4                    = 16;
-    public static final int HOOK_FUNCTION_TEST_5                    = 17;
-    public static final int HOOK_FUNCTION_TEST_6                    = 18;
+    public static final int HOOK_APP_CONTEXT                        = 17;
+    public static final int HOOK_CREATE_SECURITY_OBJECT             = 18;
+    public static final int HOOK_SECURITY_CLASS                     = 19;
+    public static final int HOOK_CUSTOM_ENCRYPTOR                   = 20;
+    public static final int HOOK_ENGINE_PROXY                       = 21;
+    public static final int HOOK_CHANGE_MAP_BINARY                  = 22;
+    public static final int HOOK_NANO_MESSAGENANO                   = 23;
+    public static final int HOOK_FUNCTION_TEST_2                    = 24;
+
 
     private static final int HOOK_PRELOAD_CLASSES                   = 101;
 
@@ -198,11 +208,64 @@ public class HookThread extends Thread {
 //                HookHelper.hook(orgMethod, replaceMethod);
 //                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking success...");
 
-//                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking input...");
-//                orgMethod = findMethodHierarchically(clazz, "a", byte[].class);
-//                replaceMethod = findMethodHierarchically(AppHooking.class, "NStokensigParam1", Class.class, byte[].class);
-//                HookHelper.hook(orgMethod, replaceMethod);
-//                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking success...");
+                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking input...");
+                new NativeRespose(clazz, NativeRespose.SECURITY_CPU_GETCLOCK);
+                orgMethod = findMethodHierarchically(clazz, "a", byte[].class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "NStokensigParam1", Class.class, byte[].class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking success...");
+                break;
+
+            //TODO _Nssig3 만드는 클라스 : com.kuaishou.android.security.matrix.h
+            case HOOK_CREATE_SECURITY_OBJECT:
+                Log.d(TAG, "[===] HOOK_CREATE_SECURITY_OBJECT signal input..." + clazz.getName());
+                NativeRespose nate = new NativeRespose();
+                nate.createSecurityObject(clazz);
+                orgMethod = findMethodHierarchically(clazz, "a", String.class, boolean.class, String.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "security_matrix_h", Class.class, String.class, boolean.class, String.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                //nate.getNssig3("");
+                Log.d(TAG, "[===] HOOK_CREATE_SECURITY_OBJECT hooking success...");
+                break;
+
+            //TODO 전화번호암호화 하는 클라스 : com.kuaishou.android.security.KSecurity
+            case HOOK_SECURITY_CLASS:
+                Log.d(TAG, "[===] HOOK_SECURITY_CLASS signal input..." + clazz.getName());
+                NativeRespose security = new NativeRespose(clazz, NativeRespose.SECURITY_PHONE_NUMBER);
+                //nate.getNssig3("");
+                Log.d(TAG, "[===] HOOK_SECURITY_CLASS hooking success...");
+                break;
+
+            case HOOK_APP_CONTEXT:
+                Log.d(TAG, "[===] HOOK_APP_CONTEXT signal input..." + clazz.getName());
+                AppHooking.appClassTest(clazz, 0);
+                orgMethod = findMethodHierarchically(clazz, "a", int.class, Object[].class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myNativeKwsgmain", Class.class, int.class, Object[].class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_APP_CONTEXT hooking success...");
+                break;
+
+            //TODO 공개키와 비공개키를 만드는 클라스 : com.yxcorp.gifshow.util.AccountSecurityHelper
+            case HOOK_KEYPAIR_CREATE:
+                Log.d(TAG, "[===] HOOK_KEYPAIR_CREATE signal input..." + clazz.getName());
+                new NativeRespose(clazz, NativeRespose.SECURITY_KEYPAIR_CREATE);
+                //nate.getNssig3("");
+                Log.d(TAG, "[===] HOOK_KEYPAIR_CREATE hooking success...");
+                break;
+
+            //TODO 공개키와 비공개키를 다시 암호화하는데 리용되는 클라스 : com.yxcorp.gifshow.util.AccountSecurityHelper
+            case HOOK_CUSTOM_ENCRYPTOR:
+                Log.d(TAG, "[===] HOOK_CUSTOM_ENCRYPTOR signal input..." + clazz.getName());
+                NativeRespose customEncryptor = new NativeRespose();
+                try {
+                    customEncryptor.createCustomEncryptClassB(clazz);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                //nate.getNssig3("");
+                Log.d(TAG, "[===] HOOK_CUSTOM_ENCRYPTOR hooking success...");
                 break;
 
             case HOOK_HASH_VALUE:
@@ -215,53 +278,69 @@ public class HookThread extends Thread {
                 break;
 
             case HOOK_FUNCTION_TEST_1:  //egid 얻어오는 URL에 들어가는 장치정보얻는 부분
-//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_1 signal input...");
-//                //AppHooking.appClassTest(clazz, 0);
-//                orgMethod = findMethodHierarchically(clazz, "a", Map.class);
-//                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_1", Class.class, Map.class);
-//                HookHelper.hook(orgMethod, replaceMethod);
-//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_1 hooking success...");
-                break;
-
-            case HOOK_FUNCTION_TEST_2:
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_2 signal input..." + clazz.getName());
-                orgMethod = findMethodHierarchically(clazz, "a", String.class, String.class, Map.class, Map.class, String.class);
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_2", Class.class, String.class, String.class, Map.class, Map.class, String.class);
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_1 signal input...");
+                //AppHooking.appClassTest(clazz, 0);
+                orgMethod = findMethodHierarchically(clazz, "a", Map.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_1", Class.class, Map.class);
                 HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_2 hooking success...");
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_1 hooking success...");
                 break;
 
-            case HOOK_FUNCTION_TEST_3:
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 signal input..." + clazz.getName());
-                Member org = findConstructorHierarchically(clazz, byte[].class, String.class);
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_3", Class.class, byte[].class, String.class);
-                HookHelper.hook(org, replaceMethod);
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 hooking success...");
+            case HOOK_DEVICE_CARRY_INFO:
+                Log.d(TAG, "[===] HOOK_DEVICE_CARRY_INFO signal input..." + clazz.getName());
+                orgMethod = findMethodHierarchically(clazz, "atlasEncrypt", String.class, String.class, int.class, byte[].class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "atlasEncrypt", Class.class, String.class, String.class, int.class, byte[].class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                new NativeRespose(clazz, NativeRespose.SECURITY_DEVICE_AND_CARRY);
+
+                Log.d(TAG, "[===] HOOK_DEVICE_CARRY_INFO hooking success...");
                 break;
+
+            // TODO 디바이스정보에 들어가는 파라메터들중에서 K31, K89를 얻는 모쥴
+            case HOOK_ENGINE_PROXY:
+                Log.d(TAG, "[===] HOOK_ENGINE_PROXY signal input..." + clazz.getName());
+                new NativeRespose(clazz, NativeRespose.SECURITY_ENGINE_PROXY);
+                Log.d(TAG, "[===] HOOK_ENGINE_PROXY hooking success...");
+                break;
+
+            // TODO 디바이스정보에 들어가는 파라메터맵을 바이너리로 변환한다.
+            case HOOK_CHANGE_MAP_BINARY:
+                Log.d(TAG, "[===] HOOK_CHANGE_MAP_BINARY signal input..." + clazz.getName());
+                new NativeRespose(clazz, NativeRespose.MAP_CHANGE);
+                Log.d(TAG, "[===] HOOK_CHANGE_MAP_BINARY hooking success...");
+                break;
+
+            case HOOK_NANO_MESSAGENANO:
+                Log.d(TAG, "[===] HOOK_NANO_MESSAGENANO signal input..." + clazz.getName());
+                new NativeRespose(clazz, NativeRespose.MAP_MESSAGE_NANO);
+                Log.d(TAG, "[===] HOOK_NANO_MESSAGENANO hooking success...");
+                break;
+
             case HOOK_FUNCTION_TEST_4:
+//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_4 signal input..." + clazz.getName());
+//                orgMethod = findMethodHierarchically(clazz, "doFinal", byte[].class);
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_4", Class.class, byte[].class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_4 hooking success...");
+                // 전화번호 encode
                 Log.d(TAG, "[===] HOOK_FUNCTION_TEST_4 signal input..." + clazz.getName());
-                orgMethod = findMethodHierarchically(clazz, "doFinal", byte[].class);
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_4", Class.class, byte[].class);
+                orgMethod = findMethodHierarchically(clazz, "a", String.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myPhoneNumberEncode", Class.class, String.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                //TODO mobileVerifyCode에 들어가는 "secret" 키분석부분
+                orgMethod = findMethodHierarchically(clazz, "a", KeyPair.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myScretKey", Class.class, KeyPair.class);
                 HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_FUNCTION_TEST_4 hooking success...");
                 break;
-            case HOOK_FUNCTION_TEST_5:
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_5 signal input..." + clazz.getName());
-                org = findMethodHierarchicallyForString(clazz, "a", "j.a.z.u.b", "java.lang.String");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_5", Class.class,Class.class, String.class);
-                HookHelper.hook(org, replaceMethod);
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_5 hooking success...");
-                break;
-            case HOOK_FUNCTION_TEST_6:
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_6 signal input..." + clazz.getName());
 
-                /*
-                orgMethod = findMethodHierarchically(clazz, "a");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_6", Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_6 hooking success...");
-                 */
-                break;
+            case HOOK_FUNCTION_TEST_2:
+//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_4 signal input..." + clazz.getName());
+//                orgMethod = findMethodHierarchically(clazz, "myFuncTest_2", String.class);
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_2", Class.class, String.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_4 hooking success...");
 
         }
         //super.run();

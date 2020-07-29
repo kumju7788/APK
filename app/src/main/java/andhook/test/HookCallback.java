@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class HookCallback implements Handler.Callback {
     static boolean load_class = false;
     public static Thread autoThread;
     private boolean isAutoEngineStart;
+    private boolean isLocalServer = false;
     @Override
     public boolean handleMessage(Message msg) {
 
@@ -53,16 +55,20 @@ public class HookCallback implements Handler.Callback {
             case BIND_APPLICATION:
                 Log.d(TAG, "ActivityThread msg is BIND_APPLICATION");
                 isAutoEngineStart = false;
-                // java hooking....
                 break;
             case CREATE_SERVICE:
                 Log.d(TAG, "ActivityThread msg is CREATE_SERVICE");
-//                if(!load_class) {
+                if(!isLocalServer) {
+                    Server serverSocket = new Server();
+                    serverSocket.start();
+                    isLocalServer = true;
+                }
+                if(!load_class) {
                     // 후킹할 클라스가 로드되지 않는 경우 여기에서 수동으로 먼저 로드해준다.
-                    Class<?>  preloadClass = ClasspathScanner.FindClassForName("j.h0.q.a.j.i");
-
+                    ClasspathScanner.setPreloadClasses();
+                    ClasspathScanner.PreLoadClass();
                     load_class = true;
-//                }
+                }
 
                 break;
             case RESUME_ACTIVITY:

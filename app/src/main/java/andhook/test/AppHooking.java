@@ -36,6 +36,8 @@ import java.net.URLStreamHandler;
 import java.nio.Buffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -241,7 +243,7 @@ public final class AppHooking {
        // Log.d(TAG, "<<<-[R:" + String.format("%04d", responseIndex) + "[---myRetrofitExecute build() start");
         Object response = HookHelper.invokeObjectOrigin(clazz);
 //        if(logStart) {
- //           getResponseInfo(response, HookThread.HOOK_RETROFIT_RESPONSE, response.hashCode());
+//            getResponseInfo(response, HookThread.HOOK_RETROFIT_RESPONSE, response.hashCode());
 //        }
 //        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "[---myRetrofitExecute build() end");
         return response;
@@ -253,7 +255,7 @@ public final class AppHooking {
         Object response = HookHelper.invokeObjectOrigin(clazz);
 //        if(logStart) {
 
-        getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
+        //getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
 //        }
 //        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "]---myOkhttpExecute end  ");
         responseIndex ++;
@@ -289,12 +291,16 @@ public final class AppHooking {
 
     public static String NStokensigParam1(Class<?> clazz, byte[] bytes) {
         Log.d(TAG, ">>>>>>>>>>> NStokensigParam_1 :");
+        boolean is = false;
         if(bytes.length > 16){
-            new Throwable().printStackTrace();
-            DbgLog logHex = new DbgLog();
-            logHex.LogByteArray(bytes, bytes.length);
+            String s = new String(bytes);
+            Log.d(TAG, ">>>>>>>>>>> NStokensigParam_1:" + s);
+            is = true;
         }
         String hashVal = HookHelper.invokeObjectOrigin(clazz, bytes);
+        if(is)
+            Log.d(TAG, ">>>>>>>>>>> NStokensigParam_1:" + hashVal);
+
         return hashVal;
     }
 
@@ -308,30 +314,66 @@ public final class AppHooking {
 
     //장치정보
     public static Object myFuncTest_1(Class<?> clazz, Map<String, String> map) {
+        int count = 1;
         Log.d(TAG, ">> myFuncTest_1 start... ");
-        Set<Map.Entry<String, String>> entries = map.entrySet();
-        for(Map.Entry<String, String>tmpEntry: entries) {
-            Log.d(TAG, "device info : " + tmpEntry.getKey() + "=" + tmpEntry.getValue());
+        for(count = 1; count <= 102; count++) {
+            String k = "k" + count;
+            Log.d(TAG, "device info : " + k + "=" + map.get(k));
         }
         return HookHelper.invokeObjectOrigin(clazz, map);
     }
 
-    public static String myFuncTest_2(Class<?> clazz, String str, String str2, Map<String, String> map, Map<String, String> map2, String str3) {
-        Log.d(TAG, ">> myFuncTest_2 (request)start... ");
-        //new Throwable().printStackTrace();
-        //String ss = getClientSignParam(str, str2, map, map2, str3);
-        String encode = HookHelper.invokeObjectOrigin(clazz, str, str2, map, map2, str3);
-        Log.d(TAG, ">> __clientSign : " + encode);
-        Log.d(TAG, ">> myFuncTest_2 (request)end... ");
+    public static byte[] atlasEncrypt(Class<?> clazz, String str, String str2, int i, byte[] bytes) {
+        Log.d(TAG, ">> atlasEncrypt (request)start... ");
+        Log.d(TAG, ">> device info param | input param length =" + bytes.length);
+        DbgLog hexLog = new DbgLog();
+        hexLog.LogByteArray(bytes, bytes.hashCode());
+        byte[] encode = HookHelper.invokeObjectOrigin(clazz, str, str2, i, bytes);
+        Log.d(TAG, ">> device info param | output bytes length =" + encode.length);
+        Log.d(TAG, ">> atlasEncrypt (request)end... ");
         return encode;
     }
 
-    public static Object myFuncTest_3(Class<?> clazz, byte[] key, String algorithm) {
+    public static Object myFuncTest_3(Class<?> clazz) {
         Log.d(TAG, ">> myFuncTest_3 start... ");
-        DbgLog hexlog = new DbgLog();
-        hexlog.LogByteArray(key, key.hashCode());
-        Object obj = HookHelper.invokeObjectOrigin(clazz, key, algorithm);
+        Object obj = HookHelper.invokeObjectOrigin(clazz);
         return obj;
+    }
+
+    public static void myFuncTest_2(Class<?> clazz, String str) {
+        Log.d(TAG, ">> myFuncTest_3 start... ");
+        Log.d(TAG, ">> myFuncTest_3 | " + str);
+        HookHelper.invokeVoidOrigin(clazz, str);
+    }
+
+    public static String security_matrix_h(Class<?> clazz, String str, boolean z, String str2) {
+        Log.d(TAG, ">> security_matrix_h start... ");
+        Log.d(TAG, ">> security_matrix_h | str=" + str + ", str2=" + str2);
+        String ret = HookHelper.invokeObjectOrigin(clazz, str, z, str2);
+        Log.d(TAG, ">> security_matrix_h | ret=" + ret);
+        return ret;
+    }
+
+
+    public static void myScretKey(Class<?> clazz, KeyPair keypair) {
+        Log.d(TAG, ">> myScretKey start... ");
+        new Throwable().printStackTrace();
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(">> myFuncTest_3 start... \n");
+//        sb.append(">> input : " + privateKey + "\n");
+        HookHelper.invokeVoidOrigin(clazz, keypair);
+//        sb.append(">> output : " + encode + "\n");
+        Log.d(TAG, ">> myScretKey end");
+    }
+
+    public static String myPhoneNumberEncode(Class<?> clazz, String phoneNumber) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(">> myFuncTest_3 start... \n");
+        sb.append(">> input : " + phoneNumber + "\n");
+        String encode= HookHelper.invokeObjectOrigin(clazz,phoneNumber);
+        sb.append(">> output : " + encode + "\n");
+        Log.d(TAG, String.valueOf(sb));
+        return encode;
     }
 
 
@@ -352,10 +394,43 @@ public final class AppHooking {
         HookHelper.invokeVoidOrigin(clazz, cls, str);
     }
 
-    public static Object myFuncTest_6(Class<?> clazz){
-        Object cet = HookHelper.invokeObjectOrigin(clazz);
-        Log.d(TAG, ">> myFuncTest_6 | " + cet.getClass().getName());
-        return  cet;
+    public static Object myNativeKwsgmain(Class<?> clazz, int id, Object[] objs){
+        StringBuilder sb = new StringBuilder();
+        sb.append(">> myNativeKwsgmain | objs = " + objs.length + "\n");
+        for(int i = 0; i < objs.length; i++ )
+        {
+            if(objs[i] != null) {
+                if(objs[i] instanceof String[]) {
+                    String[] arr = (String[])objs[i];
+                    for(int j = 0; j < arr.length; j++) {
+                        sb.append("\tlength = " + "[" + i + "] " + arr[j].length());
+                        sb.append("\tid=" + id + ", [" + i + "] " + arr[j] + "\n");
+                    }
+                }
+                else if(objs[i] instanceof String) {
+                    String s = (String)objs[i];
+                    sb.append("\tlength = " + "[" + i + "] " + s.length());
+                    sb.append("\tid=" + id + ", [" + i + "] " + s + "\n");
+                }
+                else if(objs[i] instanceof Context) {
+                    AppInfo.setContextClass((Context) objs[i]);
+                    sb.append("\tid=" + id + ", [" + i +"] Context | Applicatio Context set" + "\n");
+                }
+            }
+        }
+        Object sign = HookHelper.invokeObjectOrigin(clazz, id, objs);
+        if(sign instanceof String) {
+            String s = (String)sign;
+            sb.append("\tid=" + id + " Return type is String, length = " + s.length());
+            sb.append("\tid=" + id + " Return value | " + (String)sign + "\n");
+        } else {
+            byte[] ret = (byte[])sign;
+            sb.append("\tid=" + id + " Return type is byte[], length = " + ret.length);
+            DbgLog helLog = new DbgLog();
+            helLog.LogByteArray(ret, id);
+        }
+        Log.d(TAG,String.valueOf(sb));
+        return  sign;
     }
 
 
@@ -368,7 +443,7 @@ public final class AppHooking {
         if(responseType == HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "OKHTTP" + "-RESPONSE] : " + response.toString());
 //            if(logStart || response.toString().contains("n/user/mobile/checker")) {
-//                logStart = true;
+                logStart = true;
 
                 ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
                 //responseInfo.setOnlyRequest(true);

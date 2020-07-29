@@ -1,5 +1,7 @@
 package andhook.test;
 
+import android.util.Log;
+
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -12,23 +14,36 @@ import java.util.List;
 import java.util.ArrayList;
 import java.net.ServerSocket;
 
-public class Server {
-
+public class Server extends Thread{
+    public static String TAG = "JAVA";
     static List<String> param = new ArrayList<String>();
     static List<String> function = new ArrayList<String>();
+    public static ServerSocket server = null;
 
-    public static void main(String[] args) throws IOException {
+    Server() {
+
+    }
+
+    @Override
+    public void run() {
+        try {
+            create();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void create() throws IOException {
         int port = 8899;
         // ServiceSocket 8899포트에서 클리이언트 listener
-        ServerSocket server = new ServerSocket(port);
-        System.out.println("Waiting...");
+        server = new ServerSocket(port);
+        Log.d(TAG, "Waiting...");
         while (true) {
-            // server尝试接收其他Socket的连接请求，server的accept方法是阻塞式的
             Socket socket = server.accept();
             // 클라이언트가 접속할떄 마다 새 스레드가 생성된다.
             new Thread(new Task(socket)).start();
         }
-        // server.close();
+//        server.close();
     }
 
     /**
@@ -74,16 +89,16 @@ public class Server {
                 }
                 sb.append(recvData);
             }
-            System.out.println("Form Cliect[port:" + socket.getPort() + "] :" + sb.toString());
+            Log.d(TAG,"Form Cliect[port:" + socket.getPort() + "] :" + sb.toString());
             // 클라이언트에게 응답
             setParam(String.valueOf(sb));
-            NativeRespose Secur = new NativeRespose(function, param);
-            String result = Secur.getResult();
+            NativeRespose Secure = new NativeRespose(function, param);
+            String result = Secure.getResult();
             Writer writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
             writer.write(result);
             writer.flush();
             writer.close();
-            System.out.println("To Cliect[port:" + socket.getPort() + "] Successful sending result..");
+            Log.d(TAG,"To Client[port:" + socket.getPort() + "] Successful sending | " + result);
             br.close();
             socket.close();
         }
@@ -93,10 +108,13 @@ public class Server {
         int funcPos;
         String funcPrefix = "FUNC=";
         String paramPrefix = "PARAM=";
-        
+
+        function.clear();
+        param.clear();
+
         int paramPos = recvData.indexOf(paramPrefix);
         if(paramPos != -1) {
-            String str = recvData.substring(paramPos + paramPrefix.length(), recvData.length());
+            String str = recvData.substring(paramPos + paramPrefix.length());
             String[] params = str.split("&");
             for(int i = 0; i < params.length; i++) {
                 param.add(params[i]);
