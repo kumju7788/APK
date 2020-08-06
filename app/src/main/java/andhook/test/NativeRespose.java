@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +23,7 @@ import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.zip.CRC32;
 
@@ -50,6 +52,10 @@ public class NativeRespose {
     static Class<?> mEngineProxy;
     static Class<?> mMessageNano;
 
+    static String mSocName;
+    static String mCpuCount;
+    static String mDevWidth;
+    static String mDevHeight;
 
     String mAppKey = "d7b7d042-d4f2-4012-be60-d97ff2429c17";
 
@@ -141,7 +147,7 @@ public class NativeRespose {
                 param = getParam("url");
                 if(!param.isEmpty()) {
                     res = getSig(param);
-                    sb.append("" + res);
+                    sb.append(res);
                 }
                 continue;
             }
@@ -150,7 +156,7 @@ public class NativeRespose {
                 param = getParam("info");
                 if(!param.isEmpty()) {
                     try {
-                        res = getDeviceInfo("info");
+                        res = getDeviceInfo(param);
                     } catch (InvocationTargetException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
@@ -162,28 +168,80 @@ public class NativeRespose {
                     } catch (InstantiationException e) {
                         e.printStackTrace();
                     }
-                    sb.append("" + res);
+                    sb.append(res);
                 }
                 continue;
             }
 
-            if(mRequest.get(i).equals("keypair")) {
-                String publicKey = "";
-                String privateKey = "";
+            if(mRequest.get(i).equals("get_environment")) {
+                String devParam = getParam("info");
+                String egid = getParam("egid");
+                String did = getParam("did");
+                String uid = getParam("uid");
                 try {
-                    getKeyPair(publicKey, privateKey);
-                    sb.append("PublicKey=")
-                            .append(publicKey)
-                            .append("&PrivateKey")
-                            .append(privateKey);
+                    res = getEnvironmentInfo(devParam, egid, did, uid);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+                sb.append(res);
+            }
+
+            if(mRequest.get(i).equals("get_config_param")) {
+                String egid = getParam("egid");
+                String appVer = getParam("appver");
+                try {
+                    res = getReportConfigParam(egid, appVer);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+                sb.append(res);
+            }
+
+            if(mRequest.get(i).equals("get_config")) {
+                String conf = getParam("conf");
+                try {
+                    res = getReportConfig(conf);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+                sb.append(res);
+            }
+
+            if(mRequest.get(i).equals("keypair")) {
+                try {
+                    sb.append(getKeyPair());
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
-
-
         }
         return String.valueOf(sb);
     }
@@ -210,7 +268,11 @@ public class NativeRespose {
                         strCrtt = (String) crtt.invoke(instance);
                     }
                 }
+            } else {
+                Log.d(TAG, "getDevParam_K31_k89() Application context is null. ");
             }
+        } else {
+            Log.d(TAG, "getDevParam_K31_k89() mEngineProxy class is null. ");
         }
         res= strNzz + "&" + strCrtt;
         return res;
@@ -244,7 +306,7 @@ public class NativeRespose {
         return bArr;
     }
 
-    private String getDeviceInfo(String key) throws InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, NoSuchMethodException, InstantiationException {
+    private String getDeviceInfo(String param) throws InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, NoSuchMethodException, InstantiationException {
         String res = "";
         String encode = "";
         String sign = "";
@@ -253,7 +315,7 @@ public class NativeRespose {
             Constructor<?> constructor = mDeviceInfoClass.getConstructor();
             Object objDeviceInfo = constructor.newInstance();
             //TODO 디바이스파라메터들을 맵형식으로 변환한다.
-            Map<String, String> map = createDeviceParam(key);
+            Map<String, String> map = createDeviceParam(param);
             // 테스트용
 //            Map<String, String> map = createDeviceParam();
 //            for(int i = 1; i <= 102; i++) {
@@ -336,7 +398,7 @@ public class NativeRespose {
                     hexlog.LogByteArray(phone, phone.hashCode());
 
                     byte[] encData = (byte[]) atlasEncrypt.invoke(null, phone);
-                    Log.d(TAG, "|\tmencode bytes size : " + encData.length);
+                    Log.d(TAG, "|\tencode bytes size : " + encData.length);
                     hexlog.LogByteArray(encData, encData.hashCode());
 
                     if(mCustomEncryptorB != null) {
@@ -403,8 +465,10 @@ public class NativeRespose {
         }
     }
 
-    private void getKeyPair(String publicKey, String privateKey) throws InvocationTargetException, IllegalAccessException {
+    private String getKeyPair() throws InvocationTargetException, IllegalAccessException {
         KeyPair keys = null;
+        String publicKey = "";
+        String privateKey = "";
 
         if (mSecurityKeyPair != null) {
             Method e = HookHelper.findMethodHierarchically(mSecurityKeyPair, "e");
@@ -415,16 +479,17 @@ public class NativeRespose {
             Method a = HookHelper.findMethodHierarchically(mSecurityKeyPair, "a", PrivateKey.class, String.class);
             if (a != null && keys != null) {
                 String timeStr = String.valueOf(System.currentTimeMillis());
-                privateKey = (String) a.invoke(keys.getPrivate(), timeStr);
+                privateKey = (String) a.invoke(null, keys.getPrivate(), timeStr);
                 if(mCustomEncryptorB != null) {
                     Class<?> bb = mCustomEncryptorB.getClass();
                     Method b = HookHelper.findMethodHierarchically(bb, "a", byte[].class);
                     if(b != null) {
-                        publicKey = (String) b.invoke(null, keys.getPublic().getEncoded());
+                        publicKey = (String) b.invoke(mCustomEncryptorB, keys.getPublic().getEncoded());
                     }
                 }
             }
         }
+        return "PublicKey=" + publicKey + "&PrivateKey=" + privateKey;
     }
 
     public void createCustomEncryptClassB(Class<?> clazz) throws InvocationTargetException, IllegalAccessException {
@@ -434,6 +499,7 @@ public class NativeRespose {
             mCustomEncryptorB = b.invoke(null);
         }
     }
+
     public static String k31(String nzz) {
         try {
             if (TextUtils.isEmpty(nzz)) {
@@ -674,7 +740,7 @@ public class NativeRespose {
     }
 
 
-    private Map<String, String> createDeviceParam(String paramKey) throws InvocationTargetException, IllegalAccessException {
+    private Map<String, String> createDeviceParam(String param) throws InvocationTargetException, IllegalAccessException {
         Map<String, String> map = new HashMap<>();
         String[] key_val;
         byte[] b = new byte[10];
@@ -683,31 +749,23 @@ public class NativeRespose {
         String k9 = "";
         String k31;
         String k31_89 = getDevParam_K31_k89();
+        Log.d(TAG, "k31_89 param = | " + k31_89);
         String[] k = k31_89.split("&");
         String socName = "";
         k31 = k31(k[0]);
+        String[] kValue = param.split("&");
 
-        for(int i = 0; i < mParam.size(); i++)
+        for(int i = 0; i < kValue.length; i++)
         {
-            System.out.println(mParam.get(i));
-            key_val = mParam.get(i).split("=");
-            if(key_val[0].equals(paramKey)) {
-                if(key_val.length == 3) {
-                    key = key_val[1];
-                    value = key_val[2];
-                } else if(key_val.length == 2){
-                    key = key_val[1];
-                    value = "";
-                }
-            } else {
-                if(key_val.length == 1) {
-                    key = key_val[0];
-                    value = "";
-                }
-                else {
-                    key = key_val[0];
-                    value = key_val[1];
-                }
+            key_val = kValue[i].split("=");
+
+            if(key_val.length == 1) {
+                key = key_val[0];
+                value = "";
+            }
+            else {
+                key = key_val[0];
+                value = key_val[1];
             }
 
             switch (key) {
@@ -725,8 +783,20 @@ public class NativeRespose {
                     break;
                 case "k103":
                     socName = value;
+                    mSocName = value;
                     value = getCpuInfo(socName);
                     key = "k89";
+                    break;
+                case "k104":
+                    mCpuCount = value;
+                    break;
+                case "k105":
+                    mDevWidth = value;
+                    break;
+                case "k106":
+                    mDevHeight =value;
+                    break;
+
             }
             map.put(key, value);
         }
@@ -925,4 +995,372 @@ public class NativeRespose {
         map.put("k14", sb2.toString());
     }
 
+    private String getEnvironmentInfo(String devParam, String egid, String did, String uid) throws IllegalAccessException, JSONException, InvocationTargetException, NoSuchMethodException, InstantiationException, UnsupportedEncodingException {
+        String res = "";
+        String encode = "";
+        String sign = "";
+        String errMsg;
+        if(mDeviceInfoClass != null) {
+            Constructor<?> constructor = mDeviceInfoClass.getConstructor();
+            Object objDeviceInfo = constructor.newInstance();
+
+            String carryInfo = createCarryInfo(devParam, egid, did, uid);
+            byte[] bArr = carryInfo.getBytes();
+            // TODO 바이트배렬의 인코딩
+            Method method = HookHelper.findMethodHierarchically(mDeviceInfoClass, "atlasEncrypt", String.class, String.class, int.class, byte[].class);
+            if(method != null) {
+                byte[] encBytes = (byte[]) method.invoke(objDeviceInfo, "ztdfp", "7e46b28a-8c93-4940-8238-4c60e64e3c81", 0, bArr);
+                Log.d(TAG,  "param length=" + bArr.length + "encByte lebgth=" + encBytes.length);
+                encode = URLEncoder.encode(Base64.encodeToString(encBytes, 0), "utf-8");
+                Log.d(TAG, "encode value = " + encode);
+            }
+
+            // TODO 인코딩된 자료의 서명
+            method = HookHelper.findMethodHierarchically(mDeviceInfoClass, "atlasSign", String.class, String.class, int.class, String.class);
+            if(method != null) {
+                String timeStamp = String.valueOf(Long.valueOf(System.currentTimeMillis()));
+                String signParam = "KUAISHOU" + timeStamp + "2" +  encode;
+                sign = (String) method.invoke(objDeviceInfo, "ztdfp", "7e46b28a-8c93-4940-8238-4c60e64e3c81", 0, signParam);
+
+                //TODO HTTPS파라메터형식으로 자료를 넘긴다.
+                res = "productName=KUAISHOU&ts="+ timeStamp + "&carryInfo=" +  URLEncoder.encode(encode, "utf-8") + "&sign=" + sign + "&sv=2";
+            }
+        } else {
+            res = "mDeviceInfoClass is null";
+        }
+
+        return res;
+    }
+
+
+    public String createCarryInfo(String devParam, String egid, String did, String uid) throws JSONException, InvocationTargetException, IllegalAccessException {
+        JSONObject json100102 = new JSONObject();
+        JSONObject json100103 = new JSONObject();
+        JSONObject dataSection1 = new JSONObject();
+        JSONObject dataSection2 = new JSONObject();
+        JSONArray jsonDataSection1 = new JSONArray();
+        JSONArray jsonDataSection2 = new JSONArray();
+        JSONArray jsonCarryInfo = new JSONArray();
+        Map<String, String> devInfo = createDeviceParam(devParam);
+        Map<String, String> apiLevel = new HashMap<>();
+        apiLevel.put("5.0","21");
+        apiLevel.put("5.1","22");
+        apiLevel.put("6.0","23");
+        apiLevel.put("7.0","24");
+        apiLevel.put("7.1","25");
+        apiLevel.put("8.0","26");
+        apiLevel.put("8.1","27");
+        apiLevel.put("9.0","28");
+        apiLevel.put("10.0","29");
+
+        json100102.put("1", "快手");
+        json100102.put("2", "com.smile.gifmaker");
+        json100102.put("3", devInfo.get("k22"));
+        json100102.put("4", "100102");
+        json100102.put("5", Long.toString(Long.valueOf(System.currentTimeMillis())));
+        json100102.put("6", "KUAISHOU");
+        json100102.put("7", "1.1.8.0");
+        json100102.put("8", egid);
+        json100102.put("9", "1:21");
+        json100102.put("10", devInfo.get("k95"));
+        json100102.put("11", did);
+
+        dataSection1.put("1", "/data/app/com.smile.gifmaker-1/oat/arm/base.odex:/data/data/com.smile.gifmaker/.uniaccount/optdex/uniaccount.dex:/data/data/com.smile.gifmaker/fills/app-debug.dex:/data/data/com.smile.gifmaker/fills/system@deff361c710-cache.dex:/system/lib/libc.so");
+        dataSection1.put("2", "KWE_N");
+        dataSection1.put("3", "KWE_N");
+        dataSection1.put("4", devInfo.get("k17"));
+        dataSection1.put("5", "KWE_N");
+        dataSection1.put("6", "KWE_N");
+        dataSection1.put("7", "[]");
+        dataSection1.put("8", "0");
+
+        int batteryChargeInfo = getRandom(0, 4);
+        dataSection1.put("9", String.valueOf(batteryChargeInfo));
+        dataSection1.put("10", "0");
+        dataSection1.put("11", "0");
+        dataSection1.put("12", "KWE_N");
+        dataSection1.put("13", "2");
+        dataSection1.put("14", "KWE_N");
+        dataSection1.put("15", "4");
+        dataSection1.put("16", "KWE_N");
+        dataSection1.put("17", "KWE_N");
+        dataSection1.put("18", "0");
+        dataSection1.put("22", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\",\"3\":\"KWE_PN\",\"4\":\"KWE_PN\"}");
+        dataSection1.put("23", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\"}");
+        dataSection1.put("24", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\",\"3\":\"KWE_PN\",\"4\":\"KWE_PN\"}");
+
+        String[] wifi = devInfo.get("k41").split(",");
+        dataSection1.put("25", wifi[0].substring(1));
+        dataSection1.put("26", wifi[1].substring(0, wifi[1].length()-1));
+        dataSection1.put("27", "{\"1\":\"02:00:00:00:00:00\",\"2\":\"02:00:00:00:00:00\"}");
+
+        String ud = "{\"1\":\"KWE_N\",\"2\":\"" + uid + "\",\"3\":false,\"5\":\"KWE_N\",\"4\":0}";
+        dataSection1.put("28", ud);
+
+        String batteryRate = String.valueOf(getRandom(25, 100)) + "%";
+        dataSection1.put("29", batteryRate);
+        dataSection1.put("30", "KWE_N");
+
+        StringBuilder c31 = new StringBuilder();
+        c31.append("{");
+        c31.append("\"1\":\"REL\",");
+        c31.append("\"2\":\"").append(devInfo.get("k61")).append("\",");
+        c31.append("\"3\":\"").append(devInfo.get("k27")).append("\",");
+        c31.append("\"4\":\"").append(devInfo.get("k23")).append("\",");
+        c31.append("\"5\":\"").append(devInfo.get("k19")).append("\",");
+        c31.append("\"6\":\"").append(devInfo.get("k58")).append("\",");
+        c31.append("\"7\":\"").append(devInfo.get("k28")).append("\",");
+        c31.append("\"8\":\"").append(devInfo.get("k52")).append("\",");
+        c31.append("\"9\":\"").append(devInfo.get("k64")).append("\",");
+        c31.append("\"10\":\"").append(devInfo.get("k35")).append("\",");
+        c31.append("\"11\":\"").append(apiLevel.get(devInfo.get("k35"))).append("\",");
+        c31.append("\"12\":\"").append(devInfo.get("k30")).append("\",");
+        c31.append("\"13\":\"").append(devInfo.get("k40")).append("\",");
+        c31.append("\"14\":\"").append(devInfo.get("k37")).append("\",");
+        c31.append("\"15\":\"").append(devInfo.get("k47")).append("\",");
+        String[] chip = devInfo.get("k26").split(",");
+        c31.append("\"16\":\"").append(chip[0]).append("\",");
+        c31.append("\"17\":\"").append(devInfo.get("k44")).append("\",");
+        c31.append("\"18\":\"").append(devInfo.get("k8")).append("\",");
+        c31.append("\"19\":\"").append(devInfo.get("k16")).append("\",");
+        c31.append("\"20\":\"").append(devInfo.get("k60")).append("\",");
+        c31.append("\"22\":\"\"");
+        c31.append("\"23\":\"").append(devInfo.get("k47")).append("-")
+                .append(devInfo.get("k8")).append(" ")
+                .append(devInfo.get("k35")).append(" ")
+                .append(devInfo.get("k37")).append(" ")
+                .append(devInfo.get("k60")).append(" ")
+                .append(devInfo.get("k44")).append("\"");
+        c31.append("\"24\":\"").append(devInfo.get("k103")).append("\",");
+        c31.append("\"25\":\"").append(devInfo.get("k103")).append("\",");
+        c31.append("\"100\":\"").append("{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\"}");
+        c31.append("\"101\":\"").append(devInfo.get("k66")).append("\",");
+        c31.append("\"102\":\"").append("{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\"}");
+        c31.append("\"103\":\"").append("\"KWE_PN\"");
+        c31.append("\"104\":\"").append("\"KWE_PN\"");
+        c31.append("\"105\":\"").append("\"cn\"");
+        dataSection1.put("31", c31.toString());
+
+        StringBuilder c32 = new StringBuilder();
+        c32.append("{");
+        c32.append("\"0\":\"com.android.inputmethod.pinyin/.PinyinIME\",");
+        c32.append("\"1\":\"com.android.inputmethod.pinyin::com.android.inputmethod.latin\"");
+        c32.append("\"2\":\"\"");
+        dataSection1.put("32", c32.toString());
+        dataSection1.put("33", "0");
+        dataSection1.put("37", "{\"1\":\"exist\",\"2\":\"exist\"}");
+        dataSection1.put("38", "KWE_N");
+        dataSection1.put("39", "KWE_N");
+        dataSection1.put("40", "KWE_N");
+        dataSection1.put("41", "KWE_N");
+        dataSection1.put("42", "0");
+        dataSection1.put("43", "com.sec.phone,com.sec.location.nsflp2,system,android.process.media,com.android.systemui,com.android.phone,com.sec.sve,com.trustonic.tuiservice,com.smile.gifmaker,");
+        dataSection1.put("44", "{\"1\":\"0\",\"2\":\"0\",\"3\":\"KWE_NPN\",\"4\":\"KWE_NPN\",\"5\":\"KWE_NPN\",\"6\":\"KWE_NPN\",\"7\":\"10000\",\"8\":\"KWE_N\"}");
+        dataSection1.put("45", "com.smile.gifmaker,");
+        dataSection1.put("46", "0");
+        dataSection1.put("47", "{\"1\":\"" + devInfo.get("k41") + "\"}");
+        dataSection1.put("48", "KWE_NS");
+        dataSection1.put("49", "{\"1\":\"4:5\",\"2\":\"6:15\",\"3\":\"11:15\",\"4\":\"1:15\",\"5\":\"11:15\"}");
+
+        jsonDataSection1.put(dataSection1);
+        json100102.put("data_section", jsonDataSection1);
+
+        json100103.put("1", "快手");
+        json100103.put("2", "com.smile.gifmaker");
+        json100103.put("3", devInfo.get("k22"));
+        json100103.put("4", "100103");
+        json100103.put("5", Long.toString(Long.valueOf(System.currentTimeMillis())));
+        json100103.put("6", "KUAISHOU");
+        json100103.put("7", "1.1.8.0");
+        json100103.put("8", egid);
+        json100103.put("9", "1:21");
+        json100103.put("10", devInfo.get("k95"));
+        json100103.put("11", did);
+
+        dataSection2.put("1", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\"}");
+        dataSection2.put("2", devInfo.get("k66"));
+        dataSection2.put("3", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\"}");
+        dataSection2.put("4", "KWE_PN");
+        dataSection2.put("5", "KWE_PN");
+        dataSection2.put("6", "cn");
+        dataSection2.put("7", "46000");
+        dataSection2.put("8", "cn");
+        dataSection2.put("9", "2");
+        dataSection2.put("10", "1");
+        dataSection2.put("11", devInfo.get("k39"));
+        dataSection2.put("12", devInfo.get("k37"));
+        dataSection2.put("13", devInfo.get("k47"));
+        dataSection2.put("14", devInfo.get("k35"));
+        dataSection2.put("15", devInfo.get("k23"));
+        dataSection2.put("16", devInfo.get("k27"));
+        dataSection2.put("17", devInfo.get("k60"));
+        dataSection2.put("18", devInfo.get("k30"));
+        dataSection2.put("19", devInfo.get("k52"));
+        dataSection2.put("20", devInfo.get("k61"));
+        dataSection2.put("21", devInfo.get("k58"));
+        dataSection2.put("22", devInfo.get("k28"));
+        dataSection2.put("23", devInfo.get("k40"));
+        dataSection2.put("24", devInfo.get("k64"));
+        dataSection2.put("25", devInfo.get("k8"));
+        dataSection2.put("26", devInfo.get("k44"));
+        dataSection2.put("27", devInfo.get("k16"));
+        dataSection2.put("28", devInfo.get("k19"));
+        dataSection2.put("29", devInfo.get("k63"));
+        dataSection2.put("30", devInfo.get("k26"));
+        dataSection2.put("31", devInfo.get("k46"));
+        dataSection2.put("32", devInfo.get("notExist"));
+        dataSection2.put("33", devInfo.get("k17"));
+        dataSection2.put("34", devInfo.get("k29"));
+        dataSection2.put("35", devInfo.get("k55"));
+        dataSection2.put("36", "\"1\":\"" + devInfo.get("k55") + "\"}");
+        dataSection2.put("37", "KWE_N");
+        dataSection2.put("38", devInfo.get("k84"));
+        dataSection2.put("39", "KWE_N");
+        dataSection2.put("40", devInfo.get("k87"));
+        dataSection2.put("41", devInfo.get("k82"));
+        dataSection2.put("42", "exist");
+        dataSection2.put("43", "KWE_N");
+        dataSection2.put("44", "KWE_N");
+        dataSection2.put("45", "KUAISHOU");
+        dataSection2.put("46", "KWE_N");
+        dataSection2.put("47", "KWE_N");
+        dataSection2.put("48", String.valueOf(getRandom(100, 140)));
+        dataSection2.put("49", "{\"1\":\"4:5\",\"2\":\"6:15\",\"3\":\"11:15\",\"4\":\"1:15\",\"5\":\"11:15\"}");
+        dataSection2.put("50", "KWE_N");
+        dataSection2.put("51", "KWE_N");
+        dataSection2.put("52", "KWE_OTHER");
+        dataSection2.put("53", "true");
+        dataSection2.put("54", c32.toString());
+        dataSection2.put("55", "true");
+        dataSection2.put("56", "false");
+        dataSection2.put("57", "325:323:1");
+        dataSection2.put("58", "[com.sec.android.service.health, com.sec.android.app.soundalive, com.sec.android.app.chromecustomizations, com.android.providers.userdictionary, com.dsi.ant.server, com.ims.dm, com.samsung.android.communicationservice, com.android.apps.tag, com.sec.android.easyMover.Agent, com.android.mtp, com.google.android.packageinstaller, com.google.android.googlequicksearchbox, com.sec.android.app.easylauncher, com.android.providers.partnerbookmarks, com.sec.android.RilServiceModeApp, com.android.managedprovisioning, com.android.wallpaperbackup, com.google.android.play.games, com.sec.android.emergencylauncher, com.google.android.feedback, com.sec.android.app.snsimagecache, com.sec.android.fido.uaf.asm, com.android.wallpaper.livepicker, com.google.android.onetimeinitializer, com.google.android.ext.services, com.skt.tservice.utility, com.android.inputdevices, com.google.android.ext.shared, com.android.bluetooth, com.sec.android.uibcvirtualsoftkey, com.sec.android.app.simsettingmgr, com.dsi.ant.service.socket, com.sec.enterprise.mdm.services.simpin, com.sec.android.app.servicemodeapp, com.expway.embmsserver, com.android.printspooler, com.sec.android.easyonehand, com.google.android.apps.maps, com.android.vpndialogs, com.sec.phone, com.android.server.telecom, com.sec.bcservice, com.android.defcontainer, com.sec.android.provider.emergencymode, com.google.android.gm, com.android.systemui, com.android.nfc, com.sec.android.app.safetyassurance, com.android.providers.calendar, com.android.vending, com.android.providers.blockednumber, com.android.mms, com.android.providers.downloads, com.google.android.gsf, com.sec.android.app.factorykeystring, com.sec.app.RilErrorNotifier, com.android.htmlviewer, com.android.bookmarkprovider, com.android.location.fused, com.android.providers.contacts, com.android.bluetoothmidiservice, com.sec.android.AutoPreconfig, com.sec.automation, com.sec.android.mimage.photoretouching, com.sec.android.splitsound, com.hancom.office.viewer, com.sec.android.app.bluetoothtest, com.sec.usbsettings, com.monotype.android.font.tinkerbell, com.sec.android.app.dmb, com.sec.android.app.wlantest, com.android.captiveportallogin, com.google.android.gms, com.google.android.configupdater, com.gd.mobicore.pa, com.android.statementservice, com.sec.android.app.magnifier, com.samsung.android.drivelink.stub, com.sec.imslogger, com.samsung.android.networkdiagnostic, com.sec.android.emergencymode.service, com.dsi.ant.plugins.antplus, com.wsomacp, com.sec.ims, com.android.pacprocessor, com.skt.t_smart_charge, com.sec.android.app.tourviewer, com.sec.android.preloadinstaller, com.sec.android.app.billing, com.sec.android.app.launcher, com.google.android.apps.books, com.sec.android.providers.security, com.sec.android.app.clockpackage, com.sec.android.app.hwmoduletest, com.android.emergency, com.sec.android.Preconfig, com.android.stk, com.samsung.android.svcagent, com.android.egg, com.google.android.gsf.login, com.sec.android.app.camera.plb, com.sec.android.provider.badge, com.sec.android.diagmonagent, com.android.calendar, com.sec.android.gallery3d, com.sec.smartcard.manager, com.android.backupconfirm, com.wssyncmldm, com.skt.prod.dialer, com.android.providers.downloads.ui, com.android.externalstorage, com.android.calllogbackup, com.skt.skaf.Z00000TAPI, com.sec.factory.camera, com.sec.android.providers.tasks, com.sec.android.app.DataCreate, com.android.shell, com.android.proxyhandler, com.android.chrome, com.sec.android.app.dictionary, com.sec.android.app.ringtoneBR, com.sec.android.app.wfdbroker, com.sec.android.app.sysscope, com.android.keychain, com.monotype.android.font.applemint, service.odtcfactory.sec.com.odtcfactoryservice, com.sec.android.app.personalization, com.sec.android.app.parser, com.android.dreams.basic, com.sec.android.app.vepreload, com.sec.factory, com.sec.android.gallery3d.panorama360view, com.dsi.ant.sample.acquirechannels, com.sec.android.app.myfiles, com.android.carrierconfig, com.sec.spen.flashannotate, com.android.cts.priv.ctsshim, com.policydm, com.sec.app.TransmitPowerService, com.sec.android.provider.logsprovider, com.android.phone, com.google.android.apps.plus, android, com.android.certinstaller, com.android.providers.telephony, com.google.android.webview, com.sec.android.wallpapercropper2, com.sec.android.QRreader, com.sec.svoice.lang.en_US, com.sec.android.app.applinker, com.sec.android.widgetapp.webmanual, com.sec.android.soagent, com.google.android.talk, com.sec.android.app.camera, com.android.cts.ctsshim, com.android.settings, com.sec.android.fido.uaf.client, com.android.sharedstoragebackup, com.android.wallpapercropper, com.sec.android.app.clipvideo, com.skp.tstore.startup, com.skms.android.agent, com.sec.android.daemonapp, com.android.providers.settings, com.sec.android.app.SecSetupWizard, com.sec.enterprise.mdm.vpn, com.samsung.android.sm.provider, com.google.android.backuptransport, com.wssnps, com.sec.android.app.music, com.sec.android.inputmethod, com.sec.location.nsflp2, com.google.android.apps.docs, com.monotype.android.font.chococooky, com.sec.android.app.sns3, com.google.android.printservice.recommendation, com.android.providers.media, com.sec.modem.settings, flipboard.boxer.app, com.sec.sve, com.google.android.partnersetup, com.smile.gifmaker, com.trustonic.tuiservice]");
+        dataSection2.put("59", "KWE_PN:2");
+        dataSection2.put("60", "KWE_NPN");
+        dataSection2.put("61", mCpuCount);
+        dataSection2.put("62", devInfo.get("k46"));
+        dataSection2.put("63", devInfo.get("68141632:536870912"));
+        dataSection2.put("64", wifi[0].substring(1));
+        dataSection2.put("65", "/system/lib64/libsec-ril.so");
+
+        String[] batteryChager = {"", "AC charger", "USB charger", "", "Wireless charger"};
+        dataSection2.put("66", batteryChager[batteryChargeInfo]);
+        dataSection2.put("67", "false");
+        dataSection2.put("68", "KWE_PN");
+        dataSection2.put("69", "KWE_PN");
+        dataSection2.put("70", "KWE_PN");
+        dataSection2.put("71", "KWE_PN");
+        dataSection2.put("72", "0");
+        dataSection2.put("73", batteryRate);
+        dataSection2.put("74", "zh");
+        dataSection2.put("75", "com.sec.phone,com.sec.location.nsflp2,system,android.process.media,com.android.systemui,com.android.phone,com.sec.sve,com.trustonic.tuiservice,com.smile.gifmaker,");
+        dataSection2.put("76", "0");
+        dataSection2.put("77", "0");
+        dataSection2.put("78", "{\"1\":\"KWE_N\",\"2\":\"" + ud + "\",\"3\":false,\"5\":\"KWE_N\",\"4\":0}");
+        dataSection2.put("79", "[]");
+        dataSection2.put("80", "0");
+        dataSection2.put("81", devInfo.get("k103"));
+        dataSection2.put("82", "7");
+        dataSection2.put("83", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\"}");
+        dataSection2.put("84", apiLevel.get(devInfo.get("k35")));
+
+        String[] dispInfos = devInfo.get("k34").split(",");
+        dataSection2.put("85", dispInfos[2] + "X" + dispInfos[1]);
+
+        String size = Math.round(Float.parseFloat(mDevHeight)) + " mm x " + Math.round(Float.parseFloat(mDevWidth)) + " mm";
+        dataSection2.put("86", size);
+        dataSection2.put("87", "KWE_N");
+        dataSection2.put("88", "KWE_N");
+        dataSection2.put("89", "KWE_PN");
+        dataSection2.put("90", "KWE_PN");
+        dataSection2.put("91", "KWE_N");
+        dataSection2.put("92", "KWE_N");
+        dataSection2.put("93", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\"}");
+        dataSection2.put("94",  Long.toString(Long.valueOf(System.currentTimeMillis())));
+
+        jsonDataSection2.put(dataSection2);
+        json100103.put("data_section", jsonDataSection2);
+
+        jsonCarryInfo.put(json100102);
+        jsonCarryInfo.put(json100103);
+
+        System.out.println(jsonCarryInfo.toString());
+        return jsonCarryInfo.toString();
+    }
+
+    private int getRandom(int min, int max) {
+        return (int) (Math.random() * (max - min + 1)) + min;
+    }
+
+    private String getReportConfigParam(String egid, String appVer) throws JSONException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnsupportedEncodingException {
+        JSONObject carry = new JSONObject();
+        carry.put("sdkVersion", "1.1.8.0");
+        carry.put("appVersion", appVer);
+        carry.put("packageName", "com.smile.gifmaker");
+        carry.put("productName", "KUAISHOU");
+        carry.put("outId", egid);
+
+
+        String res = "";
+        String encode = "";
+        String sign = "";
+        String errMsg;
+        if(mDeviceInfoClass != null) {
+            Constructor<?> constructor = mDeviceInfoClass.getConstructor();
+            Object objDeviceInfo = constructor.newInstance();
+
+            String carryInfo = carry.toString();
+            byte[] bArr = carryInfo.getBytes();
+            // TODO 바이트배렬의 인코딩
+            Method method = HookHelper.findMethodHierarchically(mDeviceInfoClass, "atlasEncrypt", String.class, String.class, int.class, byte[].class);
+            if(method != null) {
+                byte[] encBytes = (byte[]) method.invoke(objDeviceInfo, "ztdfp", "7e46b28a-8c93-4940-8238-4c60e64e3c81", 0, bArr);
+                Log.d(TAG,  "param length=" + bArr.length + "encByte lebgth=" + encBytes.length);
+                encode = URLEncoder.encode(Base64.encodeToString(encBytes, 0), "utf-8");
+                Log.d(TAG, "encode value = " + encode);
+            }
+
+            // TODO 인코딩된 자료의 서명
+            method = HookHelper.findMethodHierarchically(mDeviceInfoClass, "atlasSign", String.class, String.class, int.class, String.class);
+            if(method != null) {
+                String timeStamp = String.valueOf(Long.valueOf(System.currentTimeMillis()));
+                String signParam = "KUAISHOU" + timeStamp + "2" +  encode;
+                sign = (String) method.invoke(objDeviceInfo, "ztdfp", "7e46b28a-8c93-4940-8238-4c60e64e3c81", 0, signParam);
+
+                //TODO HTTPS파라메터형식으로 자료를 넘긴다.
+                res = "productName=KUAISHOU&ts="+ timeStamp + "&carryInfo=" +  URLEncoder.encode(encode, "utf-8") + "&sign=" + sign + "&sv=2";
+            }
+        } else {
+            res = "mDeviceInfoClass is null";
+        }
+
+        return res;
+    }
+
+    private String getReportConfig(String conf) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        String res = "";
+
+        if(mDeviceInfoClass != null) {
+            Constructor<?> constructor = mDeviceInfoClass.getConstructor();
+            Object objDeviceInfo = constructor.newInstance();
+
+            byte[] bArr = Base64.decode(conf, 0);
+            // TODO 바이트배렬의 인코딩
+            Method method = HookHelper.findMethodHierarchically(mDeviceInfoClass, "atlasDecrypt", String.class, String.class, int.class, byte[].class);
+            if(method != null) {
+                byte[] decBytes = (byte[]) method.invoke(objDeviceInfo, "ztdfp", "7e46b28a-8c93-4940-8238-4c60e64e3c81", 0, bArr);
+                if(decBytes != null) {
+                    res = new String(decBytes);
+                    Log.d(TAG, "param length=" + bArr.length + "encByte lebgth=" + decBytes.length);
+                    Log.d(TAG, "decode value = " + res);
+                }
+            }
+        } else {
+            res = "mDeviceInfoClass is null";
+        }
+
+        return res;
+    }
+
 }
+

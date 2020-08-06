@@ -34,6 +34,7 @@ public class ResponseInfo extends Thread {
     private String mSource;
     Object mResponse;
     private boolean isOnlyRequest;
+    private boolean isOnlyUrl;
     private String logPath;
 
 
@@ -42,6 +43,7 @@ public class ResponseInfo extends Thread {
         mIdentifyCode = identifyCode;
         mSource = source;
         isOnlyRequest = false;
+        isOnlyUrl = false;
         logPath = AppHooking.logPath;
     }
 
@@ -49,12 +51,19 @@ public class ResponseInfo extends Thread {
         isOnlyRequest = true;
     }
 
+    public void setOnlyUrl(boolean onlyUrl) {
+        isOnlyUrl = true;
+    }
+
     @Override
     public void run() {
         try {
             if(isOnlyRequest) {
                 Log.d(TAG, getRequestInfo(mResponse));
-            }else {
+            } else if(isOnlyUrl) {
+                getRequestUrl(mResponse);
+            }
+            else {
                 getResponse();
             }
         } catch (IllegalAccessException e) {
@@ -348,7 +357,28 @@ public class ResponseInfo extends Thread {
         }
         return String.valueOf(logMsg);
     }
-    
+
+
+    private String getRequestUrl(Object response) throws IOException, IllegalAccessException {
+        Class<?> clazz = response.getClass();
+        StringBuilder logMsg = new StringBuilder();
+        Field field = HookHelper.findFieldHierarchically(clazz, "a");
+        if(field != null) {
+            Object request = (Object)field.get(mResponse);
+            if(request != null) {
+                RequestInfo requestInfo = new RequestInfo(request, mIdentifyCode, mSource);
+                requestInfo.getRequestUrl();
+            }
+        } else {
+            logMsg.append("\t")
+                    .append(mIdentifyCode)
+                    .append("-[")
+                    .append(mSource)
+                    .append("-RESPONSE:Request] : error.")
+                    .append("\n");
+        }
+        return String.valueOf(logMsg);
+    }
     
     /**
      * OKHTTP3 Respons Body class(w0.a0-> 'g' field)

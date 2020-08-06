@@ -19,7 +19,6 @@ public class ClasspathScanner {
     private static ArrayList<String> preloadClasses = new ArrayList<>();
 
     public static void setPreloadClasses() {
-        preloadClasses.add("Lw0.y");
         preloadClasses.add("j.b.g.a.b");
         preloadClasses.add("com.yxcorp.gifshow.util.AccountSecurityHelper");
         preloadClasses.add("com.kuaishou.android.security.mainplugin.b");
@@ -28,7 +27,12 @@ public class ClasspathScanner {
         preloadClasses.add("com.kuaishou.android.security.matrix.m");
         preloadClasses.add("com.kuaishou.dfp.env.Proxy.EngineProxy");
         preloadClasses.add("com.google.protobuf.nano.MessageNano");
+        preloadClasses.add("com.yxcorp.gifshow.KwaiApp");
         preloadClasses.add("j.b.h.a$c.f");
+        preloadClasses.add("j.a.a.n5.i");
+        //preloadClasses.add("j.a.a.p6.o0.a");
+        //preloadClasses.add("com.yxcorp.gifshow.retrofit.etag.ETagResult");
+        //preloadClasses.add("w0.y");
     }
 
     private static boolean hasClassName(String className) {

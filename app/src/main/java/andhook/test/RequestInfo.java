@@ -3,6 +3,7 @@ package andhook.test;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -90,7 +91,7 @@ public class RequestInfo extends Thread{
                                 Object q = a.get(b);
                                 Method toStringMethod = HookHelper.findMethodHierarchically(q.getClass(), "toString");
                                 String contStr = (String) toStringMethod.invoke(q);
-                                logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body" + i + " : " + contStr + "\n");
+                                logMsg.append("\t" + mIdentifyCode + "- Body" + i + " : " + contStr + "\n");
 
                                 Field bf = HookHelper.findFieldHierarchically(b.getClass(), "b");
                                 Object z = bf.get(b);
@@ -109,8 +110,12 @@ public class RequestInfo extends Thread{
                 e.printStackTrace();
             }
         }
-
+        File file = new File("/data/data/com.smile.gifmaker/log/request.txt");
+        FileWriter fw = new FileWriter(file, true);
+        fw.write(String.valueOf(logMsg));
+        fw.close();
         logMsg.append("-----" + mIdentifyCode + "-[---REQUEST---] --> end ++++++++++++++++++++\n");
+
         Log.d(TAG, String.valueOf(logMsg));
     }
 
@@ -156,7 +161,7 @@ public class RequestInfo extends Thread{
             assert encodedNames != null;
             assert encodedValues != null;
             for (int i = 0; i < encodedNames.size(); i++) {
-                logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body:" + encodedNames.get(i) +"=" + encodedValues.get(i) + "\n");
+                logMsg.append("\t" + "- Body:" + encodedNames.get(i) +"=" + encodedValues.get(i) + "\n");
             }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
         } else if (clazz.getName().equals("w0.z$b")) {
@@ -165,7 +170,8 @@ public class RequestInfo extends Thread{
             if (nameFld != null) {
                 buffer = (byte[]) nameFld.get(body);
                 if (buffer.length > 0) {
-                    logMsg.append("\t" + mIdentifyCode + "-[---REQUEST---] Body: byte array " + buffer.length + "bytes\n");
+                    logMsg.append("\t" + "-[---REQUEST---] Body: byte array " + buffer.length + "bytes\n");
+                    logMsg.append("\t" + new String(buffer));
                     //DbgLog hexLog = new DbgLog(TAG, buffer, hashCode);
                     //hexLog.start();
                 }
@@ -196,4 +202,14 @@ public class RequestInfo extends Thread{
 
         return String.valueOf(logMsg);
     }
+
+    public void getRequestUrl() {
+        byte[] requestBytes;
+        StringBuilder logMsg = new StringBuilder();
+        Class<?> cls = mRequest.getClass();
+        Log.d(TAG,"-[---REQUEST---start]");
+        Log.d(TAG,"-[---REQUEST---] : " + mRequest.toString());
+        Log.d(TAG,"-[---REQUEST---end]");
+    }
+
 }

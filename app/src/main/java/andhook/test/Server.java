@@ -76,6 +76,12 @@ public class Server extends Thread{
              * 개행 문자를 쓴후 출력 스트림이 즉시 닫기지 않으면 플러시해야합니다. 
              * 이렇게하면 버퍼에서 데이터가 남아있게 된다.
              */
+            String funcPrefix = "FUNC=";
+            String paramPrefix = "PARAM=";
+
+            function.clear();
+            param.clear();
+
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(socket.getInputStream(), "UTF-8"));
             StringBuilder sb = new StringBuilder();
@@ -87,13 +93,22 @@ public class Server extends Thread{
                     sb.append(recvData.substring(0, index));
                     break;
                 }
+                if((index = recvData.indexOf(funcPrefix)) != -1) {
+                    function.add(recvData.substring(funcPrefix.length()));
+                }
+
+                if((index = recvData.indexOf(paramPrefix)) != -1) {
+                    param.add(recvData.substring(paramPrefix.length()));
+                }
+
                 sb.append(recvData);
             }
             Log.d(TAG,"Form Cliect[port:" + socket.getPort() + "] :" + sb.toString());
             // 클라이언트에게 응답
-            setParam(String.valueOf(sb));
+            //setParam(String.valueOf(sb));
             NativeRespose Secure = new NativeRespose(function, param);
             String result = Secure.getResult();
+            Log.d(TAG,"send packet length = " + result.length());
             Writer writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
             writer.write(result);
             writer.flush();

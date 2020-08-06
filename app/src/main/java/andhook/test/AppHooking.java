@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.JsonWriter;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
@@ -19,11 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -255,7 +260,7 @@ public final class AppHooking {
         Object response = HookHelper.invokeObjectOrigin(clazz);
 //        if(logStart) {
 
-        //getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
+        getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
 //        }
 //        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "]---myOkhttpExecute end  ");
         responseIndex ++;
@@ -283,24 +288,27 @@ public final class AppHooking {
     }
 
     public static Pair<String, String> NStokensigParam(Class<?> clazz, Class<?> request, Map<String, String> map, Map<String, String> map2) {
-        Log.d(TAG, ">>>>>>>>>>> NStokensigParam :");
-        byte[] bytes = requestParam(map, map2);
+//        Log.d(TAG, ">>>>>>>>>>> NStokensigParam :");
+//        byte[] bytes = requestParam(map, map2);
         Pair<String, String> obj = HookHelper.invokeObjectOrigin(clazz, request, map, map2);
         return obj;
     }
 
-    public static String NStokensigParam1(Class<?> clazz, byte[] bytes) {
-        Log.d(TAG, ">>>>>>>>>>> NStokensigParam_1 :");
-        boolean is = false;
-        if(bytes.length > 16){
-            String s = new String(bytes);
-            Log.d(TAG, ">>>>>>>>>>> NStokensigParam_1:" + s);
-            is = true;
-        }
-        String hashVal = HookHelper.invokeObjectOrigin(clazz, bytes);
-        if(is)
-            Log.d(TAG, ">>>>>>>>>>> NStokensigParam_1:" + hashVal);
 
+    public static String NStokensigParam1(Class<?> clazz, byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        Log.d(TAG, "------------- NStokensigParam_1 :" + "\n");
+        boolean is = false;
+        //if(bytes.length > 16){
+            String s = new String(bytes);
+        Log.d(TAG,  "\tNStokensigParam_1 | input=" + s + "\n");
+            is = true;
+        //}
+        String hashVal = HookHelper.invokeObjectOrigin(clazz, bytes);
+        //if(is)
+            Log.d(TAG, "\tNStokensigParam_1 | output=" + hashVal + "\n");
+
+        //Log.d(TAG, sb.toString());
         return hashVal;
     }
 
@@ -313,21 +321,46 @@ public final class AppHooking {
     }
 
     //장치정보
-    public static Object myFuncTest_1(Class<?> clazz, Map<String, String> map) {
+    public static Object myDeviceInfoParam(Class<?> clazz, Map<String, String> map) {
         int count = 1;
         Log.d(TAG, ">> myFuncTest_1 start... ");
-        for(count = 1; count <= 102; count++) {
-            String k = "k" + count;
-            Log.d(TAG, "device info : " + k + "=" + map.get(k));
-        }
+//        for(count = 1; count <= 102; count++) {
+//            String k = "k" + count;
+//            Log.d(TAG, "device info : " + k + "=" + map.get(k));
+//        }
         return HookHelper.invokeObjectOrigin(clazz, map);
     }
 
+    //CarryInfo 파라메터
+    public static int myCarryInfoParam(Class<?> clazz, String str, String str2, boolean z, Bundle bundle) {
+        int count = 1;
+        Log.d(TAG, ">> myCarryInfoParam start... ");
+        Log.d(TAG, ">> myCarryInfoParam | str2=" + str2);
+        Log.d(TAG, ">> myCarryInfoParam | str=" + str);
+        return HookHelper.invokeObjectOrigin(clazz, str, str2, z, bundle);
+    }
+
     public static byte[] atlasEncrypt(Class<?> clazz, String str, String str2, int i, byte[] bytes) {
-        Log.d(TAG, ">> atlasEncrypt (request)start... ");
-        Log.d(TAG, ">> device info param | input param length =" + bytes.length);
-        DbgLog hexLog = new DbgLog();
-        hexLog.LogByteArray(bytes, bytes.hashCode());
+        Log.d(TAG, ">> atlasEncrypt (request)start...|length = " + bytes.length);
+        new Throwable().printStackTrace();
+        if(bytes[0] == '[') {
+            try {
+                JSONArray testV=new JSONArray(new String(bytes));
+                FileWriter file = new FileWriter("/data/data/com.smile.gifmaker/log/carry.json");
+                file.write(String.valueOf(testV));
+                file.flush();
+                file.close();
+                Log.d(TAG, "/data/data/com.smile.gifmaker/log/carry.json file created.");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d(TAG, ">> device info param | input param length =" + bytes.length);
+            DbgLog hexLog = new DbgLog();
+            hexLog.LogByteArray(bytes, bytes.hashCode());
+        }
         byte[] encode = HookHelper.invokeObjectOrigin(clazz, str, str2, i, bytes);
         Log.d(TAG, ">> device info param | output bytes length =" + encode.length);
         Log.d(TAG, ">> atlasEncrypt (request)end... ");
@@ -336,21 +369,40 @@ public final class AppHooking {
 
     public static Object myFuncTest_3(Class<?> clazz) {
         Log.d(TAG, ">> myFuncTest_3 start... ");
-        Object obj = HookHelper.invokeObjectOrigin(clazz);
-        return obj;
+        new Throwable().printStackTrace();
+        List<Object> lst = HookHelper.invokeObjectOrigin(clazz);
+        for(int i = 0;i < lst.size(); i++) {
+            Log.d(TAG, "---->" + lst.get(i).getClass().getName());
+        }
+        return  lst;
     }
 
-    public static void myFuncTest_2(Class<?> clazz, String str) {
-        Log.d(TAG, ">> myFuncTest_3 start... ");
-        Log.d(TAG, ">> myFuncTest_3 | " + str);
-        HookHelper.invokeVoidOrigin(clazz, str);
+    public static Object myFuncTest_2(Class<?> clazz, Object obj) throws InvocationTargetException, IllegalAccessException {
+        Log.d(TAG, ">> myFuncTest_2 start... ");
+        Log.d(TAG, ">> myFuncTest_2 | " + obj.getClass().getName());
+        getRequest(obj);
+        Object response = HookHelper.invokeObjectOrigin(clazz, obj);
+
+        return response;
+    }
+
+    private static void getRequest(Object obj) throws InvocationTargetException, IllegalAccessException {
+        Class<?> clazz = obj.getClass();
+        Method method = HookHelper.findMethodHierarchically(clazz, "request");
+        if(method != null) {
+            Object request = method.invoke(obj);
+            assert request != null;
+            Log.d(TAG, request.toString());
+        }
     }
 
     public static String security_matrix_h(Class<?> clazz, String str, boolean z, String str2) {
-        Log.d(TAG, ">> security_matrix_h start... ");
-        Log.d(TAG, ">> security_matrix_h | str=" + str + ", str2=" + str2);
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(">> security_matrix_h start... \n");
+//        sb.append(">> security_matrix_h | input =" + str + ", str2=" + str2 + "\n");
         String ret = HookHelper.invokeObjectOrigin(clazz, str, z, str2);
-        Log.d(TAG, ">> security_matrix_h | ret=" + ret);
+//        sb.append(">> security_matrix_h | output=" + ret + "\n");
+//        Log.d(TAG, sb.toString());
         return ret;
     }
 
@@ -379,13 +431,13 @@ public final class AppHooking {
 
     public static byte[] myFuncTest_4(Class<?> clazz, byte[] bytes) {
         Log.d(TAG, ">> myFuncTest_4 start... ");
-        String ss = new String(bytes);
-        Log.d(TAG, "__clientSign param [" + bytes.hashCode() + "]\t" + ss);
+//        String ss = new String(bytes);
+//        Log.d(TAG, "__clientSign param [" + bytes.hashCode() + "]\t" + ss);
         byte[] encode = HookHelper.invokeObjectOrigin(clazz, bytes);
-        Log.d(TAG, "---------------------------");
-        DbgLog hexlog = new DbgLog();
-        hexlog.LogByteArray(encode, encode.hashCode());
-        Log.d(TAG, "---------------------------");
+//        Log.d(TAG, "---------------------------");
+//        DbgLog hexlog = new DbgLog();
+//        hexlog.LogByteArray(encode, encode.hashCode());
+//        Log.d(TAG, "---------------------------");
         return encode;
     }
     public static void myFuncTest_5(Class<?> clazz, Class<?> cls, String str){
@@ -429,7 +481,7 @@ public final class AppHooking {
             DbgLog helLog = new DbgLog();
             helLog.LogByteArray(ret, id);
         }
-        Log.d(TAG,String.valueOf(sb));
+//        Log.d(TAG,String.valueOf(sb));
         return  sign;
     }
 
@@ -442,13 +494,16 @@ public final class AppHooking {
     private static void getResponseInfo(Object response, int responseType, int identify){
         if(responseType == HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "OKHTTP" + "-RESPONSE] : " + response.toString());
-//            if(logStart || response.toString().contains("n/user/mobile/checker")) {
+            if(response.toString().contains("/v1/open/univ") ||
+                    response.toString().contains("/n/feed/hot")) {
                 logStart = true;
 
                 ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
-                //responseInfo.setOnlyRequest(true);
+                responseInfo.setOnlyRequest(true);
+                //responseInfo.setOnlyUrl(true);
                 responseInfo.start();
-//            }
+            }
+
         }
         else if(responseType == HookThread.HOOK_RETROFIT_RESPONSE) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "RETROFIT" + "-RESPONSE] : " + response.toString());
@@ -509,10 +564,10 @@ public final class AppHooking {
             arrayList.add(sb2.toString());
         }
         try {
-            Collections.sort(arrayList);
             for (int i = 0; i < arrayList.size(); i++) {
                 Log.d(TAG, "ArrList : " + arrayList.get(i));
             }
+            Collections.sort(arrayList);
         } catch (Exception e) {
             e.printStackTrace();
         }

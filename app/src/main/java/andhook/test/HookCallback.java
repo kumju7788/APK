@@ -65,8 +65,14 @@ public class HookCallback implements Handler.Callback {
                 }
                 if(!load_class) {
                     // 후킹할 클라스가 로드되지 않는 경우 여기에서 수동으로 먼저 로드해준다.
-                    ClasspathScanner.setPreloadClasses();
-                    ClasspathScanner.PreLoadClass();
+                    /////////////////////////////////
+                    Preload preload = new Preload();
+                    preload.start();
+
+
+//                    ClasspathScanner.setPreloadClasses();
+//                    ClasspathScanner.PreLoadClass();
+
                     load_class = true;
                 }
 
