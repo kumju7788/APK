@@ -4,12 +4,17 @@ import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class DbgLog extends Thread {
     private static String TAG = "HTTP";
+    public static final int TO_FILE = 1;
+
     byte[] mBuffer;
     int mHashCode;
     boolean bLogString = false;
+    FileWriter mFile;
 
     DbgLog(String tag, byte[] bytes, int hashCode) {
         mBuffer = bytes;
@@ -17,11 +22,24 @@ public class DbgLog extends Thread {
         TAG = tag;
     }
     DbgLog() {};
+
     DbgLog(byte[] bytes, int hashcode, boolean log2string) {
         bLogString = log2string;
         mBuffer = bytes;
         mHashCode = hashcode;
     }
+
+    DbgLog(String fileName, int flag) {
+        try {
+            if(flag == TO_FILE) {
+                mFile = new FileWriter(fileName, true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     public void run() {
         if(bLogString)
@@ -77,4 +95,11 @@ public class DbgLog extends Thread {
     void LogString(byte[] bytes, int hashCode) {
         Log.d(TAG, "[" + hashCode + "]\t" + bytes.toString());
     }
+
+    void toFile(String logMsg) throws IOException {
+        mFile.write(String.valueOf(logMsg));
+        mFile.flush();
+        mFile.close();
+    }
+
 }

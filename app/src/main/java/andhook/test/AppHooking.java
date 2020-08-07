@@ -36,6 +36,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLStreamHandler;
 import java.nio.Buffer;
@@ -238,7 +239,7 @@ public final class AppHooking {
  //       new Throwable().printStackTrace();
         Object response = HookHelper.invokeObjectOrigin(clazz, request, fVar, cVar, aVar);
 //        if(logStart) {
-            //getResponseInfo(response, HookThread.HOOK_OKHTTP3_HTTP_PROCEED, response.hashCode());
+            getResponseInfo(response, HookThread.HOOK_OKHTTP3_HTTP_PROCEED, response.hashCode());
 //        }
 //        Log.d("HTTP", "<<<" + request.hashCode() + "-[R:--myOkhttp3_HttpProceed()  end");
         return response;
@@ -260,7 +261,7 @@ public final class AppHooking {
         Object response = HookHelper.invokeObjectOrigin(clazz);
 //        if(logStart) {
 
-        getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
+        //getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
 //        }
 //        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "]---myOkhttpExecute end  ");
         responseIndex ++;
@@ -367,23 +368,20 @@ public final class AppHooking {
         return encode;
     }
 
-    public static Object myFuncTest_3(Class<?> clazz) {
+    public static String myFuncTest_3(Class<?> clazz, Object obj, Type type) {
         Log.d(TAG, ">> myFuncTest_3 start... ");
         new Throwable().printStackTrace();
-        List<Object> lst = HookHelper.invokeObjectOrigin(clazz);
-        for(int i = 0;i < lst.size(); i++) {
-            Log.d(TAG, "---->" + lst.get(i).getClass().getName());
-        }
-        return  lst;
+        Log.d(TAG, "----> Object : " + obj.getClass().getName());
+        String str = HookHelper.invokeObjectOrigin(clazz, obj, type);
+        Log.d(TAG, "----> Return Value : " + str);
+        return str;
     }
 
-    public static Object myFuncTest_2(Class<?> clazz, Object obj) throws InvocationTargetException, IllegalAccessException {
+    public static void myFuncTest_2(Class<?> clazz, Map<String, String> map, byte[] bArr) {
         Log.d(TAG, ">> myFuncTest_2 start... ");
-        Log.d(TAG, ">> myFuncTest_2 | " + obj.getClass().getName());
-        getRequest(obj);
-        Object response = HookHelper.invokeObjectOrigin(clazz, obj);
-
-        return response;
+        new Throwable().printStackTrace();
+        Log.d(TAG, ">> myFuncTest_2 | Input=" + new String(bArr));
+        HookHelper.invokeVoidOrigin(clazz, map, bArr);
     }
 
     private static void getRequest(Object obj) throws InvocationTargetException, IllegalAccessException {
@@ -405,6 +403,24 @@ public final class AppHooking {
 //        Log.d(TAG, sb.toString());
         return ret;
     }
+
+    public static byte[] toByteArray(Class<?> clazz, Object obj) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        DbgLog logFile = new DbgLog("/data/data/com.smile.gifmaker/log/array", DbgLog.TO_FILE);
+        if(logStart) {
+            new Throwable().printStackTrace();
+            sb.append(">> toByteArray start... \n");
+        }
+        byte[] bArr = HookHelper.invokeObjectOrigin(clazz, obj);
+        if(logStart) {
+            sb.append(">> toByteArray [" + bArr.hashCode() + "] | output=" + new String(bArr) + "\n");
+            logFile.toFile(sb.toString());
+            Log.d(TAG, "-------------> toByteArray [" + bArr.hashCode() + "]");
+        }
+        //logStart = false;
+        return bArr;
+    }
+
 
 
     public static void myScretKey(Class<?> clazz, KeyPair keypair) {
@@ -494,12 +510,11 @@ public final class AppHooking {
     private static void getResponseInfo(Object response, int responseType, int identify){
         if(responseType == HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "OKHTTP" + "-RESPONSE] : " + response.toString());
-            if(response.toString().contains("/v1/open/univ") ||
-                    response.toString().contains("/n/feed/hot")) {
+            if(response.toString().contains("/rest/n/search/new")) {
                 logStart = true;
 
                 ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
-                responseInfo.setOnlyRequest(true);
+                //responseInfo.setOnlyRequest(true);
                 //responseInfo.setOnlyUrl(true);
                 responseInfo.start();
             }

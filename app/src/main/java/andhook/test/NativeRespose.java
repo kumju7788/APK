@@ -39,6 +39,7 @@ public class NativeRespose {
     public static final int SECURITY_ENGINE_PROXY       = 104;
     public static final int MAP_CHANGE                  = 105;
     public static final int MAP_MESSAGE_NANO            = 106;
+    public static final int ENCRYPT_IMEIS               = 107;
 
     List<String> mParam;
     List<String> mRequest;
@@ -51,6 +52,7 @@ public class NativeRespose {
     static Class<?> mMapChange;
     static Class<?> mEngineProxy;
     static Class<?> mMessageNano;
+    static Class<?> mEncryptImeis;
 
     static String mSocName;
     static String mCpuCount;
@@ -84,6 +86,9 @@ public class NativeRespose {
                 break;
             case MAP_MESSAGE_NANO:
                 mMessageNano = clazz;
+                break;
+            case ENCRYPT_IMEIS:
+                mEncryptImeis = clazz;
                 break;
         }
     }
@@ -242,8 +247,78 @@ public class NativeRespose {
                     e.printStackTrace();
                 }
             }
+
+            if(mRequest.get(i).equals("get_imeis")) {
+                String imei = getParam("imei");
+                if(!imei.isEmpty())
+                {
+                    try {
+                        sb.append(getEncryprImeis(imei));
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            if(mRequest.get(i).equals("get_query_id")) {
+                String keyword = getParam("keyword");
+                String userId = getParam("uid");
+                if(!keyword.isEmpty() && !userId.isEmpty())
+                {
+                    try {
+                        sb.append(getQueryId(keyword, userId));
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
         }
         return String.valueOf(sb);
+    }
+
+    private String getQueryId(String keyword, String userId) throws InvocationTargetException, IllegalAccessException {
+        String res = "";
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(keyword);
+        sb.append(userId);
+        sb.append(System.currentTimeMillis());
+        sb.append(new Random().nextInt(10000));
+
+        if(mCustomEncryptorB != null) {
+            Class<?> bb = mCustomEncryptorB.getClass();
+            Method b = HookHelper.findMethodHierarchically(bb, "a", byte[].class);
+            if(b != null) {
+                res = (String) b.invoke(mCustomEncryptorB, sb.toString().getBytes());
+            }
+        }
+        else {
+            Log.d(TAG, "|\tmCustomEncryptorB class : 'null'");
+        }
+        return res;
+    }
+
+    private String getEncryprImeis(String imei) throws InvocationTargetException, IllegalAccessException {
+        String res ="";
+
+        if(mEncryptImeis != null) {
+            String param = "[" + imei + "]";
+            Method method = HookHelper.findMethodHierarchically(mEncryptImeis, "a", byte[].class);
+            if(method != null) {
+                byte[] encBytes = (byte[])method.invoke(null, param.getBytes());
+                res = Base64.encodeToString(encBytes, 2);
+            }else {
+                Log.d(TAG, "getEncryprImeis() method is null. ");
+            }
+        }else {
+            Log.d(TAG, "getEncryprImeis() mEncryptImeis class is null. ");
+        }
+        return res;
     }
 
     private String getDevParam_K31_k89() throws InvocationTargetException, IllegalAccessException {

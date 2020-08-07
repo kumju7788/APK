@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ public class HookThread extends Thread {
     public static final int HOOK_NANO_MESSAGENANO                   = 23;
     public static final int HOOK_FUNCTION_TEST_2                    = 24;
     public static final int HOOK_FUNCTION_TEST_3                    = 25;
+    public static final int HOOK_IMEIS_ENCRYPT                      = 26;
 
 
     private static final int HOOK_PRELOAD_CLASSES                   = 101;
@@ -208,8 +210,8 @@ public class HookThread extends Thread {
             case HOOK_FUNCTION_TEST_3:
                 Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 hooking input...");
                 AppHooking.appClassTest(clazz, 1);
-                orgMethod = findMethodHierarchically(clazz, "getItems");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_3", Class.class);
+                orgMethod = findMethodHierarchically(clazz, "a", Object.class, Type.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_3", Class.class,  Object.class, Type.class);
                 HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 hooking success...");
                 break;
@@ -319,8 +321,19 @@ public class HookThread extends Thread {
 ////////////
             case HOOK_NANO_MESSAGENANO:
                 Log.d(TAG, "[===] HOOK_NANO_MESSAGENANO signal input..." + clazz.getName());
+
                 new NativeRespose(clazz, NativeRespose.MAP_MESSAGE_NANO);
+                orgMethod = HookHelper.findMethodHierarchicallyForString(clazz, "toByteArray", "com.google.protobuf.nano.MessageNano");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "toByteArray", Class.class, Object.class);
+                HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_NANO_MESSAGENANO hooking success...");
+                break;
+
+            // TODO 이메지 슬라이드할 때(육성) /rest/n/clc/show URL에 포함되는 imeis파라메터 얻는 부분.
+            case HOOK_IMEIS_ENCRYPT:
+                Log.d(TAG, "[===] HOOK_IMEIS_ENCRYPT signal input..." + clazz.getName());
+                new NativeRespose(clazz, NativeRespose.ENCRYPT_IMEIS);
+                Log.d(TAG, "[===] HOOK_IMEIS_ENCRYPT hooking success...");
                 break;
 
             case HOOK_FUNCTION_TEST_4:
@@ -345,8 +358,8 @@ public class HookThread extends Thread {
 
             case HOOK_FUNCTION_TEST_2:
                 Log.d(TAG, "[===] HOOK_FUNCTION_TEST_2 signal input..." + clazz.getName());
-                orgMethod = findMethodHierarchicallyForString(clazz, "intercept", "w0.s$a");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_2", Class.class, Object.class);
+                orgMethod = findMethodHierarchically(clazz, "a", Map.class, byte[].class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_2", Class.class, Map.class, byte[].class);
                 HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_FUNCTION_TEST_2 hooking success...");
 

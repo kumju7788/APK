@@ -110,10 +110,10 @@ public class RequestInfo extends Thread{
                 e.printStackTrace();
             }
         }
-        File file = new File("/data/data/com.smile.gifmaker/log/request.txt");
-        FileWriter fw = new FileWriter(file, true);
-        fw.write(String.valueOf(logMsg));
-        fw.close();
+//        File file = new File("/data/data/com.smile.gifmaker/log/request.txt");
+//        FileWriter fw = new FileWriter(file, true);
+//        fw.write(String.valueOf(logMsg));
+//        fw.close();
         logMsg.append("-----" + mIdentifyCode + "-[---REQUEST---] --> end ++++++++++++++++++++\n");
 
         Log.d(TAG, String.valueOf(logMsg));
