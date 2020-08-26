@@ -322,6 +322,18 @@ public final class HookHelper {
         return m;
     }
 
+    public static Class<?> findSubClass(Class<?> clazz, String strClassName) {
+        Class<?> sub = null;
+        Class<?>[] clsArray = clazz.getDeclaredClasses();
+        for (Class<?> aClass : clsArray) {
+            if (aClass.getSimpleName().equals(strClassName)) {
+                sub = aClass;
+                break;
+            }
+        }
+        return sub;
+    }
+
     private static boolean isConstructor(final Class<?> clazz,
                                          final String methodname) {
         final String clsname = clazz.getName();

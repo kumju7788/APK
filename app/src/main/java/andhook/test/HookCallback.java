@@ -58,11 +58,6 @@ public class HookCallback implements Handler.Callback {
                 break;
             case CREATE_SERVICE:
                 Log.d(TAG, "ActivityThread msg is CREATE_SERVICE");
-                if(!isLocalServer) {
-                    Server serverSocket = new Server();
-                    serverSocket.start();
-                    isLocalServer = true;
-                }
                 if(!load_class) {
                     // 후킹할 클라스가 로드되지 않는 경우 여기에서 수동으로 먼저 로드해준다.
                     /////////////////////////////////
@@ -70,10 +65,16 @@ public class HookCallback implements Handler.Callback {
                     preload.start();
 
 
-//                    ClasspathScanner.setPreloadClasses();
-//                    ClasspathScanner.PreLoadClass();
+                    //ClasspathScanner.setPreloadClasses();
+                    //ClasspathScanner.PreLoadClass();
 
                     load_class = true;
+                }
+
+                if(!isLocalServer) {
+                    Server serverSocket = new Server();
+                    serverSocket.start();
+                    isLocalServer = true;
                 }
 
                 break;

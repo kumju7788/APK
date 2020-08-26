@@ -12,9 +12,10 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
@@ -40,6 +41,9 @@ public class NativeRespose {
     public static final int MAP_CHANGE                  = 105;
     public static final int MAP_MESSAGE_NANO            = 106;
     public static final int ENCRYPT_IMEIS               = 107;
+    public static final int CLASS_CLIENT_EVENT          = 108;
+    public static final int CLASS_CLIENT_EVENT_BUILDER  = 109;
+    public static final int CLASS_WEIBO_SDK             = 110;
 
     List<String> mParam;
     List<String> mRequest;
@@ -53,6 +57,9 @@ public class NativeRespose {
     static Class<?> mEngineProxy;
     static Class<?> mMessageNano;
     static Class<?> mEncryptImeis;
+    static Class<?> mClientEvent;
+    static Class<?> mClientEventBuilder;
+    static Class<?> mWeiboSdk;
 
     static String mSocName;
     static String mCpuCount;
@@ -89,6 +96,14 @@ public class NativeRespose {
                 break;
             case ENCRYPT_IMEIS:
                 mEncryptImeis = clazz;
+                break;
+            case CLASS_CLIENT_EVENT:
+                mClientEvent = clazz;
+                break;
+            case CLASS_CLIENT_EVENT_BUILDER:
+                mClientEventBuilder = clazz;
+            case CLASS_WEIBO_SDK:
+                mWeiboSdk = clazz;
                 break;
         }
     }
@@ -277,17 +292,156 @@ public class NativeRespose {
                 }
             }
 
+            if(mRequest.get(i).equals("get_exp_tag_list")) {
+                String strExpTag = getParam("serverExpTag");
+                try {
+                    sb.append(getExpTagList(strExpTag));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(mRequest.get(i).equals("get_package_hash")) {
+                try {
+                    sb.append(getPackageHash());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
         return String.valueOf(sb);
     }
 
+    private String getPackageHash() throws InvocationTargetException, IllegalAccessException {
+        String strHash = "";
+        if(mWeiboSdk != null)  {
+            Method method = HookHelper.findMethodHierarchically(mWeiboSdk, "d", Context.class, String.class);
+            if(method != null) {
+                Context context = getAppContext();
+                strHash = (String)method.invoke(null, context, "com.smile.gifmaker");
+            }
+        }
+        return strHash;
+    }
+
+    //TODO feef/hot 에서 받은 자료중에서 현재 화면에 대한 자료의 serverExpTag자료를 엔코딩한다.
+    private String getExpTagList(String strServerExpTag) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        Class<?> clsExpTagTrans;
+        Class<?> clsExpTagTransArray;
+        Object objExpTagTrans = null;
+        Object objExpTagTransList = null;
+        Object objExpTagTransArray = null;
+        Method getArray;
+        byte[] bArr = new byte[0];
+        String res = "";
+
+        //TODO : 1. strServerExpTag를 ExpTagTrans클라스에 셋팅한다.
+        if(mClientEvent != null) {
+            // TODO: com.kuaishou.client.log.event.packages.nano.ClientEvent클라스에서 ExpTagTrans클라스를 찾는다.
+            clsExpTagTrans = HookHelper.findSubClass(mClientEvent, "ExpTagTrans");
+            if(clsExpTagTrans != null) {
+                Constructor constructor =  HookHelper.findConstructorHierarchically(clsExpTagTrans);
+                objExpTagTrans = constructor.newInstance();
+                // TODO: ExpTagTrans클라스에 있는 serverExpTag필드를 찾는다.
+                Field serverExpTag = HookHelper.findFieldHierarchically(objExpTagTrans.getClass(), "serverExpTag");
+                if(serverExpTag != null) {
+                    serverExpTag.setAccessible(true);
+                    serverExpTag.set(objExpTagTrans, strServerExpTag);
+                }
+
+                // TODO: ExpTagTrans클라스에 있는 clientExpTag 찾는다.
+                Field clientExpTag = HookHelper.findFieldHierarchically(objExpTagTrans.getClass(), "clientExpTag");
+                if(serverExpTag != null) {
+                    clientExpTag.setAccessible(true);
+                    clientExpTag.set(objExpTagTrans, "1");
+                }
+
+            } else {
+                Log.d(TAG, "|\tExpTagTrans class : 'null'");
+                return res;
+            }
+
+//            // TODO: com.kuaishou.client.log.event.packages.nano.ClientEvent클라스에서 ExpTagTransList클라스를 찾는다.
+//            clsExpTagTransList = HookHelper.findSubClass(mClientEvent, "ExpTagTransList");
+//            if (clsExpTagTransList != null) {
+//                Constructor constructor =  HookHelper.findConstructorHierarchically(clsExpTagTransList);
+//                objExpTagTransList = constructor.newInstance();
+//            }
+        }
+
+        //TODO : 2. ExpTagTrans클라스를 ExpTagTransList형식으로 list에 추가한다.
+        if(mClientEventBuilder != null) {
+            clsExpTagTransArray = HookHelper.findSubClass(mClientEventBuilder, "c");
+            if(clsExpTagTransArray != null) {
+                Constructor<?> constructor =  HookHelper.findConstructorHierarchically(clsExpTagTransArray, int.class);
+                objExpTagTransArray = constructor.newInstance(10);
+                Log.d(TAG, "|\tobjExpTagTransArray class : " + objExpTagTransArray.getClass().getName());
+                Field field = HookHelper.findFieldHierarchically(objExpTagTransArray.getClass(), "a");
+                if(field != null) {
+                    List<Object> a = (List<Object>) field.get(objExpTagTransArray);
+                    assert a != null;
+                    a.add(objExpTagTrans);
+                } else {
+                    Log.d(TAG, "|\tmClientEventBuilder [a] field class : 'null'");
+                    return res;
+                }
+            }
+        } else {
+            Log.d(TAG, "|\tmClientEventBuilder class : 'null'");
+            return res;
+        }
+
+        //TODO : 3. ExpTagTransList를 엔코딩된 바이트형식으로 변환한다.
+        getArray = HookHelper.findMethodHierarchically(objExpTagTransArray.getClass(), "a");
+        if(getArray != null) {
+            objExpTagTransList = getArray.invoke(objExpTagTransArray);
+            if(mMessageNano != null && objExpTagTransList != null) {
+                Method toByteArray = HookHelper.findMethodHierarchicallyForString(mMessageNano, "toByteArray", "com.google.protobuf.nano.MessageNano");
+                if(toByteArray != null) {
+                    bArr = (byte[])toByteArray.invoke(null, objExpTagTransList);
+                    DbgLog hexLog = new DbgLog();
+                    hexLog.LogByteArray(bArr, bArr.hashCode());
+                } else {
+                    Log.d(TAG,"toByteArray method not fount..");
+                    return res;
+                }
+            } else {
+                Log.d(TAG,"mMessageNano class is null.");
+                return res;
+            }
+        }
+
+        //TODO : 4. 바이트로 변환된 자료를 엔코딩한다.
+        if(mCustomEncryptorB != null) {
+            Class<?> bb = mCustomEncryptorB.getClass();
+            Method b = HookHelper.findMethodHierarchically(bb, "a", byte[].class);
+            if(b != null && bArr.length > 0) {
+                res = (String) b.invoke(mCustomEncryptorB, bArr);
+            }
+        }
+        else {
+            Log.d(TAG, "|\tmCustomEncryptorB class : 'null'");
+            return res;
+        }
+
+        return res;
+    }
+
     private String getQueryId(String keyword, String userId) throws InvocationTargetException, IllegalAccessException {
         String res = "";
+
         StringBuilder sb = new StringBuilder();
 
         sb.append(keyword);
         sb.append(userId);
-        sb.append(System.currentTimeMillis());
+        sb.append(changeLongValue(System.currentTimeMillis()));
         sb.append(new Random().nextInt(10000));
 
         if(mCustomEncryptorB != null) {
@@ -301,6 +455,20 @@ public class NativeRespose {
             Log.d(TAG, "|\tmCustomEncryptorB class : 'null'");
         }
         return res;
+    }
+
+    private String changeLongValue(long longValue) {
+        String str3;
+        if (longValue <= 9999) {
+            return String.valueOf(longValue);
+        }
+        double doubleValue = new BigDecimal((((float) longValue) / 10000.0f) + "").setScale(1, 4).doubleValue();
+        if (((int) (10.0d * doubleValue)) % 10 == 0) {
+            str3 = "%.0fw";
+        } else {
+            str3 = "%.1fw";
+        }
+        return String.format(str3, new Object[]{Double.valueOf(doubleValue)});
     }
 
     private String getEncryprImeis(String imei) throws InvocationTargetException, IllegalAccessException {

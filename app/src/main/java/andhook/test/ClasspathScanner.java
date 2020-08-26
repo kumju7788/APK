@@ -29,8 +29,14 @@ public class ClasspathScanner {
         preloadClasses.add("com.google.protobuf.nano.MessageNano");
         preloadClasses.add("com.yxcorp.gifshow.KwaiApp");
         preloadClasses.add("j.b.h.a$c.f");
-        preloadClasses.add("com.google.gson.Gson");
-        preloadClasses.add("j.a.f0.h0");
+        preloadClasses.add("com.kuaishou.client.log.event.packages.nano.ClientEvent");
+        preloadClasses.add("j.a.a.r4.q1");
+        preloadClasses.add("com.sina.weibo.sdk.c.e");
+
+//        preloadClasses.add("l0.b.c.v0.e.b");
+//        preloadClasses.add("l0.b.c.a");
+//        preloadClasses.add("j.z.a.b.l.u");
+//        preloadClasses.add("j.b.t.i.q");
         //preloadClasses.add("com.yxcorp.gifshow.retrofit.etag.ETagResult");
         //preloadClasses.add("w0.y");
     }

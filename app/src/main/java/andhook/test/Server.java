@@ -78,6 +78,7 @@ public class Server extends Thread{
              */
             String funcPrefix = "FUNC=";
             String paramPrefix = "PARAM=";
+            String result = "";
 
             function.clear();
             param.clear();
@@ -106,9 +107,14 @@ public class Server extends Thread{
             Log.d(TAG,"Form Cliect[port:" + socket.getPort() + "] :" + sb.toString());
             // 클라이언트에게 응답
             //setParam(String.valueOf(sb));
-            NativeRespose Secure = new NativeRespose(function, param);
-            String result = Secure.getResult();
-            Log.d(TAG,"send packet length = " + result.length());
+            if(sb.toString().equals("Hello Android!")) {
+                result = "Hello client!";
+            } else {
+                NativeRespose Secure = new NativeRespose(function, param);
+                result = Secure.getResult();
+                Log.d(TAG,"send packet length = " + result.length());
+            }
+
             Writer writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
             writer.write(result);
             writer.flush();

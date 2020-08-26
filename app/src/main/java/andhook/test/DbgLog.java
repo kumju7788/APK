@@ -15,6 +15,8 @@ public class DbgLog extends Thread {
     int mHashCode;
     boolean bLogString = false;
     FileWriter mFile;
+    StringBuilder allString = new StringBuilder();
+
 
     DbgLog(String tag, byte[] bytes, int hashCode) {
         mBuffer = bytes;
@@ -60,7 +62,6 @@ public class DbgLog extends Thread {
             return;
         }
 
-        StringBuilder allString = new StringBuilder();
         StringBuilder lineData = null;
         StringBuilder chData = null;
         Log.d(TAG, "[" + hashCode + "]\t Data lenth : " + length + "B\n");
@@ -85,7 +86,7 @@ public class DbgLog extends Thread {
             }
 
             if(col == 15) {
-//                allString.append("[").append(hashCode).append("]\t").append(lineData).append("    ").append(chData).append("\n");
+                allString.append("[").append(hashCode).append("]\t").append(lineData).append("    ").append(chData).append("\n");
                 Log.d(TAG, "[" + hashCode + "]\t" + lineData + "    " + chData);
             }
         }
@@ -98,6 +99,13 @@ public class DbgLog extends Thread {
 
     void toFile(String logMsg) throws IOException {
         mFile.write(String.valueOf(logMsg));
+        mFile.flush();
+        mFile.close();
+    }
+
+    void toFile(byte[] bytes, long hashCode) throws IOException {
+        LogByteArray(bytes, hashCode);
+        mFile.write(String.valueOf(allString));
         mFile.flush();
         mFile.close();
     }

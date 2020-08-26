@@ -3,6 +3,9 @@ package andhook.test;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Application;
+import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -10,10 +13,13 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.JsonWriter;
 import android.util.Log;
+import android.util.LruCache;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,13 +39,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLStreamHandler;
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -83,19 +95,23 @@ public final class AppHooking {
     public static String logPath;
     private static String[] urls;
 
+    public static Class<?> clsTest1 = null;
+    public static Class<?> clsTest2 = null;
+    public static Class<?> clsTest3 = null;
+
     public static void init() {
         Log.d(TAG, "Java <AppHooking>..");
         logPath = FileUtils.createLogPath();
         Log.d(TAG, "log path = " + logPath);
         urls = new String[] {
-                "n/user/mobile/checker",
-                "n/user/requestMobileCode",
-                "n/user/login/mobileVerifyCode",
-                "n/user/profile",
-                "n/token/infra/getServiceToken",
-                "n/live/authStatus",
-                "n/key/refresh/contact",
-                "infra/push/token/ks/bind/android",
+//                "n/user/mobile/checker",
+//                "n/user/requestMobileCode",
+//                "n/user/login/mobileVerifyCode",
+//                "n/user/profile",
+//                "n/token/infra/getServiceToken",
+//                "n/live/authStatus",
+//                "n/key/refresh/contact",
+//                "infra/push/token/ks/bind/android",
         };
 
 
@@ -239,7 +255,7 @@ public final class AppHooking {
  //       new Throwable().printStackTrace();
         Object response = HookHelper.invokeObjectOrigin(clazz, request, fVar, cVar, aVar);
 //        if(logStart) {
-            getResponseInfo(response, HookThread.HOOK_OKHTTP3_HTTP_PROCEED, response.hashCode());
+//            getResponseInfo(response, HookThread.HOOK_OKHTTP3_HTTP_PROCEED, response.hashCode());
 //        }
 //        Log.d("HTTP", "<<<" + request.hashCode() + "-[R:--myOkhttp3_HttpProceed()  end");
         return response;
@@ -261,7 +277,7 @@ public final class AppHooking {
         Object response = HookHelper.invokeObjectOrigin(clazz);
 //        if(logStart) {
 
-        //getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
+        getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
 //        }
 //        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "]---myOkhttpExecute end  ");
         responseIndex ++;
@@ -298,16 +314,16 @@ public final class AppHooking {
 
     public static String NStokensigParam1(Class<?> clazz, byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        Log.d(TAG, "------------- NStokensigParam_1 :" + "\n");
+        //Log.d(TAG, "------------- NStokensigParam_1 :" + "\n");
         boolean is = false;
         //if(bytes.length > 16){
-            String s = new String(bytes);
-        Log.d(TAG,  "\tNStokensigParam_1 | input=" + s + "\n");
+        //    String s = new String(bytes);
+        //Log.d(TAG,  "\tNStokensigParam_1 | input=" + s + "\n");
             is = true;
         //}
         String hashVal = HookHelper.invokeObjectOrigin(clazz, bytes);
         //if(is)
-            Log.d(TAG, "\tNStokensigParam_1 | output=" + hashVal + "\n");
+            //Log.d(TAG, "\tNStokensigParam_1 | output=" + hashVal + "\n");
 
         //Log.d(TAG, sb.toString());
         return hashVal;
@@ -368,21 +384,245 @@ public final class AppHooking {
         return encode;
     }
 
-    public static String myFuncTest_3(Class<?> clazz, Object obj, Type type) {
-        Log.d(TAG, ">> myFuncTest_3 start... ");
+    public static void myFuncTest_3(Class<?> clazz, Object obj){
+        Log.d(TAG, ">> myFuncTest_3(Add) start... " + obj.getClass().getName());
+
         new Throwable().printStackTrace();
-        Log.d(TAG, "----> Object : " + obj.getClass().getName());
-        String str = HookHelper.invokeObjectOrigin(clazz, obj, type);
-        Log.d(TAG, "----> Return Value : " + str);
-        return str;
+        HookHelper.invokeObjectOrigin(clazz, obj);
+        Log.d(TAG, ">> myFuncTest_3 end... ");
     }
 
-    public static void myFuncTest_2(Class<?> clazz, Map<String, String> map, byte[] bArr) {
-        Log.d(TAG, ">> myFuncTest_2 start... ");
+    public static String myFuncTest_8(Class<?> clazz) {
+        Log.d(TAG, ">> myFuncTest_8 start... ");
+        if(clsTest1 != null && clsTest2 != null) {
+            Method method = HookHelper.findMethodHierarchically(clsTest1,"a", Class.class);
+            if(method != null) {
+                Object b2 = null;
+                try {
+                    b2 = method.invoke(null, clsTest2);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+                if(b2 != null) {
+                    Class<?> cls = b2.getClass();
+                    Method f = HookHelper.findMethodHierarchically(cls, "f");
+                    if(f != null) {
+                        Object y0 = null;
+                        try {
+                            y0 = f.invoke(b2);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                        if(y0 != null) {
+                            Field field = HookHelper.findFieldHierarchically(y0.getClass(), "c");
+                            if(field != null) {
+                                List cList = null;
+                                try {
+                                    cList = (List) field.get(y0);
+                                    Log.d(TAG, ">> myFuncTest_8(list) size... " + cList.size());
+                                    for(int i = 0; i < cList.size(); i++) {
+                                        Object X0 = cList.get(i);
+                                        Field r = HookHelper.findFieldHierarchically(X0.getClass(), "R");
+                                        if(r != null) {
+                                            Object R = r.get(X0);
+                                            if(R != null) {
+                                                Field w = HookHelper.findFieldHierarchically(R.getClass(), "w");
+                                                if(w != null) {
+                                                    Object expTran = w.get(R);
+                                                    if(expTran != null) {
+                                                        Field tag = HookHelper.findFieldHierarchically(expTran.getClass(), "serverExpTag");
+                                                        String serverExpTag = (String) tag.get(expTran);
+
+                                                        tag = HookHelper.findFieldHierarchically(expTran.getClass(), "clientExpTag");
+                                                        String clientExpTag = (String) tag.get(expTran);
+
+                                                        tag = HookHelper.findFieldHierarchically(expTran.getClass(), "cachedSize");
+                                                        int cachedSize = (int) tag.get(expTran);
+                                                        Log.d(TAG, ">> myFuncTest_8(list) serverExpTag=" + serverExpTag + ", clientExpTag=" + clientExpTag + ", cachedSize=" + cachedSize);
+                                                    } else {
+                                                        Log.d(TAG, ">> [expTran] object is null ");
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Log.d(TAG, ">> [c] field is null ");
+                            }
+                        } else {
+                            Log.d(TAG, ">> [x0] object is null ");
+                        }
+                    } else {
+                        Log.d(TAG, ">> [f] method is null ");
+                    }
+                } else {
+                    Log.d(TAG, ">> [b2] object is null ");
+                }
+            } else {
+                Log.d(TAG, ">> [a] method is null ");
+            }
+        } else {
+            Log.d(TAG, ">> [clsTest1, clsTest2] class is null ");
+        }
+        logStart = true;
         new Throwable().printStackTrace();
-        Log.d(TAG, ">> myFuncTest_2 | Input=" + new String(bArr));
-        HookHelper.invokeVoidOrigin(clazz, map, bArr);
+        String retStr = HookHelper.invokeObjectOrigin(clazz);
+        Log.d(TAG, ">> myFuncTest_8 end... " + retStr);
+        return retStr;
     }
+
+    public static void myFuncTest_2(Class<?> clazz, Activity activity, Bundle bundle) {
+        Log.d(TAG, ">> onActivityCreated start... " + activity.getClass().getName() + ", taskId=" + activity.getTaskId());
+        new Throwable().printStackTrace();
+        HookHelper.invokeVoidOrigin(clazz, activity, bundle);
+        Log.d(TAG, ">> onActivityCreated end... ");
+    }
+
+    public static void myFuncTest_2_1(Class<?> clazz, Activity activity) throws IllegalAccessException {
+        Log.d(TAG, ">> onActivityResumed... " + activity.getClass().getName() + ", taskId=" + activity.getTaskId());
+        Class<?> cls = activity.getClass();
+        Field fld = HookHelper.findFieldHierarchically(cls, "mIdent");
+        int a = (int) fld.get(activity);
+        Log.d(TAG, ">> onActivityResumed mIdent... " + a);
+        HookHelper.invokeVoidOrigin(clazz, activity);
+
+    }
+
+    public static void myFuncTest_5(Class<?> clazz, Object obj) {
+        Log.d(TAG, ">> myFuncTest_5 call.. ");
+
+    }
+
+    public static void myFuncTest_6(Class<?> clazz, Object obj, Object obj2) {
+        Log.d(TAG, ">> myFuncTest_6.... " + obj.getClass().getName());
+       // new Throwable().printStackTrace();
+        HookHelper.invokeVoidOrigin(clazz, obj, obj2);
+        Log.d(TAG, ">> ------------------ ");
+    }
+
+    public static void myFuncTest_7(Class<?> clazz, Object obj) throws IllegalAccessException {
+        Log.d(TAG, ">> myFuncTest_7...call " + obj.getClass().getName());
+//        new Throwable().printStackTrace();
+        getObjetValue(obj);
+        HookHelper.invokeVoidOrigin(clazz, obj);
+        Log.d(TAG, ">> ------------------ ");
+
+    }
+
+    private static void getObjetValue(Object object) throws IllegalAccessException {
+        Class<?> clazz = object.getClass();
+        Object tmObj = null;
+
+        Field field = HookHelper.findFieldHierarchically(clazz, "b");
+        if(field != null) {
+            tmObj = field.get(object);
+            if(tmObj == null) {
+                Log.d(TAG, ">> tmObj | null");
+                return;
+            }
+            clazz = tmObj.getClass();
+        }
+        field = HookHelper.findFieldHierarchically(clazz, "d");
+        if(field != null) {
+            ByteBuffer[] bArr = (ByteBuffer[]) field.get(tmObj);
+            if(bArr != null) {
+                Log.d(TAG, ">> bArr | length=" + bArr.length);
+            } else {
+                Log.d(TAG, ">> bArr | null");
+            }
+        }
+
+        field = HookHelper.findFieldHierarchically(clazz, "e");
+        if(field != null) {
+            ByteBuffer buff = (ByteBuffer) field.get(tmObj);
+            if(buff != null) {
+                Log.d(TAG, ">> buff | " + buff.toString());
+            } else {
+                Log.d(TAG, ">> buff | null");
+            }
+        }
+
+        field = HookHelper.findFieldHierarchically(clazz, "j");
+        if(field != null) {
+            ByteBuffer[] bArr = (ByteBuffer[]) field.get(tmObj);
+            if(bArr != null) {
+                Log.d(TAG, ">> j | " + bArr.length);
+            } else {
+                Log.d(TAG, ">> j | null");
+            }
+        }
+
+//        if(clsTest3 != null) {
+//            Method method = HookHelper.findMethodHierarchically(clsTest3,"A");
+//            if(method != null) {
+//                method.invoke()
+//            } else {
+//                Log.d(TAG, ">> 'A' method | null");
+//            }
+//        } else {
+//            Log.d(TAG, ">> clsTest3 | null");
+//        }
+
+    }
+
+    public static void myFuncTest_9(Class<?> clazz, Object obj, Object obj2, Object obj3) {
+        Log.d(TAG, ">> myFuncTest_9 start..." + obj2.getClass().getName());
+       // new Throwable().printStackTrace();
+        HookHelper.invokeVoidOrigin(clazz, obj, obj2, obj3);
+        Log.d(TAG, ">> myFuncTest_9 end...");
+    }
+
+    public static void myFuncTest_8_1(Class<?> clazz, Object obj) throws IllegalAccessException {
+        Log.d(TAG, ">> myFuncTest_8_1 start...");
+        Log.d(TAG, ">> obj | " + obj.getClass().getName());
+        Object instance = HookHelper.invokeObjectOrigin(clazz, obj);
+        getRunnableObject(instance);
+        Log.d(TAG, ">> myFuncTest_8_1 end...");
+    }
+
+    private static void getRunnableObject(Object obj) throws IllegalAccessException {
+        Field field = HookHelper.findFieldHierarchically(obj.getClass(), "a");
+        if(field != null) {
+            Object m = field.get(obj);
+            Field g = HookHelper.findFieldHierarchically(m.getClass(), "g");
+            if(g != null) {
+                List<Runnable> runnableList = (List<Runnable>)g.get(m);
+                if(!runnableList.isEmpty()) {
+                    for(Runnable run: runnableList) {
+                        Log.d(TAG, "Runable object : " + run.getClass().getName());
+                    }
+                }
+            }
+        }
+    }
+
+    public static void myFuncTest_8_2(Class<?> clazz, String url, String extra) throws IllegalAccessException {
+        Log.d(TAG, ">> myFuncTest_8_2 call..| url=" + url + ", extra=" + extra);
+        HookHelper.invokeVoidOrigin(clazz, url, extra);
+    }
+
+    @SuppressLint("HardwareIds")
+    public static int myFuncTest_10(Class<?> clazz){
+        Log.d(TAG, ">> myFuncTest_10 call.");
+        new Throwable().printStackTrace();
+        int ret = HookHelper.invokeIntOrigin(clazz);
+        return ret;
+    }
+
+    public static void myFuncTest_11(Class<?> clazz, String name){
+        Log.d(TAG, ">> myFuncTest_11 call.");
+        Log.d(TAG, ">> myFuncTest_11 call | name=" + name);
+        new Throwable().printStackTrace();
+        HookHelper.invokeVoidOrigin(clazz, name);
+    }
+
 
     private static void getRequest(Object obj) throws InvocationTargetException, IllegalAccessException {
         Class<?> clazz = obj.getClass();
@@ -405,18 +645,13 @@ public final class AppHooking {
     }
 
     public static byte[] toByteArray(Class<?> clazz, Object obj) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        DbgLog logFile = new DbgLog("/data/data/com.smile.gifmaker/log/array", DbgLog.TO_FILE);
-        if(logStart) {
-            new Throwable().printStackTrace();
-            sb.append(">> toByteArray start... \n");
-        }
         byte[] bArr = HookHelper.invokeObjectOrigin(clazz, obj);
-        if(logStart) {
-            sb.append(">> toByteArray [" + bArr.hashCode() + "] | output=" + new String(bArr) + "\n");
-            logFile.toFile(sb.toString());
-            Log.d(TAG, "-------------> toByteArray [" + bArr.hashCode() + "]");
-        }
+//        if(obj.getClass().getName().contains("SocketMessages$SocketMessage")) {
+//            Log.d(TAG, "-------------> toByteArray");
+//            DbgLog hexLog = new DbgLog();
+//            hexLog.LogByteArray(bArr, bArr.hashCode());
+//        }
+//        Log.d(TAG, "-------------> toByteArray [" + bArr.hashCode() + "]");
         //logStart = false;
         return bArr;
     }
@@ -436,7 +671,7 @@ public final class AppHooking {
 
     public static String myPhoneNumberEncode(Class<?> clazz, String phoneNumber) {
         StringBuilder sb = new StringBuilder();
-        sb.append(">> myFuncTest_3 start... \n");
+        sb.append(">> myPhoneNumberEncode start... \n");
         sb.append(">> input : " + phoneNumber + "\n");
         String encode= HookHelper.invokeObjectOrigin(clazz,phoneNumber);
         sb.append(">> output : " + encode + "\n");
@@ -456,11 +691,7 @@ public final class AppHooking {
 //        Log.d(TAG, "---------------------------");
         return encode;
     }
-    public static void myFuncTest_5(Class<?> clazz, Class<?> cls, String str){
-        Log.d(TAG, ">> myFuncTest_5 start... | " + str);
-        new Throwable().printStackTrace();
-        HookHelper.invokeVoidOrigin(clazz, cls, str);
-    }
+
 
     public static Object myNativeKwsgmain(Class<?> clazz, int id, Object[] objs){
         StringBuilder sb = new StringBuilder();
@@ -497,6 +728,7 @@ public final class AppHooking {
             DbgLog helLog = new DbgLog();
             helLog.LogByteArray(ret, id);
         }
+
 //        Log.d(TAG,String.valueOf(sb));
         return  sign;
     }
@@ -510,15 +742,14 @@ public final class AppHooking {
     private static void getResponseInfo(Object response, int responseType, int identify){
         if(responseType == HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "OKHTTP" + "-RESPONSE] : " + response.toString());
-            if(response.toString().contains("/rest/n/search/new")) {
-                logStart = true;
-
-                ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
-                //responseInfo.setOnlyRequest(true);
+            if(response.toString().contains("/live/startPlay/v2")) {
+                logStart = false;
+                ResponseInfo responseInfo = new ResponseInfo(response, identify, ResponseInfo.TO_FILE);
+                //ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
+                responseInfo.setOnlyRequest(true);
                 //responseInfo.setOnlyUrl(true);
                 responseInfo.start();
             }
-
         }
         else if(responseType == HookThread.HOOK_RETROFIT_RESPONSE) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "RETROFIT" + "-RESPONSE] : " + response.toString());
@@ -666,62 +897,39 @@ public final class AppHooking {
 
     }
 
-
-
     public static void appClassTest(Class<?> clazz, int reserved)
     {
         Log.d(TAG, "----------------------------------------------------");
         Log.d(TAG, "Class : " + clazz.getName());
         StringBuffer sb = new StringBuffer();
-        Method[] methods = clazz.getMethods();
-        for (Method md: methods) {
-            sb.append(md.getName());
-            Class<?>[] argTypes = md.getParameterTypes();
-            sb.append("(");
-            int size = argTypes.length;
-            for( Class<?> argType : argTypes ){
-                String argName = argType.getName();
-                sb.append(argName);
-                if( --size != 0 ){
-                    sb.append(", ");
-                }
-            }
-            sb.append(")");
-            Class<?> retType = md.getReturnType();
-            sb.append(" : " + retType.getName());
-            Log.d(TAG, "Test class method : " + sb + "\n");
-            sb.delete(0, sb.toString().length());
+
+        Class<?>[] clsArray = clazz.getDeclaredClasses();
+        for (Class<?> aClass: clsArray) {
+            sb.append("sub class : " + aClass.getSimpleName() + "\n");
         }
 
-        methods = clazz.getDeclaredMethods();
+        Constructor<?>[] cs = clazz.getDeclaredConstructors();
+        for(Constructor<?> c : cs) {
+            sb.append("Constructor : " + c.toString() + "\n");
+        }
+
+        Method[] methods = clazz.getDeclaredMethods();
         for (Method md: methods) {
-            sb.append(md.getName());
-            Class<?>[] argTypes = md.getParameterTypes();
-            sb.append("(");
-            int size = argTypes.length;
-            for( Class<?> argType : argTypes ){
-                String argName = argType.getName();
-                sb.append(argName);
-                if( --size != 0 ){
-                    sb.append(", ");
-                }
-            }
-            sb.append(")");
-            Class<?> retType = md.getReturnType();
-            sb.append(" : " + retType.getName());
-            Log.d(TAG, "Test class declared method : " + sb + "\n");
-            sb.delete(0, sb.toString().length());
+            sb.append("\tMethod : " + md.toString() + "\n");
         }
 
         Field[] fields = clazz.getFields();
+        Field[] decField = clazz.getDeclaredFields();
+        sb.append("field count : " + (fields.length + decField.length) + "\n");
+
         for (Field fd: fields) {
-            Log.d(TAG, "[*]Test class field : " + fd.getName());
-        }
-        fields = clazz.getDeclaredFields();
-        for (Field fd: fields) {
-            Log.d(TAG, "[*]Test class field : " + fd.getName());
+            sb.append("\t[*]field : " + fd.getName() + "\n");
         }
 
+        for (Field fd: decField) {
+            sb.append("\t[*]field : " + fd.getName() + "\n");
+        }
+        Log.d(TAG, sb + "\n");
         Log.d(TAG, "----------------------------------------------------");
 
     }

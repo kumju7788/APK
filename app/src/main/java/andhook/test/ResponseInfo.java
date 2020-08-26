@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,13 +31,15 @@ import andhook.lib.HookHelper;
 
 public class ResponseInfo extends Thread {
     private static final String TAG = "HTTP";
+    public static final int TO_FILE = 1;
     private int mIdentifyCode = 0;
     private String mSource;
     Object mResponse;
     private boolean isOnlyRequest;
     private boolean isOnlyUrl;
     private String logPath;
-
+    private String logFile = "response";
+    int mFlag = 0;
 
     ResponseInfo(Object obj, int identifyCode, String source) {
         mResponse = obj;
@@ -45,7 +48,19 @@ public class ResponseInfo extends Thread {
         isOnlyRequest = false;
         isOnlyUrl = false;
         logPath = AppHooking.logPath;
+        mFlag = 0;
     }
+
+    ResponseInfo(Object obj, int identifyCode, int flag) {
+        mResponse = obj;
+        mIdentifyCode = identifyCode;
+        mSource = "";
+        isOnlyRequest = false;
+        isOnlyUrl = false;
+        logPath = AppHooking.logPath;
+        mFlag = flag;
+    }
+
 
     public void setOnlyRequest(boolean onlyRequest) {
         isOnlyRequest = true;
@@ -90,8 +105,8 @@ public class ResponseInfo extends Thread {
             header = getHeadersInfo(mResponse);
             msg.append(header);
 //
-            sslInfo = getSSLInfo(mResponse);
-            msg.append(sslInfo);
+//            sslInfo = getSSLInfo(mResponse);
+//            msg.append(sslInfo);
 
             request = getRequestInfo(mResponse);
             msg.append(request);
@@ -99,7 +114,15 @@ public class ResponseInfo extends Thread {
             String bodyInfo = getResponseBodyInfo(mResponse);
             msg.append(bodyInfo);
             msg.append("\t").append(mIdentifyCode).append("-[").append(mSource).append("-RESPONSE] : end ------------------------").append("\n");
-            Log.d(TAG, String.valueOf(msg));
+            if(mFlag == TO_FILE) {
+                FileWriter response_logfile;
+                response_logfile = new FileWriter(logPath + "/" + logFile, true);
+                response_logfile.write(String.valueOf(msg));
+                response_logfile.flush();
+                response_logfile.close();
+            } else {
+                Log.d(TAG, String.valueOf(msg));
+            }
   //      }
     }
 
@@ -460,13 +483,19 @@ public class ResponseInfo extends Thread {
                         .append("\n");
             }
 
-            if(contentLength > 0 && strContentType != null && !isSkipInfo(strContentType)) {
+            if(strContentType != null && !isSkipInfo(strContentType)) {
                 // TODO Response body content값을 스트림형식으로 읽는다.(w0.b0.a())
                 method = HookHelper.findMethodHierarchically(clazz, "a");
                 if (method != null) {
                     InputStream input = (InputStream) method.invoke(responseBody);
-                    //String msg = writeFile(input, contentLength);
-                    String msg = FileUtils.writeResponseData(input, contentLength, mIdentifyCode);
+                    String msg = "";
+                    if(input != null) {
+                        if(mFlag != TO_FILE) {
+                            msg = FileUtils.writeResponseData(input, input.toString().length(), mIdentifyCode);
+                        } else {
+                            msg = input.toString();
+                        }
+                    }
                     logMsg.append(msg);
                 } else {
                     logMsg.append("\t")
@@ -766,9 +795,7 @@ public class ResponseInfo extends Thread {
     }
 
     private boolean isSkipInfo(String url) {
-        if( url.contains("image") ||
-                url.contains("octet-stream") ||
-                url.contains("zip")) {
+        if( url.contains("image") || url.contains("octet-stream")) {
             return true;
         }
         return false;
