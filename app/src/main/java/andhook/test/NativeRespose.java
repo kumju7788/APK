@@ -55,7 +55,7 @@ public class NativeRespose {
     static Class<?> mDeviceInfoClass;
     static Class<?> mMapChange;
     static Class<?> mEngineProxy;
-    static Class<?> mMessageNano;
+    public static Class<?> mMessageNano;
     static Class<?> mEncryptImeis;
     static Class<?> mClientEvent;
     static Class<?> mClientEventBuilder;
@@ -293,9 +293,10 @@ public class NativeRespose {
             }
 
             if(mRequest.get(i).equals("get_exp_tag_list")) {
-                String strExpTag = getParam("serverExpTag");
+                String strSrvExpTag = getParam("serverExpTag");
+                String strClientExpTag = getParam("clientExpTag");
                 try {
-                    sb.append(getExpTagList(strExpTag));
+                    sb.append(getExpTagList(strSrvExpTag, strClientExpTag));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InstantiationException e) {
@@ -332,7 +333,7 @@ public class NativeRespose {
     }
 
     //TODO feef/hot 에서 받은 자료중에서 현재 화면에 대한 자료의 serverExpTag자료를 엔코딩한다.
-    private String getExpTagList(String strServerExpTag) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+    private String getExpTagList(String strServerExpTag, String strClientExpTag) throws InstantiationException, IllegalAccessException, InvocationTargetException {
         Class<?> clsExpTagTrans;
         Class<?> clsExpTagTransArray;
         Object objExpTagTrans = null;
@@ -360,7 +361,8 @@ public class NativeRespose {
                 Field clientExpTag = HookHelper.findFieldHierarchically(objExpTagTrans.getClass(), "clientExpTag");
                 if(serverExpTag != null) {
                     clientExpTag.setAccessible(true);
-                    clientExpTag.set(objExpTagTrans, "1");
+//                    clientExpTag.set(objExpTagTrans, "1");
+                    clientExpTag.set(objExpTagTrans, strClientExpTag);
                 }
 
             } else {

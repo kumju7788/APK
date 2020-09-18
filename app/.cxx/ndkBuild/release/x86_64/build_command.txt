@@ -1,4 +1,4 @@
-Executable : C:\android-ndk-r21\ndk-build.cmd
+Executable : C:\android-ndk-r21\android-ndk-r21b\ndk-build.cmd
 arguments : 
 NDK_PROJECT_PATH=null
 APP_BUILD_SCRIPT=E:\Kw5\AndHook\app\src\main\jni\Android.mk

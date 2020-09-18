@@ -277,7 +277,7 @@ public final class AppHooking {
         Object response = HookHelper.invokeObjectOrigin(clazz);
 //        if(logStart) {
 
-        getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
+        //getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
 //        }
 //        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "]---myOkhttpExecute end  ");
         responseIndex ++;
@@ -495,8 +495,82 @@ public final class AppHooking {
 
     }
 
-    public static void myFuncTest_5(Class<?> clazz, Object obj) {
+    public static void myFuncTest_5(Class<?> clazz, Object obj) throws IllegalAccessException, InvocationTargetException {
         Log.d(TAG, ">> myFuncTest_5 call.. ");
+        byteArrayView(obj);
+        new Throwable().printStackTrace();
+        HookHelper.invokeVoidOrigin(clazz, obj);
+        Log.d(TAG, ">> ------------------ ");
+    }
+
+    public static void byteArrayView(Object obj) throws InvocationTargetException, IllegalAccessException {
+        if(NativeRespose.mMessageNano != null)
+        {
+            Method method = HookHelper.findMethodHierarchicallyForString(NativeRespose.mMessageNano, "toByteArray", "com.google.protobuf.nano.MessageNano");
+            if(method != null)
+            {
+                byte[] bytes = (byte[])method.invoke(null, obj);
+                if(bytes.length > 0) {
+                    DbgLog hexLog = new DbgLog();
+                    hexLog.LogByteArray(bytes, bytes.hashCode());
+                }
+            }
+        }
+    }
+    public static void myFuncTest_5_1(Class<?> clazz, Object obj) throws IllegalAccessException {
+        Log.d(TAG, ">> myFuncTest_5_1 call.. ");
+        getParameter(obj);
+        HookHelper.invokeVoidOrigin(clazz, obj);
+        Log.d(TAG, ">> ------------------ ");
+    }
+
+    private static void getParameter(Object obj) throws IllegalAccessException {
+        Field field = HookHelper.findFieldHierarchically(obj.getClass(), "a");
+        String sessionID = (String)field.get(obj);
+        Log.d(TAG, "\t| sessionID = " + sessionID);
+        field = HookHelper.findFieldHierarchically(obj.getClass(), "d");
+        String str = (String)field.get(obj);
+        Log.d(TAG, "\t| d = " + str);
+        field = HookHelper.findFieldHierarchically(obj.getClass(), "c");
+        Object cVar = (Object)field.get(obj);
+        Log.d(TAG, "\t| cVar name = " + cVar.getClass().getName());
+        {
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "a");
+            int intVal = (int)field.get(cVar);
+            Log.d(TAG, "\t| cVar-a = " + intVal);
+
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "b");
+            String str1 = (String)field.get(cVar);
+            Log.d(TAG, "\t| cVar-b = " + str1);
+
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "c");
+            intVal = (int)field.get(cVar);
+            Log.d(TAG, "\t| cVar-c = " + intVal);
+
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "d");
+            str1 = (String)field.get(cVar);
+            Log.d(TAG, "\t| cVar-d = " + str1);
+
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "e");
+            str1 = (String)field.get(cVar);
+            Log.d(TAG, "\t| cVar-e = " + str1);
+
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "f");
+            intVal = (int)field.get(cVar);
+            Log.d(TAG, "\t| cVar-f = " + intVal);
+
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "g");
+            boolean bool = (boolean)field.get(cVar);
+            Log.d(TAG, "\t| cVar-g = " + bool);
+
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "h");
+            str1 = (String)field.get(cVar);
+            Log.d(TAG, "\t| cVar-h = " + str1);
+
+            field = HookHelper.findFieldHierarchically(cVar.getClass(), "i");
+            str1 = (String)field.get(cVar);
+            Log.d(TAG, "\t| cVar-i = " + str1);
+        }
 
     }
 
