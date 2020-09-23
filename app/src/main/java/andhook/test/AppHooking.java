@@ -581,70 +581,27 @@ public final class AppHooking {
         Log.d(TAG, ">> ------------------ ");
     }
 
-    public static void myFuncTest_7(Class<?> clazz, Object obj) throws IllegalAccessException {
-        Log.d(TAG, ">> myFuncTest_7...call " + obj.getClass().getName());
+    public static String myFuncTest_7(Class<?> clazz, Context context) {
+        Log.d(TAG, ">> myFuncTest_7...call ");
 //        new Throwable().printStackTrace();
-        getObjetValue(obj);
-        HookHelper.invokeVoidOrigin(clazz, obj);
+        String ret = HookHelper.invokeObjectOrigin(clazz, context);
+        Log.d(TAG, ">>retVal =  " + ret);
         Log.d(TAG, ">> ------------------ ");
-
+        return ret;
     }
 
-    private static void getObjetValue(Object object) throws IllegalAccessException {
-        Class<?> clazz = object.getClass();
-        Object tmObj = null;
+    public static List<String> myFuncTest_7_1(Class<?> clazz, Context context) {
+        Log.d(TAG, ">> myFuncTest_7_1...call ");
+//        new Throwable().printStackTrace();
+        List<String> ret = HookHelper.invokeObjectOrigin(clazz, context);
+        for(int i = 0; i < ret.size(); i++) {
 
-        Field field = HookHelper.findFieldHierarchically(clazz, "b");
-        if(field != null) {
-            tmObj = field.get(object);
-            if(tmObj == null) {
-                Log.d(TAG, ">> tmObj | null");
-                return;
-            }
-            clazz = tmObj.getClass();
+            Log.d(TAG, ">>retVal[" + i + "] = " + ret.get(i));
         }
-        field = HookHelper.findFieldHierarchically(clazz, "d");
-        if(field != null) {
-            ByteBuffer[] bArr = (ByteBuffer[]) field.get(tmObj);
-            if(bArr != null) {
-                Log.d(TAG, ">> bArr | length=" + bArr.length);
-            } else {
-                Log.d(TAG, ">> bArr | null");
-            }
-        }
-
-        field = HookHelper.findFieldHierarchically(clazz, "e");
-        if(field != null) {
-            ByteBuffer buff = (ByteBuffer) field.get(tmObj);
-            if(buff != null) {
-                Log.d(TAG, ">> buff | " + buff.toString());
-            } else {
-                Log.d(TAG, ">> buff | null");
-            }
-        }
-
-        field = HookHelper.findFieldHierarchically(clazz, "j");
-        if(field != null) {
-            ByteBuffer[] bArr = (ByteBuffer[]) field.get(tmObj);
-            if(bArr != null) {
-                Log.d(TAG, ">> j | " + bArr.length);
-            } else {
-                Log.d(TAG, ">> j | null");
-            }
-        }
-
-//        if(clsTest3 != null) {
-//            Method method = HookHelper.findMethodHierarchically(clsTest3,"A");
-//            if(method != null) {
-//                method.invoke()
-//            } else {
-//                Log.d(TAG, ">> 'A' method | null");
-//            }
-//        } else {
-//            Log.d(TAG, ">> clsTest3 | null");
-//        }
-
+        Log.d(TAG, ">> ------------------ ");
+        return ret;
     }
+
 
     public static void myFuncTest_9(Class<?> clazz, Object obj, Object obj2, Object obj3) {
         Log.d(TAG, ">> myFuncTest_9 start..." + obj2.getClass().getName());

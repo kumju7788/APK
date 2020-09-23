@@ -1310,13 +1310,13 @@ public class NativeRespose {
         json100102.put("10", devInfo.get("k95"));
         json100102.put("11", did);
 
-        dataSection1.put("1", "/data/app/com.smile.gifmaker-1/oat/arm/base.odex:/data/data/com.smile.gifmaker/.uniaccount/optdex/uniaccount.dex:/data/data/com.smile.gifmaker/fills/app-debug.dex:/data/data/com.smile.gifmaker/fills/system@deff361c710-cache.dex:/system/lib/libc.so");
+        dataSection1.put("1", "KWE_N");
         dataSection1.put("2", "KWE_N");
         dataSection1.put("3", "KWE_N");
         dataSection1.put("4", devInfo.get("k17"));
         dataSection1.put("5", "KWE_N");
         dataSection1.put("6", "KWE_N");
-        dataSection1.put("7", "[]");
+        dataSection1.put("7", "KWE_N");
         dataSection1.put("8", "0");
 
         int batteryChargeInfo = getRandom(0, 4);
@@ -1325,12 +1325,12 @@ public class NativeRespose {
         dataSection1.put("11", "0");
         dataSection1.put("12", "KWE_N");
         dataSection1.put("13", "2");
-        dataSection1.put("14", "KWE_N");
+        dataSection1.put("14", "KWE_NPN");
         dataSection1.put("15", "4");
         dataSection1.put("16", "KWE_N");
         dataSection1.put("17", "KWE_N");
         dataSection1.put("18", "0");
-        dataSection1.put("22", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\",\"3\":\"KWE_PN\",\"4\":\"KWE_PN\"}");
+        dataSection1.put("22", "{\"1\":\"" + devInfo.get("k107") + "\",\"2\":\"" + devInfo.get("k107") + "\",\"3\":\"KWE_N\",\"4\":\"KWE_N\"}");
         dataSection1.put("23", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\"}");
         dataSection1.put("24", "{\"1\":\"KWE_PN\",\"2\":\"KWE_PN\",\"3\":\"KWE_PN\",\"4\":\"KWE_PN\"}");
 

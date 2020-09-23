@@ -416,11 +416,15 @@ public class HookThread extends Thread {
                 break;
 
             case HOOK_FUNCTION_TEST_7:
-//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_7 hooking input...");
-//                orgMethod = findMethodHierarchicallyForString(clazz, "a", "l0.b.c.r");
-//                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_7", Class.class, Object.class);
-//                HookHelper.hook(orgMethod, replaceMethod);
-//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_7 hooking success...");
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_7 hooking input...");
+                orgMethod = findMethodHierarchically(clazz, "c", Context.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_7", Class.class, Context.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchically(clazz, "b", Context.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_7_1", Class.class, Context.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_7 hooking success...");
                 break;
 
             case HOOK_FUNCTION_TEST_8:

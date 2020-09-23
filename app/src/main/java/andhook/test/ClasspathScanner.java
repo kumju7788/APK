@@ -34,7 +34,7 @@ public class ClasspathScanner {
         preloadClasses.add("com.sina.weibo.sdk.c.e");
 
         preloadClasses.add("j.a.b.o.n0.r");
-//        preloadClasses.add("l0.b.c.a");
+        preloadClasses.add("j.a.f0.j1");
 //        preloadClasses.add("j.z.a.b.l.u");
 //        preloadClasses.add("j.b.t.i.q");
         //preloadClasses.add("com.yxcorp.gifshow.retrofit.etag.ETagResult");
