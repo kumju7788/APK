@@ -341,10 +341,10 @@ public final class AppHooking {
     public static Object myDeviceInfoParam(Class<?> clazz, Map<String, String> map) {
         int count = 1;
         Log.d(TAG, ">> myFuncTest_1 start... ");
-//        for(count = 1; count <= 102; count++) {
-//            String k = "k" + count;
-//            Log.d(TAG, "device info : " + k + "=" + map.get(k));
-//        }
+        for(count = 1; count <= 102; count++) {
+            String k = "k" + count;
+            Log.d(TAG, "device info : " + k + "=" + map.get(k));
+        }
         return HookHelper.invokeObjectOrigin(clazz, map);
     }
 

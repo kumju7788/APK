@@ -323,6 +323,9 @@ public class HookThread extends Thread {
             case HOOK_CHANGE_MAP_BINARY: //egid 얻어오는 URL에 들어가는 장치정보얻는 부분
                 Log.d(TAG, "[===] HOOK_CHANGE_MAP_BINARY signal input..." + clazz.getName());
                 new NativeRespose(clazz, NativeRespose.MAP_CHANGE);
+                orgMethod = findMethodHierarchically(clazz, "a", Map.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myDeviceInfoParam", Class.class, Map.class);
+                HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_CHANGE_MAP_BINARY hooking success...");
                 break;
 ////////////
