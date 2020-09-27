@@ -314,16 +314,16 @@ public final class AppHooking {
 
     public static String NStokensigParam1(Class<?> clazz, byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        //Log.d(TAG, "------------- NStokensigParam_1 :" + "\n");
+        Log.d(TAG, "------------- NStokensigParam_1 :" + "\n");
         boolean is = false;
         //if(bytes.length > 16){
-        //    String s = new String(bytes);
-        //Log.d(TAG,  "\tNStokensigParam_1 | input=" + s + "\n");
+            String s = new String(bytes);
+        Log.d(TAG,  "\tNStokensigParam_1 | input=" + s + "\n");
             is = true;
         //}
         String hashVal = HookHelper.invokeObjectOrigin(clazz, bytes);
         //if(is)
-            //Log.d(TAG, "\tNStokensigParam_1 | output=" + hashVal + "\n");
+            Log.d(TAG, "\tNStokensigParam_1 | output=" + hashVal + "\n");
 
         //Log.d(TAG, sb.toString());
         return hashVal;
@@ -666,12 +666,12 @@ public final class AppHooking {
     }
 
     public static String security_matrix_h(Class<?> clazz, String str, boolean z, String str2) {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(">> security_matrix_h start... \n");
-//        sb.append(">> security_matrix_h | input =" + str + ", str2=" + str2 + "\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append(">> security_matrix_h start... \n");
+        sb.append(">> security_matrix_h | input =" + str + ", str2=" + str2 + "\n");
         String ret = HookHelper.invokeObjectOrigin(clazz, str, z, str2);
-//        sb.append(">> security_matrix_h | output=" + ret + "\n");
-//        Log.d(TAG, sb.toString());
+        sb.append(">> security_matrix_h | output=" + ret + "\n");
+        Log.d(TAG, sb.toString());
         return ret;
     }
 

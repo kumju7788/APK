@@ -224,11 +224,11 @@ public class HookThread extends Thread {
 
 ////////////
             case HOOK_NSTOKENSIG_PARAM:
-                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking input...");
-                new NativeRespose(clazz, NativeRespose.SECURITY_CPU_GETCLOCK);
+                Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking input..." + clazz.getName());
                 orgMethod = findMethodHierarchically(clazz, "a", byte[].class);
                 replaceMethod = findMethodHierarchically(AppHooking.class, "NStokensigParam1", Class.class, byte[].class);
                 HookHelper.hook(orgMethod, replaceMethod);
+                new NativeRespose(clazz, NativeRespose.SECURITY_CPU_GETCLOCK);
                 Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking success...");
                 break;
 ///////////
