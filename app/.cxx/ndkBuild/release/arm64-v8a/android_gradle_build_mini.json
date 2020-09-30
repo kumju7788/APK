@@ -1,18 +1,18 @@
 {
   "buildFiles": [
-    "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Application.mk"
+    "E:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk",
+    "E:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Application.mk"
   ],
   "cleanCommands": [
-    "C:\\android-ndk-r21\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/AndHook/app/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dE:\\Kw5\\AndHook\\app\\build\\intermediates\\ndkBuild\\release\\lib clean"
+    "C:\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/Kuaisho.Apk/app/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\build\\intermediates\\ndkBuild\\release\\lib clean"
   ],
-  "buildTargetsCommand": "C:\\android-ndk-r21\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/AndHook/app/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dE:\\Kw5\\AndHook\\app\\build\\intermediates\\ndkBuild\\release\\lib {LIST_OF_TARGETS_TO_BUILD}",
+  "buildTargetsCommand": "C:\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/Kuaisho.Apk/app/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\build\\intermediates\\ndkBuild\\release\\lib {LIST_OF_TARGETS_TO_BUILD}",
   "libraries": {
     "manner-release-arm64-v8a": {
       "artifactName": "manner",
-      "buildCommand": "C:\\android-ndk-r21\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/AndHook/app/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dE:\\Kw5\\AndHook\\app\\build\\intermediates\\ndkBuild\\release\\lib E:/Kw5/AndHook/app/build/intermediates/ndkBuild/release/obj/local/arm64-v8a/libmanner.so",
+      "buildCommand": "C:\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/Kuaisho.Apk/app/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\build\\intermediates\\ndkBuild\\release\\lib E:/Kw5/Kuaisho.Apk/app/build/intermediates/ndkBuild/release/obj/local/arm64-v8a/libmanner.so",
       "abi": "arm64-v8a",
-      "output": "E:\\Kw5\\AndHook\\app\\build\\intermediates\\ndkBuild\\release\\obj\\local\\arm64-v8a\\libmanner.so",
+      "output": "E:\\Kw5\\Kuaisho.Apk\\app\\build\\intermediates\\ndkBuild\\release\\obj\\local\\arm64-v8a\\libmanner.so",
       "runtimeFiles": []
     }
   }

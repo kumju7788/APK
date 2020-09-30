@@ -1,4 +1,4 @@
 APP_OPTIM is release ...
 [x86_64] Compile++      : manner <= myjnihook.cpp
-[x86_64] Prebuilt       : libAK.so <= E:/Kw5/AndHook/app/src/main/jni/../../../../lib/src/main/jniLibs/x86_64/
+[x86_64] Prebuilt       : libAK.so <= E:/Kw5/Kuaisho.Apk/app/src/main/jni/../../../../lib/src/main/jniLibs/x86_64/
 [x86_64] SharedLibrary  : libmanner.so
