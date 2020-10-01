@@ -255,7 +255,7 @@ public final class AppHooking {
  //       new Throwable().printStackTrace();
         Object response = HookHelper.invokeObjectOrigin(clazz, request, fVar, cVar, aVar);
 //        if(logStart) {
-//            getResponseInfo(response, HookThread.HOOK_OKHTTP3_HTTP_PROCEED, response.hashCode());
+            getResponseInfo(response, HookThread.HOOK_OKHTTP3_HTTP_PROCEED, response.hashCode());
 //        }
 //        Log.d("HTTP", "<<<" + request.hashCode() + "-[R:--myOkhttp3_HttpProceed()  end");
         return response;
@@ -277,7 +277,7 @@ public final class AppHooking {
         Object response = HookHelper.invokeObjectOrigin(clazz);
 //        if(logStart) {
 
-        //getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
+        getResponseInfo(response, HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER, response.hashCode());
 //        }
 //        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "]---myOkhttpExecute end  ");
         responseIndex ++;
@@ -773,11 +773,11 @@ public final class AppHooking {
     private static void getResponseInfo(Object response, int responseType, int identify){
         if(responseType == HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "OKHTTP" + "-RESPONSE] : " + response.toString());
-            if(response.toString().contains("/live/startPlay/v2")) {
+            if(response.toString().contains("/system/stat")) {
                 logStart = false;
-                ResponseInfo responseInfo = new ResponseInfo(response, identify, ResponseInfo.TO_FILE);
-                //ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
-                responseInfo.setOnlyRequest(true);
+                //ResponseInfo responseInfo = new ResponseInfo(response, identify, ResponseInfo.TO_FILE);
+                ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
+                //responseInfo.setOnlyRequest(true);
                 //responseInfo.setOnlyUrl(true);
                 responseInfo.start();
             }

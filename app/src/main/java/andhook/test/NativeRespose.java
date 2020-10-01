@@ -714,16 +714,17 @@ public class NativeRespose {
         KeyPair keys = null;
         String publicKey = "";
         String privateKey = "";
+        String timeStr = "";
 
         if (mSecurityKeyPair != null) {
-            Method e = HookHelper.findMethodHierarchically(mSecurityKeyPair, "e");
+            Method e = HookHelper.findMethodHierarchically(mSecurityKeyPair, "c");
             if (e != null) {
                 keys = (KeyPair) e.invoke(null);
             }
 
             Method a = HookHelper.findMethodHierarchically(mSecurityKeyPair, "a", PrivateKey.class, String.class);
             if (a != null && keys != null) {
-                String timeStr = String.valueOf(System.currentTimeMillis());
+                timeStr = String.valueOf(System.currentTimeMillis());
                 privateKey = (String) a.invoke(null, keys.getPrivate(), timeStr);
                 if(mCustomEncryptorB != null) {
                     Class<?> bb = mCustomEncryptorB.getClass();
@@ -734,7 +735,7 @@ public class NativeRespose {
                 }
             }
         }
-        return "PublicKey=" + publicKey + "&PrivateKey=" + privateKey;
+        return "PublicKey=" + publicKey + "&PrivateKey=" + privateKey + "&raw=" + timeStr;
     }
 
     public void createCustomEncryptClassB(Class<?> clazz) throws InvocationTargetException, IllegalAccessException {

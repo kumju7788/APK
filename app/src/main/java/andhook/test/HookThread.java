@@ -206,11 +206,11 @@ public class HookThread extends Thread {
                 break;
 
             case HOOK_OKHTTP3_HTTP_PROCEED:
-//                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED signal input...");
-//                orgMethod = findMethodHierarchicallyForString(clazz, "proceed", "okhttp3.Request", "w0.e0.e.f", "w0.e0.f.c", "w0.e0.e.c");
-//                replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttp3_HttpProceed", Class.class,Object.class, Class.class, Class.class, Class.class);
-//                HookHelper.hook(orgMethod, replaceMethod);
-//                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED hooking success...");
+                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED signal input...");
+                orgMethod = findMethodHierarchicallyForString(clazz, "proceed", "okhttp3.Request", "w0.e0.e.f", "w0.e0.f.c", "w0.e0.e.c");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttp3_HttpProceed", Class.class,Object.class, Class.class, Class.class, Class.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED hooking success...");
 
                 break;
 
