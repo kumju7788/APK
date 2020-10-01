@@ -654,6 +654,14 @@ public final class AppHooking {
         HookHelper.invokeVoidOrigin(clazz, name);
     }
 
+    public static Object myFuncTest_12(Class<?> clazz, List<Object> list, boolean z ){
+        Log.d(TAG, ">> myFuncTest_12 call.");
+        new Throwable().printStackTrace();
+
+        return HookHelper.invokeObjectOrigin(clazz, list, z);
+    }
+
+
 
     private static void getRequest(Object obj) throws InvocationTargetException, IllegalAccessException {
         Class<?> clazz = obj.getClass();
@@ -689,16 +697,57 @@ public final class AppHooking {
 
 
 
-    public static void myScretKey(Class<?> clazz, KeyPair keypair) {
+    public static void myScretKey(Class<?> clazz, KeyPair keyPair) {
         Log.d(TAG, ">> myScretKey start... ");
         new Throwable().printStackTrace();
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(">> myFuncTest_3 start... \n");
-//        sb.append(">> input : " + privateKey + "\n");
-        HookHelper.invokeVoidOrigin(clazz, keypair);
-//        sb.append(">> output : " + encode + "\n");
+        HookHelper.invokeVoidOrigin(clazz, keyPair);
+        //Log.d(TAG, ">> output : " + ret);
         Log.d(TAG, ">> myScretKey end");
     }
+
+    public static Object mySecretKey_a(Class<?> clazz, Object object) {
+        Log.d(TAG, ">> mySecretKey_a start... ");
+        new Throwable().printStackTrace();
+        return HookHelper.invokeObjectOrigin(clazz, object);
+    }
+
+
+    public static Object mySecretKey_a_1(Class<?> clazz) {
+        Log.d(TAG, ">> mySecretKey_a_1 start... ");
+        new Throwable().printStackTrace();
+        return HookHelper.invokeObjectOrigin(clazz);
+    }
+
+    public static Object mySecretKey_b(Class<?> clazz, Object object) {
+        Log.d(TAG, ">> mySecretKey_b start... ");
+        new Throwable().printStackTrace();
+        return HookHelper.invokeObjectOrigin(clazz, object);
+    }
+
+    public static Object mySecretKey_c(Class<?> clazz) {
+        Log.d(TAG, ">> mySecretKey_c start... ");
+        new Throwable().printStackTrace();
+        return HookHelper.invokeObjectOrigin(clazz);
+    }
+
+    public static Object mySecretKey_d(Class<?> clazz) {
+        Log.d(TAG, ">> mySecretKey_d start... ");
+        new Throwable().printStackTrace();
+        return HookHelper.invokeObjectOrigin(clazz);
+    }
+
+    public static Object mySecretKey_e(Class<?> clazz) {
+        Log.d(TAG, ">> mySecretKey_e start... ");
+        new Throwable().printStackTrace();
+        return HookHelper.invokeObjectOrigin(clazz);
+    }
+
+    public static Object mySecretKey_g(Class<?> clazz) {
+        Log.d(TAG, ">> mySecretKey_g start... ");
+        new Throwable().printStackTrace();
+        return HookHelper.invokeObjectOrigin(clazz);
+    }
+
 
     public static String myPhoneNumberEncode(Class<?> clazz, String phoneNumber) {
         StringBuilder sb = new StringBuilder();

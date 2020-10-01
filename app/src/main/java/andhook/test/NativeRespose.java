@@ -86,7 +86,7 @@ public class NativeRespose {
                 mDeviceInfoClass = clazz;
                 break;
             case SECURITY_ENGINE_PROXY:
-                mEngineProxy = clazz;
+                mEngineProxy = clazz ;
                 break;
             case MAP_CHANGE:
                 mMapChange = clazz;

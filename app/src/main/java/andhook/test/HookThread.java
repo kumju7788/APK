@@ -69,6 +69,7 @@ public class HookThread extends Thread {
     public static final int HOOK_FUNCTION_TEST_9                    = 33;
     public static final int HOOK_FUNCTION_TEST_10                   = 34;
     public static final int HOOK_FUNCTION_TEST_11                   = 35;
+    public static final int HOOK_FUNCTION_TEST_12                   = 36;
 
 
     private static final int HOOK_PRELOAD_CLASSES                   = 101;
@@ -265,7 +266,33 @@ public class HookThread extends Thread {
             case HOOK_KEYPAIR_CREATE:
                 Log.d(TAG, "[===] HOOK_KEYPAIR_CREATE signal input..." + clazz.getName());
                 new NativeRespose(clazz, NativeRespose.SECURITY_KEYPAIR_CREATE);
-                //nate.getNssig3("");
+                orgMethod = findMethodHierarchicallyForString(clazz, "a", "com.yxcorp.gifshow.util.AccountSecurityHelper$a");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_a", Class.class, Object.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchically(clazz, "a");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_a_1", Class.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchicallyForString(clazz, "b", "com.yxcorp.gifshow.util.AccountSecurityHelper$a");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_b", Class.class, Object.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchically(clazz, "c");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_c", Class.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchically(clazz, "d");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_d", Class.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchically(clazz, "e");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_e", Class.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+
+                orgMethod = findMethodHierarchically(clazz, "g");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_g", Class.class);
+                HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_KEYPAIR_CREATE hooking success...");
                 break;
 //////////////
@@ -374,7 +401,7 @@ public class HookThread extends Thread {
                 replaceMethod = findMethodHierarchically(AppHooking.class, "myPhoneNumberEncode", Class.class, String.class);
                 HookHelper.hook(orgMethod, replaceMethod);
 
-                //TODO mobileVerifyCode에 들어가는 "secret" 키분석부분
+//                //TODO mobileVerifyCode에 들어가는 "secret" 키분석부분
                 orgMethod = findMethodHierarchically(clazz, "a", KeyPair.class);
                 replaceMethod = findMethodHierarchically(AppHooking.class, "myScretKey", Class.class, KeyPair.class);
                 HookHelper.hook(orgMethod, replaceMethod);
@@ -468,6 +495,14 @@ public class HookThread extends Thread {
 //                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_11", Class.class, String.class);
 //                HookHelper.hook(orgMethod, replaceMethod);
 //                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_11 hooking success...");
+                break;
+
+            case HOOK_FUNCTION_TEST_12:
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_12 hooking input...");
+                orgMethod = findMethodHierarchically(clazz, "setDid", List.class, boolean.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_12", Class.class, List.class, boolean.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_12 hooking success...");
                 break;
         }
         //super.run();
