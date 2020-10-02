@@ -254,8 +254,9 @@ public class NativeRespose {
             }
 
             if(mRequest.get(i).equals("keypair")) {
+                String raw = getParam("raw");
                 try {
-                    sb.append(getKeyPair());
+                    sb.append(getKeyPair(raw));
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -710,21 +711,22 @@ public class NativeRespose {
         }
     }
 
-    private String getKeyPair() throws InvocationTargetException, IllegalAccessException {
+    private String getKeyPair(String raw) throws InvocationTargetException, IllegalAccessException {
         KeyPair keys = null;
         String publicKey = "";
         String privateKey = "";
         String timeStr = "";
 
         if (mSecurityKeyPair != null) {
-            Method e = HookHelper.findMethodHierarchically(mSecurityKeyPair, "c");
+            Method e = HookHelper.findMethodHierarchically(mSecurityKeyPair, "e");
             if (e != null) {
                 keys = (KeyPair) e.invoke(null);
             }
 
             Method a = HookHelper.findMethodHierarchically(mSecurityKeyPair, "a", PrivateKey.class, String.class);
             if (a != null && keys != null) {
-                timeStr = String.valueOf(System.currentTimeMillis());
+//                timeStr = String.valueOf(System.currentTimeMillis());
+                timeStr = raw;
                 privateKey = (String) a.invoke(null, keys.getPrivate(), timeStr);
                 if(mCustomEncryptorB != null) {
                     Class<?> bb = mCustomEncryptorB.getClass();
