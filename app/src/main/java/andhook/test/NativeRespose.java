@@ -281,10 +281,11 @@ public class NativeRespose {
             if(mRequest.get(i).equals("get_query_id")) {
                 String keyword = getParam("keyword");
                 String userId = getParam("uid");
+                long timeVal =  Long.parseLong(getParam("timeVal"));
                 if(!keyword.isEmpty() && !userId.isEmpty())
                 {
                     try {
-                        sb.append(getQueryId(keyword, userId));
+                        sb.append(getQueryId(keyword, userId, timeVal));
                     } catch (InvocationTargetException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
@@ -437,14 +438,15 @@ public class NativeRespose {
         return res;
     }
 
-    private String getQueryId(String keyword, String userId) throws InvocationTargetException, IllegalAccessException {
+    private String getQueryId(String keyword, String userId, long timeVal) throws InvocationTargetException, IllegalAccessException {
         String res = "";
 
         StringBuilder sb = new StringBuilder();
 
         sb.append(keyword);
         sb.append(userId);
-        sb.append(changeLongValue(System.currentTimeMillis()));
+//        sb.append(changeLongValue(System.currentTimeMillis()));
+        sb.append(changeLongValue(timeVal));
         sb.append(new Random().nextInt(10000));
 
         if(mCustomEncryptorB != null) {

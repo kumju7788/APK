@@ -392,6 +392,13 @@ public final class AppHooking {
         Log.d(TAG, ">> myFuncTest_3 end... ");
     }
 
+    public static String myEncB(Class<?> clazz, byte[] bytes){
+        Log.d(TAG, ">> myEncB start... " + new String(bytes));
+        String ret = HookHelper.invokeObjectOrigin(clazz, bytes);
+        Log.d(TAG, ">> myEncB end...Out =  " + ret);
+        return ret;
+    }
+
     public static String myFuncTest_8(Class<?> clazz) {
         Log.d(TAG, ">> myFuncTest_8 start... ");
         if(clsTest1 != null && clsTest2 != null) {

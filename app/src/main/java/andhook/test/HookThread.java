@@ -266,33 +266,33 @@ public class HookThread extends Thread {
             case HOOK_KEYPAIR_CREATE:
                 Log.d(TAG, "[===] HOOK_KEYPAIR_CREATE signal input..." + clazz.getName());
                 new NativeRespose(clazz, NativeRespose.SECURITY_KEYPAIR_CREATE);
-                orgMethod = findMethodHierarchicallyForString(clazz, "a", "com.yxcorp.gifshow.util.AccountSecurityHelper$a");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_a", Class.class, Object.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-
-                orgMethod = findMethodHierarchically(clazz, "a");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_a_1", Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-
-                orgMethod = findMethodHierarchicallyForString(clazz, "b", "com.yxcorp.gifshow.util.AccountSecurityHelper$a");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_b", Class.class, Object.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-
-                orgMethod = findMethodHierarchically(clazz, "c");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_c", Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-
-                orgMethod = findMethodHierarchically(clazz, "d");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_d", Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-
-                orgMethod = findMethodHierarchically(clazz, "e");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_e", Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-
-                orgMethod = findMethodHierarchically(clazz, "g");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_g", Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
+//                orgMethod = findMethodHierarchicallyForString(clazz, "a", "com.yxcorp.gifshow.util.AccountSecurityHelper$a");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_a", Class.class, Object.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//
+//                orgMethod = findMethodHierarchically(clazz, "a");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_a_1", Class.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//
+//                orgMethod = findMethodHierarchicallyForString(clazz, "b", "com.yxcorp.gifshow.util.AccountSecurityHelper$a");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_b", Class.class, Object.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//
+//                orgMethod = findMethodHierarchically(clazz, "c");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_c", Class.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//
+//                orgMethod = findMethodHierarchically(clazz, "d");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_d", Class.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//
+//                orgMethod = findMethodHierarchically(clazz, "e");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_e", Class.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//
+//                orgMethod = findMethodHierarchically(clazz, "g");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "mySecretKey_g", Class.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_KEYPAIR_CREATE hooking success...");
                 break;
 //////////////
@@ -307,6 +307,21 @@ public class HookThread extends Thread {
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
+
+                Method b = HookHelper.findMethodHierarchically(clazz, "b");
+                if(b != null) {
+                    try {
+                        Object customEncryptorB = (Object)b.invoke(null);
+                        orgMethod = findMethodHierarchically(customEncryptorB.getClass(), "a", byte[].class);
+                        replaceMethod = findMethodHierarchically(AppHooking.class, "myEncB", Class.class, byte[].class);
+                        HookHelper.hook(orgMethod, replaceMethod);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 //nate.getNssig3("");
                 Log.d(TAG, "[===] HOOK_CUSTOM_ENCRYPTOR hooking success...");
                 break;
