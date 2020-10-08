@@ -2,19 +2,19 @@
   {
     "level": "INFO",
     "message": "Start JSON generation. Platform version: 16 min SDK version: armeabi-v7a",
-    "file": "E:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk",
+    "file": "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk",
     "tag": "debug|armeabi-v7a"
   },
   {
     "level": "INFO",
-    "message": "JSON \u0027E:\\Kw5\\Kuaisho.Apk\\app\\.cxx\\ndkBuild\\debug\\armeabi-v7a\\android_gradle_build.json\u0027 was up-to-date",
-    "file": "E:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk",
+    "message": "JSON \u0027E:\\Kw5\\AndHook\\app\\.cxx\\ndkBuild\\debug\\armeabi-v7a\\android_gradle_build.json\u0027 was up-to-date",
+    "file": "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk",
     "tag": "debug|armeabi-v7a"
   },
   {
     "level": "INFO",
     "message": "JSON generation completed without problems",
-    "file": "E:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk",
+    "file": "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk",
     "tag": "debug|armeabi-v7a"
   }
 ]

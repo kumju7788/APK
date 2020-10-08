@@ -399,6 +399,27 @@ public final class AppHooking {
         return ret;
     }
 
+    public static Object myShowLog(Class<?> clazz, List<Object> list, boolean z) throws IllegalAccessException, InvocationTargetException {
+        Object object;
+        Log.d(TAG, ">> myShowLog start... ");
+        for(int i = 0; i < list.size(); i++) {
+            Object obj = list.get(i);
+            Log.d(TAG, "\t| obj.class=" + obj.getClass().getName());
+            Field fld = HookHelper.findFieldHierarchically(obj.getClass(), "llsid");
+            long llsid = (long)fld.get(obj);
+            Log.d(TAG, "\t| Llsid=" + llsid);
+            Method method = HookHelper.findMethodHierarchically(obj.getClass(), "getContent");
+            byte[] bArr = (byte[])method.invoke(obj);
+            DbgLog hexlog = new DbgLog();
+            if(bArr.length != 0) {
+                hexlog.LogByteArray(bArr, bArr.hashCode());
+            }
+        }
+        object = HookHelper.invokeObjectOrigin(clazz, list, z);
+        Log.d(TAG, ">> myShowLog end...");
+        return object;
+    }
+
     public static String myFuncTest_8(Class<?> clazz) {
         Log.d(TAG, ">> myFuncTest_8 start... ");
         if(clsTest1 != null && clsTest2 != null) {
@@ -690,18 +711,143 @@ public final class AppHooking {
         return ret;
     }
 
-    public static byte[] toByteArray(Class<?> clazz, Object obj) throws IOException {
+    public static byte[] toByteArray(Class<?> clazz, Object obj) throws IOException, IllegalAccessException {
         byte[] bArr = HookHelper.invokeObjectOrigin(clazz, obj);
-//        if(obj.getClass().getName().contains("SocketMessages$SocketMessage")) {
+        if(obj.getClass().getName().contains("RealShowLogs$RealShowFeed")) {
+            RealShowLogParam(obj);
 //            Log.d(TAG, "-------------> toByteArray");
 //            DbgLog hexLog = new DbgLog();
 //            hexLog.LogByteArray(bArr, bArr.hashCode());
-//        }
-//        Log.d(TAG, "-------------> toByteArray [" + bArr.hashCode() + "]");
+        }
+        Log.d(TAG, "-------------> toByteArray [" + bArr.hashCode() + "]");
         //logStart = false;
         return bArr;
     }
 
+    private static void RealShowLogParam(Object object) throws IllegalAccessException {
+        StringBuilder sb = new StringBuilder();
+        Field field = HookHelper.findFieldHierarchically(object.getClass(), "A");
+        String A = (String)field.get(object);
+        sb.append("\tRealShowLog A = \"" + A + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "B");
+        int B = (int) field.get(object);
+        sb.append("\tRealShowLog B = " + B).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "C");
+        int C = (int) field.get(object);
+        sb.append("\tRealShowLog C = " + C).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "D");
+        int D = (int) field.get(object);
+        sb.append("\tRealShowLog D = " + D).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "a");
+        int a = (int) field.get(object);
+        sb.append("\tRealShowLog a = " + a).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "b");
+        long b = (long) field.get(object);
+        sb.append("\tRealShowLog b = " + b).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "c");
+        long c = (long) field.get(object);
+        sb.append("\tRealShowLog c = " + c).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "d");
+        String d = (String)field.get(object);
+        sb.append("\tRealShowLog d = \"" + d + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "e");
+        String e = (String)field.get(object);
+        sb.append("\tRealShowLog e = \"" + e + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "f");
+        long f = (long) field.get(object);
+        sb.append("\tRealShowLog f = " + f).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "g");
+        int g = (int) field.get(object);
+        sb.append("\tRealShowLog g = " + g).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "h");
+        long h = (long) field.get(object);
+        sb.append("\tRealShowLog h = " + h).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "i");
+        String i = (String)field.get(object);
+        sb.append("\tRealShowLog i = \"" + i + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "j");
+        double j = (double) field.get(object);
+        sb.append("\tRealShowLog j = " + j).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "k");
+        long k = (long) field.get(object);
+        sb.append("\tRealShowLog k = " + k).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "l");
+        String l = (String)field.get(object);
+        sb.append("\tRealShowLog l = \"" + l + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "m");
+        String m = (String)field.get(object);
+        sb.append("\tRealShowLog m = \"" + m + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "n");
+        String n = (String)field.get(object);
+        sb.append("\tRealShowLog n = \"" + n + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "o");
+        String o = (String)field.get(object);
+        sb.append("\tRealShowLog o = \"" + o + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "p");
+        long p = (long) field.get(object);
+        sb.append("\tRealShowLog p = " + p).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "q");
+        long q = (long) field.get(object);
+        sb.append("\tRealShowLog q = " + q).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "r");
+        String r = (String)field.get(object);
+        sb.append("\tRealShowLog r = \"" + r + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "s");
+        String s = (String)field.get(object);
+        sb.append("\tRealShowLog s = \"" + s + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "t");
+        String t = (String)field.get(object);
+        sb.append("\tRealShowLog t = \"" + t + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "u");
+        boolean u = (boolean) field.get(object);
+        sb.append("\tRealShowLog u = " + u).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "v");
+        String v = (String)field.get(object);
+        sb.append("\tRealShowLog v = \"" + v + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "w");
+        String w = (String)field.get(object);
+        sb.append("\tRealShowLog w = \"" + w + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "x");
+        String x = (String)field.get(object);
+        sb.append("\tRealShowLog x = \"" + x + "\"").append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "y");
+        long y = (long) field.get(object);
+        sb.append("\tRealShowLog y = " + y).append("\n");
+
+        field = HookHelper.findFieldHierarchically(object.getClass(), "z");
+        long z = (long) field.get(object);
+        sb.append("\tRealShowLog z = " + z).append("\n");
+
+        Log.d(TAG, sb.toString());
+    }
 
 
     public static void myScretKey(Class<?> clazz, KeyPair keyPair) {

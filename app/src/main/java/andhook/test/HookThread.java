@@ -58,18 +58,19 @@ public class HookThread extends Thread {
     public static final int HOOK_CHANGE_MAP_BINARY                  = 22;
     public static final int HOOK_NANO_MESSAGENANO                   = 23;
     public static final int HOOK_FUNCTION_WEIBO_SDK                 = 24;
-    public static final int HOOK_FUNCTION_TEST_3                    = 25;
-    public static final int HOOK_IMEIS_ENCRYPT                      = 26;
-    public static final int HOOK_FUNCTION_TEST_5                    = 27;
-    public static final int HOOK_NANO_CLIENT_EVENT                  = 28;
-    public static final int HOOK_FUNCTION_TEST_6                    = 29;
-    public static final int HOOK_FUNCTION_TEST_7                    = 30;
-    public static final int HOOK_FUNCTION_TEST_8                    = 31;
-    public static final int HOOK_CLIENT_EVENT_LIST_BUILDER          = 32;
-    public static final int HOOK_FUNCTION_TEST_9                    = 33;
-    public static final int HOOK_FUNCTION_TEST_10                   = 34;
-    public static final int HOOK_FUNCTION_TEST_11                   = 35;
-    public static final int HOOK_FUNCTION_TEST_12                   = 36;
+    public static final int HOOK_SHOW_LOG                           = 25;
+    public static final int HOOK_FUNCTION_TEST_3                    = 26;
+    public static final int HOOK_IMEIS_ENCRYPT                      = 27;
+    public static final int HOOK_FUNCTION_TEST_5                    = 28;
+    public static final int HOOK_NANO_CLIENT_EVENT                  = 29;
+    public static final int HOOK_FUNCTION_TEST_6                    = 30;
+    public static final int HOOK_FUNCTION_TEST_7                    = 31;
+    public static final int HOOK_FUNCTION_TEST_8                    = 32;
+    public static final int HOOK_CLIENT_EVENT_LIST_BUILDER          = 33;
+    public static final int HOOK_FUNCTION_TEST_9                    = 34;
+    public static final int HOOK_FUNCTION_TEST_10                   = 35;
+    public static final int HOOK_FUNCTION_TEST_11                   = 36;
+    public static final int HOOK_FUNCTION_TEST_12                   = 37;
 
 
     private static final int HOOK_PRELOAD_CLASSES                   = 101;
@@ -226,9 +227,9 @@ public class HookThread extends Thread {
 ////////////
             case HOOK_NSTOKENSIG_PARAM:
                 Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking input..." + clazz.getName());
-                orgMethod = findMethodHierarchically(clazz, "a", byte[].class);
-                replaceMethod = findMethodHierarchically(AppHooking.class, "NStokensigParam1", Class.class, byte[].class);
-                HookHelper.hook(orgMethod, replaceMethod);
+//                orgMethod = findMethodHierarchically(clazz, "a", byte[].class);
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "NStokensigParam1", Class.class, byte[].class);
+//                HookHelper.hook(orgMethod, replaceMethod);
                 new NativeRespose(clazz, NativeRespose.SECURITY_CPU_GETCLOCK);
                 Log.d(TAG, "[===] HOOK_NSTOKENSIG_PARAM hooking success...");
                 break;
@@ -238,9 +239,9 @@ public class HookThread extends Thread {
                 Log.d(TAG, "[===] HOOK_CREATE_SECURITY_OBJECT signal input..." + clazz.getName());
                 NativeRespose nate = new NativeRespose();
                 nate.createSecurityObject(clazz);
-                orgMethod = findMethodHierarchically(clazz, "a", String.class, boolean.class, String.class);
-                replaceMethod = findMethodHierarchically(AppHooking.class, "security_matrix_h", Class.class, String.class, boolean.class, String.class);
-                HookHelper.hook(orgMethod, replaceMethod);
+//                orgMethod = findMethodHierarchically(clazz, "a", String.class, boolean.class, String.class);
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "security_matrix_h", Class.class, String.class, boolean.class, String.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
                 //nate.getNssig3("");
                 Log.d(TAG, "[===] HOOK_CREATE_SECURITY_OBJECT hooking success...");
                 break;
@@ -375,9 +376,9 @@ public class HookThread extends Thread {
                 Log.d(TAG, "[===] HOOK_NANO_MESSAGENANO signal input..." + clazz.getName());
 
                 new NativeRespose(clazz, NativeRespose.MAP_MESSAGE_NANO);
-//                orgMethod = HookHelper.findMethodHierarchicallyForString(clazz, "toByteArray", "com.google.protobuf.nano.MessageNano");
-//                replaceMethod = findMethodHierarchically(AppHooking.class, "toByteArray", Class.class, Object.class);
-//                HookHelper.hook(orgMethod, replaceMethod);
+                orgMethod = HookHelper.findMethodHierarchicallyForString(clazz, "toByteArray", "com.google.protobuf.nano.MessageNano");
+                replaceMethod = findMethodHierarchically(AppHooking.class, "toByteArray", Class.class, Object.class);
+                HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_NANO_MESSAGENANO hooking success...");
                 break;
 
@@ -430,6 +431,13 @@ public class HookThread extends Thread {
                 Log.d(TAG, "[===] HOOK_FUNCTION_TEST_2 hooking success...");
                 break;
 
+            case HOOK_SHOW_LOG:
+                Log.d(TAG, "[===] HOOK_SHOW_LOG hooking input...");
+                orgMethod = findMethodHierarchically(clazz, "a", List.class, boolean.class);
+                replaceMethod = findMethodHierarchically(AppHooking.class, "myShowLog", Class.class, List.class, boolean.class);
+                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_SHOW_LOG hooking success...");
+                break;
             case HOOK_FUNCTION_TEST_3:
 //                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 hooking input...");
 //                orgMethod = findMethodHierarchicallyForString(clazz, "a", "j.a.a.r4.x0");
