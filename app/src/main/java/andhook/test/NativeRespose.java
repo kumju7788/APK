@@ -10,10 +10,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -27,6 +31,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.zip.CRC32;
+import java.util.zip.GZIPOutputStream;
 
 import andhook.lib.HookHelper;
 
@@ -44,6 +49,10 @@ public class NativeRespose {
     public static final int CLASS_CLIENT_EVENT          = 108;
     public static final int CLASS_CLIENT_EVENT_BUILDER  = 109;
     public static final int CLASS_WEIBO_SDK             = 110;
+    public static final int CLASS_REAL_SHOW_FEED        = 111;
+    public static final int CLASS_REAL_SHOW_SUB_1       = 112;
+    public static final int CLASS_REAL_SHOW_SUB_2       = 113;
+
 
     List<String> mParam;
     List<String> mRequest;
@@ -60,6 +69,9 @@ public class NativeRespose {
     static Class<?> mClientEvent;
     static Class<?> mClientEventBuilder;
     static Class<?> mWeiboSdk;
+    static Class<?> mRealShowFeed;
+    static Class<?> mRealShowSub_1;
+    static Class<?> mRealShowSub_2;
 
     static String mSocName;
     static String mCpuCount;
@@ -102,8 +114,18 @@ public class NativeRespose {
                 break;
             case CLASS_CLIENT_EVENT_BUILDER:
                 mClientEventBuilder = clazz;
+                break;
             case CLASS_WEIBO_SDK:
                 mWeiboSdk = clazz;
+                break;
+            case CLASS_REAL_SHOW_FEED:
+                mRealShowFeed = clazz;
+                break;
+            case CLASS_REAL_SHOW_SUB_1:
+                mRealShowSub_1 = clazz;
+                break;
+            case CLASS_REAL_SHOW_SUB_2:
+                mRealShowSub_2 = clazz;
                 break;
         }
     }
@@ -318,8 +340,119 @@ public class NativeRespose {
                 }
             }
 
+            if(mRequest.get(i).equals("get_show_log")) {
+                String strLlsid = getParam("Llsid");
+                String strSrvExpTag = getParam("serverExpTag");
+                String strClientExpTag = getParam("ExpTag");
+                String strUserId = getParam("UserId");
+                String strBrowserType = getParam("BrowserType");
+                String strPhotoId = getParam("PhotoId");
+                String strSessionId = getParam("SessionId");
+                String strDuration = getParam("Duration");
+                try {
+                    sb.append(getRealShowLog(strLlsid, strSrvExpTag, strClientExpTag, strUserId, strBrowserType, strPhotoId, strSessionId, strDuration));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
         }
         return String.valueOf(sb);
+    }
+
+    private String getRealShowLog(String strLlsid, String strSrvExpTag, String strClientExpTag, String strUserId, String strBrowserType, String strPhotoId, String strSessionId, String strDuration) throws IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
+        byte[] bArr = null;
+        Constructor eVar = null;
+        Constructor fVar = null;
+        Field field;
+        Object eVarObj = null;
+        Object fVarObj = null;
+        Object fVarObjArr = null;
+        Object realShowObjArr = null;
+        Method toByteArray = null;
+        String res = "";
+
+        //TODO : j.a.a.r4.c3의 b(d3)에서 설정하는 값들이다
+        if(mRealShowFeed != null) {
+            Constructor constructor = HookHelper.findConstructorHierarchically(mRealShowFeed);
+            Object objRealShow = constructor.newInstance();
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "B");
+            field.set(objRealShow, Integer.valueOf(strBrowserType));
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "C");
+            field.set(objRealShow, 5);
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "a");
+            field.set(objRealShow, 1);
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "b");
+            field.set(objRealShow, Long.valueOf(strUserId));
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "c");
+            field.set(objRealShow, Long.valueOf(strPhotoId));
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "e");
+            field.set(objRealShow, strClientExpTag);
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "C");
+            field.set(objRealShow, 3);
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "s");
+            field.set(objRealShow, strSessionId);
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "t");
+            field.set(objRealShow, strSrvExpTag);
+            field = HookHelper.findFieldHierarchically(objRealShow.getClass(), "z");
+            field.set(objRealShow, Long.valueOf(strDuration));
+
+            realShowObjArr = Array.newInstance(mRealShowFeed, 1);
+            Array.set(realShowObjArr, 0, objRealShow);
+
+            if (mMessageNano != null) {
+                toByteArray = HookHelper.findMethodHierarchicallyForString(mMessageNano, "toByteArray", "com.google.protobuf.nano.MessageNano");
+                if (toByteArray != null) {
+                    bArr = (byte[]) toByteArray.invoke(null, objRealShow);
+                }
+            }
+
+            if(mRealShowSub_1 != null) {
+                eVar = HookHelper.findConstructorHierarchically(mRealShowSub_1);
+                eVarObj = eVar.newInstance();
+            }
+
+            if(mRealShowSub_2 != null) {
+                fVar = HookHelper.findConstructorHierarchically(mRealShowSub_2);
+                fVarObj = fVar.newInstance();
+                field = HookHelper.findFieldHierarchically(mRealShowSub_2, "a");
+                field.set(fVarObj, Long.valueOf(strLlsid));
+                field = HookHelper.findFieldHierarchically(mRealShowSub_2, "b");
+                field.set(fVarObj, realShowObjArr);
+                fVarObjArr = Array.newInstance(mRealShowSub_2, 1);
+                Array.set(fVarObjArr, 0, fVarObj);
+            }
+
+            if(eVar != null) {
+                field = HookHelper.findFieldHierarchically(eVarObj.getClass(), "a");
+                field.set(eVarObj, fVarObjArr);
+            }
+
+            if (toByteArray != null) {
+                bArr = (byte[]) toByteArray.invoke(null, eVarObj);
+                DbgLog hexLog = new DbgLog();
+                hexLog.LogByteArray(bArr, bArr.hashCode());
+            }
+
+            if(bArr != null && bArr.length != 0) {
+                ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream(bArr.length);
+                GZIPOutputStream outputStream = new GZIPOutputStream(arrayOutputStream);
+                outputStream.write(bArr);
+                outputStream.flush();
+                outputStream.close();
+                arrayOutputStream.flush();
+                arrayOutputStream.close();
+                res = Base64.encodeToString(arrayOutputStream.toByteArray(), 2);
+            }
+        }
+        return res;
     }
 
     private String getPackageHash() throws InvocationTargetException, IllegalAccessException {

@@ -59,18 +59,21 @@ public class HookThread extends Thread {
     public static final int HOOK_NANO_MESSAGENANO                   = 23;
     public static final int HOOK_FUNCTION_WEIBO_SDK                 = 24;
     public static final int HOOK_SHOW_LOG                           = 25;
-    public static final int HOOK_FUNCTION_TEST_3                    = 26;
-    public static final int HOOK_IMEIS_ENCRYPT                      = 27;
-    public static final int HOOK_FUNCTION_TEST_5                    = 28;
-    public static final int HOOK_NANO_CLIENT_EVENT                  = 29;
-    public static final int HOOK_FUNCTION_TEST_6                    = 30;
-    public static final int HOOK_FUNCTION_TEST_7                    = 31;
-    public static final int HOOK_FUNCTION_TEST_8                    = 32;
-    public static final int HOOK_CLIENT_EVENT_LIST_BUILDER          = 33;
-    public static final int HOOK_FUNCTION_TEST_9                    = 34;
-    public static final int HOOK_FUNCTION_TEST_10                   = 35;
-    public static final int HOOK_FUNCTION_TEST_11                   = 36;
-    public static final int HOOK_FUNCTION_TEST_12                   = 37;
+    public static final int HOOK_REAL_SHOW_FEED                     = 26;
+    public static final int HOOK_REAL_SHOW_FEED_SUB_CLASS_1         = 27;
+    public static final int HOOK_REAL_SHOW_FEED_SUB_CLASS_2         = 28;
+    public static final int HOOK_FUNCTION_TEST_3                    = 29;
+    public static final int HOOK_IMEIS_ENCRYPT                      = 30;
+    public static final int HOOK_FUNCTION_TEST_5                    = 31;
+    public static final int HOOK_NANO_CLIENT_EVENT                  = 32;
+    public static final int HOOK_FUNCTION_TEST_6                    = 33;
+    public static final int HOOK_FUNCTION_TEST_7                    = 34;
+    public static final int HOOK_FUNCTION_TEST_8                    = 35;
+    public static final int HOOK_CLIENT_EVENT_LIST_BUILDER          = 36;
+    public static final int HOOK_FUNCTION_TEST_9                    = 37;
+    public static final int HOOK_FUNCTION_TEST_10                   = 38;
+    public static final int HOOK_FUNCTION_TEST_11                   = 39;
+    public static final int HOOK_FUNCTION_TEST_12                   = 40;
 
 
     private static final int HOOK_PRELOAD_CLASSES                   = 101;
@@ -438,6 +441,22 @@ public class HookThread extends Thread {
                 HookHelper.hook(orgMethod, replaceMethod);
                 Log.d(TAG, "[===] HOOK_SHOW_LOG hooking success...");
                 break;
+
+            case HOOK_REAL_SHOW_FEED:
+                Log.d(TAG, "[===] HOOK_REAL_SHOW_FEED hooking input...");
+                new NativeRespose(clazz, NativeRespose.CLASS_REAL_SHOW_FEED);
+                break;
+
+            case HOOK_REAL_SHOW_FEED_SUB_CLASS_1:
+                Log.d(TAG, "[===] HOOK_REAL_SHOW_FEED_SUB_CLASS_1 hooking input...");
+                new NativeRespose(clazz, NativeRespose.CLASS_REAL_SHOW_SUB_1);
+                break;
+
+            case HOOK_REAL_SHOW_FEED_SUB_CLASS_2:
+                Log.d(TAG, "[===] HOOK_REAL_SHOW_FEED_SUB_CLASS_2 hooking input...");
+                new NativeRespose(clazz, NativeRespose.CLASS_REAL_SHOW_SUB_2);
+                break;
+
             case HOOK_FUNCTION_TEST_3:
 //                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 hooking input...");
 //                orgMethod = findMethodHierarchicallyForString(clazz, "a", "j.a.a.r4.x0");
@@ -521,11 +540,11 @@ public class HookThread extends Thread {
                 break;
 
             case HOOK_FUNCTION_TEST_12:
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_12 hooking input...");
-                orgMethod = findMethodHierarchically(clazz, "setDid", List.class, boolean.class);
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_12", Class.class, List.class, boolean.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_12 hooking success...");
+//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_12 hooking input...");
+//                orgMethod = findMethodHierarchically(clazz, "setDid", List.class, boolean.class);
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_12", Class.class, List.class, boolean.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_12 hooking success...");
                 break;
         }
         //super.run();
