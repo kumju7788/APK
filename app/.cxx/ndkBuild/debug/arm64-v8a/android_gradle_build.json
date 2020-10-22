@@ -1,30 +1,30 @@
 {
   "buildFiles": [
-    "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk",
-    "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\Application.mk"
+    "E:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk",
+    "E:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Application.mk"
   ],
   "cleanCommands": [
-    "C:\\android-ndk-r21\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/AndHook/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kw5\\AndHook\\app\\build\\intermediates\\ndkBuild\\debug\\lib clean"
+    "C:\\Users\\Administrator\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/Kuaisho.Apk/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\build\\intermediates\\ndkBuild\\debug\\lib clean"
   ],
-  "buildTargetsCommand": "C:\\android-ndk-r21\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/AndHook/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kw5\\AndHook\\app\\build\\intermediates\\ndkBuild\\debug\\lib {LIST_OF_TARGETS_TO_BUILD}",
+  "buildTargetsCommand": "C:\\Users\\Administrator\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/Kuaisho.Apk/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\build\\intermediates\\ndkBuild\\debug\\lib {LIST_OF_TARGETS_TO_BUILD}",
   "libraries": {
     "manner-debug-arm64-v8a": {
-      "buildCommand": "C:\\android-ndk-r21\\android-ndk-r21b\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\AndHook\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/AndHook/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kw5\\AndHook\\app\\build\\intermediates\\ndkBuild\\debug\\lib E:/Kw5/AndHook/app/build/intermediates/ndkBuild/debug/obj/local/arm64-v8a/libmanner.so",
+      "buildCommand": "C:\\Users\\Administrator\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Android.mk NDK_APPLICATION_MK\u003dE:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\Application.mk APP_ABI\u003darm64-v8a NDK_ALL_ABIS\u003darm64-v8a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-16 NDK_OUT\u003dE:/Kw5/Kuaisho.Apk/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dE:\\Kw5\\Kuaisho.Apk\\app\\build\\intermediates\\ndkBuild\\debug\\lib E:/Kw5/Kuaisho.Apk/app/build/intermediates/ndkBuild/debug/obj/local/arm64-v8a/libmanner.so",
       "toolchain": "toolchain-arm64-v8a",
       "abi": "arm64-v8a",
       "artifactName": "manner",
       "files": [
         {
-          "src": "E:\\Kw5\\AndHook\\app\\src\\main\\jni\\myjnihook.cpp",
-          "flags": "-target aarch64-none-linux-android21 -fdata-sections -ffunction-sections -fstack-protector-strong -funwind-tables -no-canonical-prefixes --sysroot C:/android-ndk-r21/android-ndk-r21b/build//../toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -Wno-invalid-command-line-argument -Wno-unused-command-line-argument -D_FORTIFY_SOURCE\u003d2 -fno-exceptions -fno-rtti -fpic -O2 -DNDEBUG -IE:/Kw5/AndHook/app/src/main/jni -IE:/Kw5/AndHook/app/src/main/jni/../../../../lib/include -IE:/Kw5/AndHook/app/src/main/jni -fvisibility\u003dhidden -fvisibility-inlines-hidden -g0 -O3 -fomit-frame-pointer -ffunction-sections -fdata-sections -std\u003dc++1y -DANDROID -fpermissive -fno-rtti -fno-exceptions -Wformat -Werror\u003dformat-security"
+          "src": "E:\\Kw5\\Kuaisho.Apk\\app\\src\\main\\jni\\myjnihook.cpp",
+          "flags": "-target aarch64-none-linux-android21 -fdata-sections -ffunction-sections -fstack-protector-strong -funwind-tables -no-canonical-prefixes --sysroot C:/Users/Administrator/AppData/Local/Android/Sdk/ndk/21.1.6352462/build//../toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -Wno-invalid-command-line-argument -Wno-unused-command-line-argument -D_FORTIFY_SOURCE\u003d2 -fno-exceptions -fno-rtti -fpic -O2 -DNDEBUG -IE:/Kw5/Kuaisho.Apk/app/src/main/jni -IE:/Kw5/Kuaisho.Apk/app/src/main/jni/../../../../lib/include -IE:/Kw5/Kuaisho.Apk/app/src/main/jni -fvisibility\u003dhidden -fvisibility-inlines-hidden -g0 -O3 -fomit-frame-pointer -ffunction-sections -fdata-sections -std\u003dc++1y -DANDROID -fpermissive -fno-rtti -fno-exceptions -Wformat -Werror\u003dformat-security"
         }
       ],
-      "output": "E:\\Kw5\\AndHook\\app\\build\\intermediates\\ndkBuild\\debug\\obj\\local\\arm64-v8a\\libmanner.so"
+      "output": "E:\\Kw5\\Kuaisho.Apk\\app\\build\\intermediates\\ndkBuild\\debug\\obj\\local\\arm64-v8a\\libmanner.so"
     }
   },
   "toolchains": {
     "toolchain-arm64-v8a": {
-      "cppCompilerExecutable": "C:\\android-ndk-r21\\android-ndk-r21b\\build\\..\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+      "cppCompilerExecutable": "C:\\Users\\Administrator\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\build\\..\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],

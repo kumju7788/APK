@@ -32,9 +32,11 @@ public class ClasspathScanner {
         preloadClasses.add("com.kuaishou.client.log.event.packages.nano.ClientEvent");
         preloadClasses.add("j.a.a.r4.q1");
         preloadClasses.add("com.sina.weibo.sdk.c.e");
+        preloadClasses.add("j.a.a.t3.p");
 
         preloadClasses.add("j.a.b.o.n0.r");
         preloadClasses.add("j.a.f0.j1");
+
 //        preloadClasses.add("j.z.a.b.l.u");
 //        preloadClasses.add("j.b.t.i.q");
         //preloadClasses.add("com.yxcorp.gifshow.retrofit.etag.ETagResult");

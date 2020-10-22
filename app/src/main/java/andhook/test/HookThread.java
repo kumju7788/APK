@@ -62,9 +62,9 @@ public class HookThread extends Thread {
     public static final int HOOK_REAL_SHOW_FEED                     = 26;
     public static final int HOOK_REAL_SHOW_FEED_SUB_CLASS_1         = 27;
     public static final int HOOK_REAL_SHOW_FEED_SUB_CLASS_2         = 28;
-    public static final int HOOK_FUNCTION_TEST_3                    = 29;
+    public static final int HOOK_REFRESH_KEY                        = 29;
     public static final int HOOK_IMEIS_ENCRYPT                      = 30;
-    public static final int HOOK_FUNCTION_TEST_5                    = 31;
+    public static final int HOOK_FUNCTION_IV2                       = 31;
     public static final int HOOK_NANO_CLIENT_EVENT                  = 32;
     public static final int HOOK_FUNCTION_TEST_6                    = 33;
     public static final int HOOK_FUNCTION_TEST_7                    = 34;
@@ -203,19 +203,19 @@ public class HookThread extends Thread {
                 break;
 
             case HOOK_OKHTTP3_RESPONSE_BUILDER:
-                Log.d(TAG, "[===] HOOK_OKHTTP3_RESPONSE_BUILDER signal input...");
-                orgMethod = findMethodHierarchically(clazz, "execute");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttpExecute", Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_OKHTTP3_RESPONSE_BUILDER hooking success...");
+//                Log.d(TAG, "[===] HOOK_OKHTTP3_RESPONSE_BUILDER signal input...");
+//                orgMethod = findMethodHierarchically(clazz, "execute");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttpExecute", Class.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_OKHTTP3_RESPONSE_BUILDER hooking success...");
                 break;
 
             case HOOK_OKHTTP3_HTTP_PROCEED:
-                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED signal input...");
-                orgMethod = findMethodHierarchicallyForString(clazz, "proceed", "okhttp3.Request", "w0.e0.e.f", "w0.e0.f.c", "w0.e0.e.c");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttp3_HttpProceed", Class.class,Object.class, Class.class, Class.class, Class.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED hooking success...");
+//                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED signal input...");
+//                orgMethod = findMethodHierarchicallyForString(clazz, "proceed", "okhttp3.Request", "w0.e0.e.f", "w0.e0.f.c", "w0.e0.e.c");
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myOkhttp3_HttpProceed", Class.class,Object.class, Class.class, Class.class, Class.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+//                Log.d(TAG, "[===] HOOK_OKHTTP3_HTTP_PROCEED hooking success...");
 
                 break;
 
@@ -457,26 +457,19 @@ public class HookThread extends Thread {
                 new NativeRespose(clazz, NativeRespose.CLASS_REAL_SHOW_SUB_2);
                 break;
 
-            case HOOK_FUNCTION_TEST_3:
-//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 hooking input...");
-//                orgMethod = findMethodHierarchicallyForString(clazz, "a", "j.a.a.r4.x0");
-//                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_3", Class.class,  Object.class);
-//                HookHelper.hook(orgMethod, replaceMethod);
-//                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_3 hooking success...");
-
+            case HOOK_REFRESH_KEY:
+//                Log.d(TAG, "[===] HOOK_REFRESH_KEY hooking input...");
+//                new NativeRespose(clazz, NativeRespose.CLASS_IV2);
+//                Log.d(TAG, "[===] HOOK_REFRESH_KEY hooking success...");
                 break;
-            case HOOK_FUNCTION_TEST_5:
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_5 hooking input...");
-                orgMethod = findMethodHierarchicallyForString(clazz, "a", "com.google.protobuf.nano.MessageNano");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_5", Class.class, Object.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_5 hooking success...");
 
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_5_1 hooking input...");
-                orgMethod = findMethodHierarchicallyForString(clazz, "a", "j.b.e0.m.a.a");
-                replaceMethod = findMethodHierarchically(AppHooking.class, "myFuncTest_5_1", Class.class, Object.class);
-                HookHelper.hook(orgMethod, replaceMethod);
-                Log.d(TAG, "[===] HOOK_FUNCTION_TEST_5 hooking success...");
+            case HOOK_FUNCTION_IV2:
+                Log.d(TAG, "[===] HOOK_FUNCTION_IV2 hooking input...");
+                new NativeRespose(clazz, NativeRespose.CLASS_IV2);
+//                orgMethod = findMethodHierarchically(clazz, "a", String.class, String.class);
+//                replaceMethod = findMethodHierarchically(AppHooking.class, "myGetIv2", Class.class, String.class, String.class);
+//                HookHelper.hook(orgMethod, replaceMethod);
+                Log.d(TAG, "[===] HOOK_FUNCTION_IV2 hooking success...");
                 break;
 
             case HOOK_FUNCTION_TEST_6:

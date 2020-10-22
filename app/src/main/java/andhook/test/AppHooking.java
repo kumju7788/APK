@@ -523,12 +523,17 @@ public final class AppHooking {
 
     }
 
-    public static void myFuncTest_5(Class<?> clazz, Object obj) throws IllegalAccessException, InvocationTargetException {
-        Log.d(TAG, ">> myFuncTest_5 call.. ");
-        byteArrayView(obj);
-        new Throwable().printStackTrace();
-        HookHelper.invokeVoidOrigin(clazz, obj);
+    public static Map<String, String> myGetIv2(Class<?> clazz, String key, String str2) {
+        Log.d(TAG, ">> myGetIv2 call.. ");
+        Log.d(TAG, ">> key : " + key);
+        Log.d(TAG, ">> str2 : " + str2);
+        //new Throwable().printStackTrace();
+        Map<String, String> mm = HookHelper.invokeObjectOrigin(clazz, key, str2);
+        for(Map.Entry<String, String> entry : mm.entrySet()) {
+            Log.d(TAG, ">>  + " + entry.getKey() + "=" + entry.getValue());
+        }
         Log.d(TAG, ">> ------------------ ");
+        return mm;
     }
 
     public static void byteArrayView(Object obj) throws InvocationTargetException, IllegalAccessException {
@@ -975,7 +980,8 @@ public final class AppHooking {
     private static void getResponseInfo(Object response, int responseType, int identify){
         if(responseType == HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "OKHTTP" + "-RESPONSE] : " + response.toString());
-            if(response.toString().contains("/system/stat")) {
+            if(response.toString().contains("freeTraffic/deviceState") ||
+                    response.toString().contains("refresh/kcard")) {
                 logStart = false;
                 //ResponseInfo responseInfo = new ResponseInfo(response, identify, ResponseInfo.TO_FILE);
                 ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");

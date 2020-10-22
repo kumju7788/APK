@@ -52,6 +52,7 @@ public class NativeRespose {
     public static final int CLASS_REAL_SHOW_FEED        = 111;
     public static final int CLASS_REAL_SHOW_SUB_1       = 112;
     public static final int CLASS_REAL_SHOW_SUB_2       = 113;
+    public static final int CLASS_IV2                   = 114;
 
 
     List<String> mParam;
@@ -72,6 +73,7 @@ public class NativeRespose {
     static Class<?> mRealShowFeed;
     static Class<?> mRealShowSub_1;
     static Class<?> mRealShowSub_2;
+    static Class<?> mClassIV2;
 
     static String mSocName;
     static String mCpuCount;
@@ -127,6 +129,8 @@ public class NativeRespose {
             case CLASS_REAL_SHOW_SUB_2:
                 mRealShowSub_2 = clazz;
                 break;
+            case CLASS_IV2:
+                mClassIV2 = clazz;
         }
     }
 
@@ -362,9 +366,35 @@ public class NativeRespose {
                 }
             }
 
+            if(mRequest.get(i).equals("get_device_traffic_param")) {
+                String strKey = getParam("key");
+                String strSimInfo = getParam("simInfo");
+                try {
+                    sb.append(getDeviceTrafficParam(strKey, strSimInfo));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
 
         }
         return String.valueOf(sb);
+    }
+
+    private String getDeviceTrafficParam(String strKey, String strSimInfo) throws InvocationTargetException, IllegalAccessException {
+        String res = new String();
+        if(mClassIV2 != null) {
+            Method method = HookHelper.findMethodHierarchically(mClassIV2,"a", String.class, String.class);
+            if(method != null) {
+                Map<String, String> map = (Map<String, String>) method.invoke(null, strKey, strSimInfo);
+                if(map.size() != 0) {
+                    res = "iv2=" + map.get("iv2") + "&e2=" + map.get("e2");
+                }
+            }
+        }
+        return res;
     }
 
     private String getRealShowLog(String strLlsid, String strSrvExpTag, String strClientExpTag, String strUserId, String strBrowserType, String strPhotoId, String strSessionId, String strDuration) throws IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
@@ -524,7 +554,7 @@ public class NativeRespose {
                 if(field != null) {
                     List<Object> a = (List<Object>) field.get(objExpTagTransArray);
                     assert a != null;
-                    a.add(objExpTagTrans);
+                 a.add(objExpTagTrans);
                 } else {
                     Log.d(TAG, "|\tmClientEventBuilder [a] field class : 'null'");
                     return res;
