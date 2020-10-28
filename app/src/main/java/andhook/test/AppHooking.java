@@ -265,7 +265,7 @@ public final class AppHooking {
        // Log.d(TAG, "<<<-[R:" + String.format("%04d", responseIndex) + "[---myRetrofitExecute build() start");
         Object response = HookHelper.invokeObjectOrigin(clazz);
 //        if(logStart) {
-//            getResponseInfo(response, HookThread.HOOK_RETROFIT_RESPONSE, response.hashCode());
+            getResponseInfo(response, HookThread.HOOK_RETROFIT_RESPONSE, response.hashCode());
 //        }
 //        Log.d(TAG, "<<<-" + response.hashCode() + "-[R:" + String.format("%04d", responseIndex) + "[---myRetrofitExecute build() end");
         return response;
@@ -523,12 +523,25 @@ public final class AppHooking {
 
     }
 
-    public static Map<String, String> myGetIv2(Class<?> clazz, String key, String str2) {
-        Log.d(TAG, ">> myGetIv2 call.. ");
+    public static Map<String, String> myKCardGetIv2(Class<?> clazz, String key, String str2) {
+        Log.d(TAG, ">> myKCardGetIv2 call.. ");
+        new Throwable().printStackTrace();
         Log.d(TAG, ">> key : " + key);
         Log.d(TAG, ">> str2 : " + str2);
-        //new Throwable().printStackTrace();
         Map<String, String> mm = HookHelper.invokeObjectOrigin(clazz, key, str2);
+        for(Map.Entry<String, String> entry : mm.entrySet()) {
+            Log.d(TAG, ">>  + " + entry.getKey() + "=" + entry.getValue());
+        }
+        Log.d(TAG, ">> ------------------ ");
+        return mm;
+    }
+
+    public static Map<String, String> myContactGetIv2(Class<?> clazz, String key, Object y0) {
+        Log.d(TAG, ">> myContactGetIv2 call.. ");
+        Log.d(TAG, ">> key : " + key);
+        Log.d(TAG, ">> Object : " + y0.getClass().getName());
+        //new Throwable().printStackTrace();
+        Map<String, String> mm = HookHelper.invokeObjectOrigin(clazz, key, y0);
         for(Map.Entry<String, String> entry : mm.entrySet()) {
             Log.d(TAG, ">>  + " + entry.getKey() + "=" + entry.getValue());
         }
@@ -614,25 +627,18 @@ public final class AppHooking {
         Log.d(TAG, ">> ------------------ ");
     }
 
-    public static String myFuncTest_7(Class<?> clazz, Context context) {
+    public static void myFuncTest_7(Class<?> clazz, Object obj) throws IllegalAccessException, InvocationTargetException {
         Log.d(TAG, ">> myFuncTest_7...call ");
-//        new Throwable().printStackTrace();
-        String ret = HookHelper.invokeObjectOrigin(clazz, context);
-        Log.d(TAG, ">>retVal =  " + ret);
-        Log.d(TAG, ">> ------------------ ");
-        return ret;
-    }
+        new Throwable().printStackTrace();
+        Method method = HookHelper.findMethodHierarchically(obj.getClass(), "N");
+        if(method != null) {
+            String N = (String)method.invoke(obj);
+            if(N.hashCode() == 109921725 && N.equals("activityInfoListVersion")) {
 
-    public static List<String> myFuncTest_7_1(Class<?> clazz, Context context) {
-        Log.d(TAG, ">> myFuncTest_7_1...call ");
-//        new Throwable().printStackTrace();
-        List<String> ret = HookHelper.invokeObjectOrigin(clazz, context);
-        for(int i = 0; i < ret.size(); i++) {
-
-            Log.d(TAG, ">>retVal[" + i + "] = " + ret.get(i));
+            }
         }
+        HookHelper.invokeVoidOrigin(clazz, obj);
         Log.d(TAG, ">> ------------------ ");
-        return ret;
     }
 
 
@@ -980,8 +986,7 @@ public final class AppHooking {
     private static void getResponseInfo(Object response, int responseType, int identify){
         if(responseType == HookThread.HOOK_OKHTTP3_RESPONSE_BUILDER) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "OKHTTP" + "-RESPONSE] : " + response.toString());
-            if(response.toString().contains("freeTraffic/deviceState") ||
-                    response.toString().contains("refresh/kcard")) {
+            if(response.toString().contains("rest/system/stat")) {
                 logStart = false;
                 //ResponseInfo responseInfo = new ResponseInfo(response, identify, ResponseInfo.TO_FILE);
                 ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP");
@@ -992,17 +997,18 @@ public final class AppHooking {
         }
         else if(responseType == HookThread.HOOK_RETROFIT_RESPONSE) {
 //            Log.d("HTTP", "\t" + identify + "-[" + "RETROFIT" + "-RESPONSE] : " + response.toString());
-            ResponseInfo responseInfo = new ResponseInfo(response, identify, "RETROFIT");
-            responseInfo.start();
+            if(response.toString().contains("rest/system/stat")) {
+                ResponseInfo responseInfo = new ResponseInfo(response, identify, "RETROFIT");
+                responseInfo.start();
+            }
         }
         else if(responseType == HookThread.HOOK_OKHTTP3_HTTP_PROCEED) {
 //            if(checkUrl(response.toString())) {
-//            if(logStart || response.toString().contains("n/user/mobile/checker")) {
+            if(response.toString().contains("rest/system/stat")) {
 //                logStart = true;
                 ResponseInfo responseInfo = new ResponseInfo(response, identify, "OKHTTP_PROCEED");
                 responseInfo.start();
-
-//            }
+            }
         }
         else {
             ResponseInfo requestInfo = new ResponseInfo(response, identify, "TEST");
