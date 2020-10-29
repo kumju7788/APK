@@ -686,18 +686,23 @@ public final class AppHooking {
         return ret;
     }
 
-    public static void myFuncTest_11(Class<?> clazz, String name){
+    public static void myFuncTest_11(Class<?> clazz, String[] name){
         Log.d(TAG, ">> myFuncTest_11 call.");
-        Log.d(TAG, ">> myFuncTest_11 call | name=" + name);
+        for(int i = 0; i < 5; i++) {
+            Log.d(TAG, ">> myFuncTest_11 | " + name[i]);
+        }
         new Throwable().printStackTrace();
         HookHelper.invokeVoidOrigin(clazz, name);
     }
 
-    public static Object myFuncTest_12(Class<?> clazz, List<Object> list, boolean z ){
+    public static List<String> myFuncTest_12(Class<?> clazz, Context context ){
         Log.d(TAG, ">> myFuncTest_12 call.");
-        new Throwable().printStackTrace();
-
-        return HookHelper.invokeObjectOrigin(clazz, list, z);
+        List<String> ret = HookHelper.invokeObjectOrigin(clazz, context);
+        Log.d(TAG, "devinfo list size : " + ret.size());
+        for(int i = 0; i < ret.size(); i++) {
+            Log.d(TAG, "devinfo : " + ret.get(i));
+        }
+        return ret;
     }
 
 
