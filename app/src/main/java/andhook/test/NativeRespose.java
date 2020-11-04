@@ -193,7 +193,7 @@ public class NativeRespose {
         return param;
     }
 
-    public synchronized String getResult() {
+    public synchronized String getResult() { 
         String res = "";
         String param;
         StringBuilder sb = new StringBuilder();
