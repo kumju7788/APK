@@ -59,22 +59,22 @@ public class NativeRespose {
     List<String> mParam;
     List<String> mRequest;
 
-    static Class<?> mSecurityPhoneNumberClass;
-    static Class<?> mSecurityKeyPair;
-    static Object mCustomEncryptorB;
-    static Class<?> mCPU;
-    static Class<?> mDeviceInfoClass;
-    static Class<?> mMapChange;
-    static Class<?> mEngineProxy;
-    public static Class<?> mMessageNano;
-    static Class<?> mEncryptImeis;
-    static Class<?> mClientEvent;
-    static Class<?> mClientEventBuilder;
-    static Class<?> mWeiboSdk;
-    static Class<?> mRealShowFeed;
-    static Class<?> mRealShowSub_1;
-    static Class<?> mRealShowSub_2;
-    static Class<?> mClassIV2;
+    static Class<?> mSecurityPhoneNumberClass = null;
+    static Class<?> mSecurityKeyPair = null;
+    static Object mCustomEncryptorB = null;
+    static Class<?> mCPU = null;
+    static Class<?> mDeviceInfoClass = null;
+    static Class<?> mMapChange = null;
+    static Class<?> mEngineProxy = null;
+    public static Class<?> mMessageNano = null;
+    static Class<?> mEncryptImeis = null;
+    static Class<?> mClientEvent = null;
+    static Class<?> mClientEventBuilder = null;
+    static Class<?> mWeiboSdk = null;
+    static Class<?> mRealShowFeed = null;
+    static Class<?> mRealShowSub_1 = null;
+    static Class<?> mRealShowSub_2 = null;
+    static Class<?> mClassIV2 = null;
     static Class<?> mClassContact;
 
     static String mSocName;
@@ -90,52 +90,84 @@ public class NativeRespose {
     NativeRespose(Class<?> clazz, int secureType) {
         switch (secureType) {
             case SECURITY_PHONE_NUMBER:
-                mSecurityPhoneNumberClass = clazz;
+                if(mSecurityPhoneNumberClass == null) {
+                    mSecurityPhoneNumberClass = clazz;
+                }
                 break;
             case SECURITY_KEYPAIR_CREATE:
-                mSecurityKeyPair = clazz;
+                if(mSecurityKeyPair == null) {
+                    mSecurityKeyPair = clazz;
+                }
                 break;
             case SECURITY_CPU_GETCLOCK:
-                mCPU = clazz;
+                if(mCPU == null) {
+                    mCPU = clazz;
+                }
                 break;
             case SECURITY_DEVICE_AND_CARRY:
-                mDeviceInfoClass = clazz;
+                if(mDeviceInfoClass == null) {
+                    mDeviceInfoClass = clazz;
+                }
                 break;
             case SECURITY_ENGINE_PROXY:
-                mEngineProxy = clazz ;
+                if(mEngineProxy == null) {
+                    mEngineProxy = clazz ;
+                }
                 break;
             case MAP_CHANGE:
-                mMapChange = clazz;
+                if(mMapChange == null) {
+                    mMapChange = clazz;
+                }
                 break;
             case MAP_MESSAGE_NANO:
-                mMessageNano = clazz;
+                if(mMessageNano == null) {
+                    mMessageNano = clazz;
+                }
                 break;
             case ENCRYPT_IMEIS:
-                mEncryptImeis = clazz;
+                if(mEncryptImeis == null) {
+                    mEncryptImeis = clazz;
+                }
                 break;
             case CLASS_CLIENT_EVENT:
-                mClientEvent = clazz;
+                if(mClientEvent == null) {
+                    mClientEvent = clazz;
+                }
                 break;
             case CLASS_CLIENT_EVENT_BUILDER:
-                mClientEventBuilder = clazz;
+                if(mClientEventBuilder == null) {
+                    mClientEventBuilder = clazz;
+                }
                 break;
             case CLASS_WEIBO_SDK:
-                mWeiboSdk = clazz;
+                if(mWeiboSdk == null) {
+                    mWeiboSdk = clazz;
+                }
                 break;
             case CLASS_REAL_SHOW_FEED:
-                mRealShowFeed = clazz;
+                if(mRealShowFeed == null) {
+                    mRealShowFeed = clazz;
+                }
                 break;
             case CLASS_REAL_SHOW_SUB_1:
-                mRealShowSub_1 = clazz;
+                if(mRealShowSub_1 == null) {
+                    mRealShowSub_1 = clazz;
+                }
                 break;
             case CLASS_REAL_SHOW_SUB_2:
-                mRealShowSub_2 = clazz;
+                if(mRealShowSub_2 == null) {
+                    mRealShowSub_2 = clazz;
+                }
                 break;
             case CLASS_IV2:
-                mClassIV2 = clazz;
+                if(mClassIV2 == null) {
+                    mClassIV2 = clazz;
+                }
                 break;
             case CLASS_CONTACT:
-                mClassContact = clazz;
+                if(mClassContact == null) {
+                    mClassContact = clazz;
+                }
                 break;
         }
     }
@@ -145,7 +177,7 @@ public class NativeRespose {
         mParam = param;
         mRequest = reqCode;
     }
-    
+
     private String getParam(String key) {
         String param = "";
         String ret;
@@ -161,7 +193,7 @@ public class NativeRespose {
         return param;
     }
 
-    public String getResult() {
+    public synchronized String getResult() {
         String res = "";
         String param;
         StringBuilder sb = new StringBuilder();
@@ -176,7 +208,7 @@ public class NativeRespose {
                 }
                 continue;
             }
-            
+
             if(mRequest.get(i).equals("egid")) {
                 param = getParam("devInfo");
                 if(!param.isEmpty()) {
@@ -185,7 +217,7 @@ public class NativeRespose {
                 }
                 continue;
             }
-   
+
             if(mRequest.get(i).equals("phoneCode")) {
                 param = getParam("phoneNumber");
                 if(!param.isEmpty()) {
@@ -231,8 +263,9 @@ public class NativeRespose {
                 String egid = getParam("egid");
                 String did = getParam("did");
                 String uid = getParam("uid");
+                String stat = getParam("stat");
                 try {
-                    res = getEnvironmentInfo(country, devParam, egid, did, uid);
+                    res = getEnvironmentInfo(country, devParam, egid, did, uid, stat);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
@@ -390,7 +423,7 @@ public class NativeRespose {
         return String.valueOf(sb);
     }
 
-    private String getDeviceTrafficParam(String strKey, String strSimInfo) throws InvocationTargetException, IllegalAccessException {
+    private synchronized String getDeviceTrafficParam(String strKey, String strSimInfo) throws InvocationTargetException, IllegalAccessException {
         String res = new String();
         if(mClassIV2 != null) {
             Method method = HookHelper.findMethodHierarchically(mClassIV2,"a", String.class, String.class);
@@ -404,7 +437,7 @@ public class NativeRespose {
         return res;
     }
 
-    private String getRealShowLog(String strLlsid, String strSrvExpTag, String strClientExpTag, String strUserId, String strBrowserType, String strPhotoId, String strSessionId, String strDuration) throws IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
+    private synchronized String getRealShowLog(String strLlsid, String strSrvExpTag, String strClientExpTag, String strUserId, String strBrowserType, String strPhotoId, String strSessionId, String strDuration) throws IllegalAccessException, InvocationTargetException, InstantiationException, IOException {
         byte[] bArr = null;
         Constructor eVar = null;
         Constructor fVar = null;
@@ -492,7 +525,7 @@ public class NativeRespose {
         return res;
     }
 
-    private String getPackageHash() throws InvocationTargetException, IllegalAccessException {
+    private synchronized String getPackageHash() throws InvocationTargetException, IllegalAccessException {
         String strHash = "";
         if(mWeiboSdk != null)  {
             Method method = HookHelper.findMethodHierarchically(mWeiboSdk, "d", Context.class, String.class);
@@ -505,7 +538,7 @@ public class NativeRespose {
     }
 
     //TODO feef/hot 에서 받은 자료중에서 현재 화면에 대한 자료의 serverExpTag자료를 엔코딩한다.
-    private String getExpTagList(String strServerExpTag, String strClientExpTag) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+    private synchronized String getExpTagList(String strServerExpTag, String strClientExpTag) throws InstantiationException, IllegalAccessException, InvocationTargetException {
         Class<?> clsExpTagTrans;
         Class<?> clsExpTagTransArray;
         Object objExpTagTrans = null;
@@ -561,7 +594,7 @@ public class NativeRespose {
                 if(field != null) {
                     List<Object> a = (List<Object>) field.get(objExpTagTransArray);
                     assert a != null;
-                 a.add(objExpTagTrans);
+                    a.add(objExpTagTrans);
                 } else {
                     Log.d(TAG, "|\tmClientEventBuilder [a] field class : 'null'");
                     return res;
@@ -608,7 +641,7 @@ public class NativeRespose {
         return res;
     }
 
-    private String getQueryId(String keyword, String userId, long timeVal) throws InvocationTargetException, IllegalAccessException {
+    private synchronized String getQueryId(String keyword, String userId, long timeVal) throws InvocationTargetException, IllegalAccessException {
         String res = "";
 
         StringBuilder sb = new StringBuilder();
@@ -646,7 +679,7 @@ public class NativeRespose {
         return String.format(str3, new Object[]{Double.valueOf(doubleValue)});
     }
 
-    private String getEncryprImeis(String imei) throws InvocationTargetException, IllegalAccessException {
+    private synchronized String getEncryprImeis(String imei) throws InvocationTargetException, IllegalAccessException {
         String res ="";
 
         if(mEncryptImeis != null) {
@@ -724,7 +757,7 @@ public class NativeRespose {
         return bArr;
     }
 
-    private String getDeviceInfo(String param) throws InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, NoSuchMethodException, InstantiationException {
+    private synchronized String getDeviceInfo(String param) throws InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, NoSuchMethodException, InstantiationException {
         String res = "";
         String encode = "";
         String sign = "";
@@ -773,7 +806,7 @@ public class NativeRespose {
         return res;
     }
 
-    private String getSig(String param) {
+    private synchronized String getSig(String param) {
         String sig = "";
         if(mCPU != null) {
             Method method = HookHelper.findMethodHierarchically(mCPU, "a", byte[].class);
@@ -790,7 +823,7 @@ public class NativeRespose {
         return sig;
     }
 
-    private String getNssig3(String param) {
+    private synchronized String getNssig3(String param) {
         String res;
         //String param = "/rest/system/keyconfigcbbfbbba82fcdc1762683129be3d0b0e";
         Log.d(TAG, "|\tkwaiSecurity : call");
@@ -804,7 +837,7 @@ public class NativeRespose {
         return res;
     }
 
-    private String phoneCode(String phoneNumber) {
+    private synchronized String phoneCode(String phoneNumber) {
         String res = "";
         Log.d(TAG, "|\tphoneCode() param | " + phoneNumber);
         if(mSecurityPhoneNumberClass != null) {
@@ -883,7 +916,7 @@ public class NativeRespose {
         }
     }
 
-    private String getKeyPair(String raw) throws InvocationTargetException, IllegalAccessException {
+    private synchronized String getKeyPair(String raw) throws InvocationTargetException, IllegalAccessException {
         KeyPair keys = null;
         String publicKey = "";
         String privateKey = "";
@@ -920,7 +953,7 @@ public class NativeRespose {
         }
     }
 
-    public static String k31(String nzz) {
+    private String k31(String nzz) {
         try {
             if (TextUtils.isEmpty(nzz)) {
                 return "KWE_OTHER";
@@ -1057,104 +1090,105 @@ public class NativeRespose {
         map.put("k2", "WiFi");
         map.put("k3", "com.smile.gifmaker");
         map.put("k4", "KWE_NC");
-        map.put("k5", "16776077312");
+        map.put("k5", "26730590208");
         map.put("k6", "0");
-        map.put("k7", "ANDROID_962ad1a2fd485522");
+        map.put("k7", "ANDROID_3ddd0cf958fb6ec8");
         map.put("k8", "user");
-        map.put("k9", "6TBrwp-kfscV533Yn6u42mlmnnbvvAUAdG2nGaOFMPY");
+        map.put("k9", "CDNM3ZO7zJXS2DumtVdu8vwVcTQSUP9AegmhBe1YOg4");
         map.put("k10", "0");
         map.put("k11", "0");
         map.put("k12", "KWE_NPN");
         map.put("k13", "KWE_NC");
+        map.put("k14", "AND:1690620114");
         map.put("k15", "KWE_NC");
-        map.put("k16", "ubuntu");
-        map.put("k17", "172.16.2.66");
+        map.put("k16", "21HH1F17");
+        map.put("k17", "192.168.1.233");
         map.put("k18", "KWE_NPN");
-        map.put("k19", "V1916A");
+        map.put("k19", "universal5433");
         map.put("k20", "KWE_NC");
         map.put("k21", "KWE_NC");
         map.put("k22", "7.5.10.14246");
-        map.put("k23", "vivo");
+        map.put("k23", "samsung");
         map.put("k24", "KWE_NC");
-        map.put("k25", "0");
+        map.put("k25", "1");
         map.put("k26", "armeabi-v7a,armeabi");
-        map.put("k27", "V1916A");
-        map.put("k28", "android_x86");
-        map.put("k29", "Dalvik/2.1.0 (Linux; U; Android 5.1.1; V1916A Build/LMY47I)");
-        map.put("k30", "LMY47I");
-        map.put("k31", "fuels:lZWfwcefx5SfwcefnJ2fkMA=");
+        map.put("k27", "SM-N916L");
+        map.put("k28", "universal5433");
+        map.put("k29", "Dalvik/2.1.0 (Linux; U; Android 6.0.1; SM-N916L Build/MMB29K)");
+        map.put("k30", "MMB29K.N916LKLU2DSA1");
+        map.put("k31", "fuels:l5WfkJCflpSfnJSfwZSfwMM=");
         map.put("k32", "KWE_NC");
         map.put("k33", "KWE_NPN");
-        map.put("k34", "[3.0,1080,1920,3.0,480.0,480.0]");
-        map.put("k35", "5.1.1");
+        map.put("k34", "[4.0,1440,2560,4.0,515.154,520.192]");
+        map.put("k35", "6.0.1");
         map.put("k36", "1.1.8.0");
-        map.put("k37", "LMY47I");
+        map.put("k37", "MMB29K");
         map.put("k38", "KWE_NC");
-        map.put("k39", "1595848872727");//Long.toString(elasedTime()));
-        map.put("k40", "asus/android_x86/x86:5.1.1/LMY47I/V9.5.3.0.LACCNFA:user/release-keys");
-        map.put("k41", "[BB15E,00:81:5e:db:db:98]");
+        map.put("k39", "1604024718142");//Long.toString(elasedTime()));
+        map.put("k40", "samsung/tre3caltelgt/tre3caltelgt:6.0.1/MMB29K/N916LKLU2DSA1:user/release-keys");
+        map.put("k41", "[ECHO1,88:25:93:65:bb:93]");
         map.put("k42", "KWE_NC");
-        map.put("k43", "0.0|0.0");
+        map.put("k43", "KWE_PN");
         map.put("k44", "release-keys");
         map.put("k45", "KWE_NC");
-        map.put("k46", "3184037888");
-        map.put("k47", "unknown");
+        map.put("k46", "2956562432");
+        map.put("k47", "N916LKLU2DSA1");
         map.put("k48", "KWE_NC");
         map.put("k49", "0");
         map.put("k50", "KWE_NC");
         map.put("k51", "KWE_NC");
-        map.put("k52", "V1916A");
+        map.put("k52", "tre3caltelgt");
         map.put("k53", "KWE_NC");
         map.put("k54", "KWE_NPN");
-        map.put("k55", "KWE_OTHER");
+        map.put("k55", "20:55:31:91:d1:ee");
         map.put("k56", "KWE_NC");
-        map.put("k57", "865166025904767");
-        map.put("k58", "aosp");
-        map.put("k59", "1");
+        map.put("k57", "KWE_PN");
+        map.put("k58", "tre3caltelgt");
+        map.put("k59", "0");
         map.put("k60", "unknown");
-        map.put("k61", "vivo");
+        map.put("k61", "samsung");
         map.put("k62", "KWE_NC");
-        map.put("k63", "builder");
-        map.put("k64", "00cf4313");
+        map.put("k63", "dpi");
+        map.put("k64", "4100e70bf2c79249");
         map.put("k65", "KWE_NC");
-        map.put("k66", "962ad1a2fd485522");
-        map.put("k67", "cn");
-        map.put("k68", "89860079681881303141");
+        map.put("k66", "3ddd0cf958fb6ec8");
+        map.put("k67", "KWE_N");
+        map.put("k68", "KWE_PN");
         map.put("k69", "KWE_NC");
         map.put("k70", "KWE_NC");
         map.put("k71", "KWE_NPN");
         map.put("k72", "KWE_NC");
         map.put("k73", "KWE_NPN");
-        map.put("k74", "KWE_N");
-        map.put("k75", "KWE_N");
+        map.put("k74", "KWE_PN");
+        map.put("k75", "KWE_PN");
         map.put("k76", "KWE_NC");
-        map.put("k77", "460002475419849");
+        map.put("k77", "KWE_PN");
         map.put("k78", "KWE_NC");
         map.put("k79", "KWE_NC");
         map.put("k80", "KWE_NU");
         map.put("k81", "KWE_NC");
-        map.put("k82", "[9,Gravity,2,QTI,78.4532,200000,0.59999084,0.001:4,Gyroscope,1,STMicroelectronics,17.453293,200000,4.3,0.009576807:1,LSM330 Accelerometer,1,STMicroelectronics,78.4532,200000,0.23,0.01:5,Light sensor,1,AMS TAOS,40000.0,200000,0.1,1.0:10,Linear Acceleration,2,QTI,78.4532,200000,0.59999084,0.0023956299:2,Magnetometer,1,AKM,4911.9995,200000,1.1,0.14953613:3,Orientation Sensor,1,AOSP,360.0,200000,5.63,0.00390625:8,Proximity sensor,2,AMS TAOS,8.000183,200000,0.1,100.0:11,Rotation Vector Sensor,3,AOSP,1.0,200000,5.63,5.9604645E-8]");
+        map.put("k82", "[6,BMP182 Barometer Sensor,1,Bosch,1013.25,180000,1.0,1.0:15,Game Rotation Vector,1,Invensense,1.0,10000,6.1,5.9604645E-8:9,Gravity Sensor,3,Samsung Electronics,19.6133,10000,6.0,5.9604645E-8:1,ICM20610 Acceleration Sensor,1,Invensense,39.2266,5000,0.25,0.0011971008:4,ICM20610 Gyroscope Sensor,1,Invensense,34.906586,5000,6.1,0.0010652645:16,ICM20610 Gyroscope sensor UnCalibrated,1,Invensense,34.906586,5000,6.1,0.0010652645:10,Linear Acceleration Sensor,3,Samsung Electronics,19.6133,10000,6.0,5.9604645E-8:65565,MAX86902 UV,1,MAXIM,65535.0,1000000,1.0,1.0:3,Orientation Sensor,1,Samsung Electronics,360.0,10000,6.0,0.00390625:11,Rotation Vector,1,Invensense,1.0,10000,6.0,5.9604645E-8:17,SAMSUNG Significant Motion Sensor,2,Samsung Inc.,1.0,-1,0.3,1.0]");
         map.put("k83", "KWE_FIRST");
-        map.put("k84", "2bf14987f79b1c42");
-        map.put("k85", "KWE_N");
-        map.put("k86", "{\"KUAISHOU\":\"DFP6480B483F4E367F00CFCAC2D5C284C98A934B3F1C28ADF70ECA6195508139\"}");
-        map.put("k87", "KWE_N");
-        map.put("k88", "exsist");
-        map.put("k89", "3126887128");
+        map.put("k84", "0138fcf2636e1afb");
+        map.put("k85", "ce9e96cdbd225cfb");
+        map.put("k86", "KWE_N");
+        map.put("k87", "1832986632");
+        map.put("k88", "noexsist");
+        map.put("k89", "3473260226");
         map.put("k90", "KWE_NC");
         map.put("k91", "KWE_NC");
-        map.put("k92", "1595849310283");//Long.toString(Long.valueOf(System.currentTimeMillis())));
+        map.put("k92", "1604032462565");//Long.toString(Long.valueOf(System.currentTimeMillis())));
         map.put("k93", "{\"1\":\"0\",\"0\":1,\"2\":\"false\",\"8\":\"9\",\"10\":\"KWE_N\"}");
         map.put("k94", "KWE_N");
-        map.put("k95", "0|6027getNetworkIsob40456getNetworkIso080713eb448c4getNetworkIso7cgetNetworkIso7d9|58");
-        map.put("k96", "{\"0\":\"1595849129000\",\"1\":\"1\"}");
+        map.put("k95", "0|getNetworkIso170386cgetNetworkIso849c39bf9957347c7be4getNetworkIsodf|48");
+        map.put("k96", "{\"0\":\"1604031250000\",\"1\":\"1\"}");
         map.put("k97", "KWE_N");
         map.put("k98", "KWE_NS");
         map.put("k99", "KWE_NS");
         map.put("k100", "d7b7d042-d4f2-4012-be60-d97ff2429c17");
         map.put("k101", "KWE_N");
-        map.put("k102", "9c6a8ca7-1432-4a65-8873-5e5828857758");
-        setParamCRC(map);
+        map.put("k102", "5cbfcee3-cf63-489c-9642-7be7f6bed5a7");
+        //setParamCRC(map);
 
         return map;
     }
@@ -1231,7 +1265,7 @@ public class NativeRespose {
         return map;
     }
 
-    public static String getUUID() {
+    private String getUUID() {
         StringBuilder sb = new StringBuilder();
         sb.append("0|");
         sb.append (md5Hash(UUID.randomUUID().toString().getBytes()));
@@ -1246,7 +1280,7 @@ public class NativeRespose {
         return str3 + "|" + i2;
     }
 
-    public static String selectVal(String str) throws JSONException {
+    private String selectVal(String str) throws JSONException {
         if (!TextUtils.isEmpty(str)) {
             String optString = new JSONObject(str).optString("0", "");
             if (!TextUtils.isEmpty(optString)) {
@@ -1283,7 +1317,7 @@ public class NativeRespose {
         return getCrc32(cpu.toString());
     }
 
-    public static String getCrc32(String str) {
+    private String getCrc32(String str) {
         try {
             if (TextUtils.isEmpty(str)) {
                 return "";
@@ -1296,7 +1330,7 @@ public class NativeRespose {
         }
     }
 
-    public static String customEncrypt2(byte[] bArr) {
+    private String customEncrypt2(byte[] bArr) {
         String[] a = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "getNetworkIso", "b", "c", "d", "e", "f"};
         StringBuffer stringBuffer = new StringBuffer();
         for (int i = 0; i < bArr.length; i++) {
@@ -1307,7 +1341,7 @@ public class NativeRespose {
         return stringBuffer.toString();
     }
 
-    public static String md5Hash(byte[] bArr) {
+    private String md5Hash(byte[] bArr) {
         if (bArr == null || bArr.length <= 0) {
             return null;
         }
@@ -1319,7 +1353,7 @@ public class NativeRespose {
     }
 
 
-    public static long elasedTime() {
+    private long elasedTime() {
         try {
             return System.currentTimeMillis() - SystemClock.elapsedRealtime();
         } catch (Throwable unused) {
@@ -1327,7 +1361,7 @@ public class NativeRespose {
         }
     }
 
-    public static String stringEncode(String str) {
+    private String stringEncode(String str) {
         byte[] bArr = null;
         try {
             byte[] bArr2 = null;
@@ -1355,7 +1389,7 @@ public class NativeRespose {
         }
     }
 
-    public static String customEncrypt(byte[] bArr) {
+    private String customEncrypt(byte[] bArr) {
         if (bArr == null || bArr.length == 0) {
             return null;
         }
@@ -1392,7 +1426,7 @@ public class NativeRespose {
         throw new RuntimeException("power over 8");
     }
 
-    public void setParamCRC(Map<String, String> map) {
+    private void setParamCRC(Map<String, String> map) {
         int i2 = 1;
         CRC32 crc322 = new CRC32();
         while (i2 <= 102) {
@@ -1415,16 +1449,23 @@ public class NativeRespose {
         map.put("k14", sb2.toString());
     }
 
-    private String getEnvironmentInfo(String country, String devParam, String egid, String did, String uid) throws IllegalAccessException, JSONException, InvocationTargetException, NoSuchMethodException, InstantiationException, UnsupportedEncodingException {
+    private synchronized String getEnvironmentInfo(String country, String devParam, String egid, String did, String uid, String stat) throws IllegalAccessException, JSONException, InvocationTargetException, NoSuchMethodException, InstantiationException, UnsupportedEncodingException {
         String res = "";
         String encode = "";
         String sign = "";
         String errMsg;
+        String carryInfo = null;
+
         if(mDeviceInfoClass != null) {
             Constructor<?> constructor = mDeviceInfoClass.getConstructor();
             Object objDeviceInfo = constructor.newInstance();
 
-            String carryInfo = createCarryInfo(country, devParam, egid, did, uid);
+            if(stat.equals("AFTER_LOGIN_FIRST")) {
+                carryInfo = getCarryInfoFirst(country, devParam, egid);
+            } else {
+                carryInfo = createCarryInfo(country, devParam, egid, did, uid, stat);
+                //String carryInfo = createCarryInfo(egid);
+            }
             byte[] bArr = carryInfo.getBytes();
             // TODO 바이트배렬의 인코딩
             Method method = HookHelper.findMethodHierarchically(mDeviceInfoClass, "atlasEncrypt", String.class, String.class, int.class, byte[].class);
@@ -1452,8 +1493,97 @@ public class NativeRespose {
         return res;
     }
 
+    public String createCarryInfo(String egid) throws JSONException {
+        JSONObject json100102 = new JSONObject();
+        JSONObject json100103 = new JSONObject();
+        JSONObject dataSection1 = new JSONObject();
+        JSONObject dataSection2 = new JSONObject();
+        JSONArray jsonDataSection1 = new JSONArray();
+        JSONArray jsonDataSection2 = new JSONArray();
+        JSONArray jsonCarryInfo = new JSONArray();
+        Map<String, String> devInfo = createDeviceParam();
 
-    public String createCarryInfo(String country, String devParam, String egid, String did, String uid) throws JSONException, InvocationTargetException, IllegalAccessException {
+        json100102.put("1", "快手");
+        json100102.put("2", "com.smile.gifmaker");
+        json100102.put("3", devInfo.get("k22"));
+        json100102.put("4", "100102");
+        json100102.put("5", Long.valueOf(System.currentTimeMillis()));
+        json100102.put("6", "KUAISHOU");
+        json100102.put("7", "1.1.8.0");
+        json100102.put("8", egid);
+        json100102.put("9", "1:21");
+        json100102.put("10", "0|getNetworkIso170386cgetNetworkIso849c39bf9957347c7be4getNetworkIsodf|48");
+        json100102.put("11", "ANDROID_3ddd0cf958fb6ec8");
+
+        dataSection1.put("1", "KWE_N");
+        dataSection1.put("2", "KWE_N");
+        dataSection1.put("3", "KWE_N");
+        dataSection1.put("4", "192.168.1.233");
+        dataSection1.put("5", "192.168.1.254");
+        dataSection1.put("6", "KWE_N");
+        dataSection1.put("7", "KWE_N");
+        dataSection1.put("8", "1");
+
+        int batteryChargeInfo = getRandom(0, 4);
+        dataSection1.put("9", "1");
+        dataSection1.put("10", "0");
+        dataSection1.put("11", "0");
+        dataSection1.put("12", "KWE_NPN");
+        dataSection1.put("13", "2");
+        dataSection1.put("14", "KWE_N");
+        dataSection1.put("15", "7");
+        dataSection1.put("16", "KWE_N");
+        dataSection1.put("17", "KWE_N");
+        dataSection1.put("18", "0");
+        dataSection1.put("22", "{\"1\":\"357678062238888\",\"2\":\"357678062238888\",\"3\":\"KWE_N\",\"4\":\"KWE_N\"}");
+        dataSection1.put("23", "{\"1\":\"" + devInfo.get("k111") + "\",\"2\":\"" + devInfo.get("k111") + "\"}");
+//        dataSection1.put("23", "{\"1\":\"KWE_N\",\"2\":\"KWE_N\"}");
+        dataSection1.put("24", "{\"1\":\"KWE_N\",\"2\":\"KWE_N\",\"3\":\"KWE_N\",\"4\":\"KWE_N\"}");
+
+        String[] wifi = devInfo.get("k41").split(",");
+        String mac = wifi[1].substring(0, wifi[1].length()-1);
+        dataSection1.put("25", "{\"1\":\"88:25:93:65:bb:93\",\"2\":\"88:25:93:65:bb:93\"}");
+        dataSection1.put("26", "{\"1\":\"\\\"ECHO1\\\"\",\"2\":\"ECHO1\"}");
+        dataSection1.put("27", "{\"1\":\"02:00:00:00:00:00\",\"2\":\"02:00:00:00:00:00\"}");
+
+        String ud = "{\"1\":\"KWE_N\",\"2\":\"" + "10203" + "\",\"3\":false,\"5\":\"KWE_N\",\"4\":0}";
+        dataSection1.put("28", ud);
+
+        String batteryRate = String.valueOf(getRandom(25, 100)) + "%";
+        dataSection1.put("29", "96%");
+        dataSection1.put("30", "KWE_N");
+
+        StringBuilder c31 = new StringBuilder();
+        c31.append("{\"1\":\"REL\",\"2\":\"samsung\",\"3\":\"SM-N916L\",\"4\":\"samsung\",\"5\":\"universal5433\",\"6\":\"tre3caltelgt\",\"7\":\"universal5433\",\"8\":\"tre3caltelgt\",\"9\":\"4100e70bf2c79249\",\"10\":\"6.0.1\",\"11\":\"23\",\"12\":\"MMB29K.N916LKLU2DSA1\",\"13\":\"samsung\\/tre3caltelgt\\/tre3caltelgt:6.0.1\\/MMB29K\\/N916LKLU2DSA1:user\\/release-keys\",\"14\":\"MMB29K\",\"15\":\"N916LKLU2DSA1\",\"16\":\"armeabi-v7a\",\"17\":\"release-keys\",\"18\":\"user\",\"19\":\"21HH1F17\",\"20\":\"N916LKLU2DSA1\",\"22\":\"\",\"23\":\"tre3caltelgt-user 6.0.1 MMB29K N916LKLU2DSA1 release-keys\",\"24\":\"Samsung EXYNOS5433\",\"25\":\"exynos5433\",\"100\":\"{\\\"1\\\":\\\"357678062238888\\\",\\\"2\\\":\\\"KWE_N\\\"}\",\"101\":\"3ddd0cf958fb6ec8\",\"102\":\"{\\\"1\\\":\\\"KWE_N\\\",\\\"2\\\":\\\"KWE_N\\\"}\",\"103\":\"KWE_N\",\"104\":\"KWE_N\",\"105\":\"KWE_N\"}");
+        dataSection1.put("31", c31.toString());
+
+        StringBuilder c32 = new StringBuilder();
+        c32.append("{\"0\":\"com.sec.android.inputmethod\\/.SamsungKeypad\",\"1\":\"com.sec.android.inputmethod::com.google.android.googlequicksearchbox::\",\"2\":\"com.google.android.googlequicksearchbox::com.google.android.marvin.talkback::com.sec.android.inputmethod::\"}");
+        dataSection1.put("32", c32.toString());
+        dataSection1.put("33", "1");
+        dataSection1.put("37", "{\"1\":\"unexist\",\"2\":\"unexist\"}");
+
+        String gateway = "IP address HW type Flags HW$192.168.1.1 0x1 0x2 c4:ad:34:75:48:2a * wlan0$192.168.1.254 0x1 0x2 c4:ad:34:75:48:2a * wlan0$";
+        dataSection1.put("38", gateway);
+        dataSection1.put("39", "192.168.1.254*255.255.255.0");
+        dataSection1.put("40", "0");
+        dataSection1.put("41", "1853-/sbin/ueventd-0;2813-/system/bin/vold --blkid_context=u:r:blkid:s0 --blkid_context=u:r:blkid:s0 --blkid_untrusted_context=u:r:blkid_untrusted:s0 --b --fsck_untrusted_context=u:r:fsck_untrus-0;3062-daemonsu:mount:master-0;3155-daemonsu:master-0;3254-/sbin/healthd-0;3255-/system/bin/lmkd-0;3275-/sbin/watchdogd 10 10-0;3282-/system/bin/netd-0;3284-/system/bin/debuggerd-0;3307-/system/bin/installd-0;3350-zygote-0;3389-/sbin/adbd --root_seclabel=u:r:su:s0-1;7537-daemonsu:10196-0;9930-/system/bin/sh --1;10256-su-1;10272-daemonsu:0 \u0014\u0014\u0014\u0014 \u0014\u0014\u0014\u0014-0;10287-daemonsu:0:10256-0;10296-sush --0;");
+        dataSection1.put("42", "0");
+        dataSection1.put("43", "com.sec.android.provider.badge,com.sec.esdk.elm,com.samsung.android.sm,com.sec.android.widgetapp.ap.hero.kweather,com.samsung.ucs.ucspinpad,com.samsung.ucs.agent.boot,com.samsung.commonimsservice,com.android.calendar,com.sec.android.gallery3d,com.sec.smartcard.manager,com.ims.dm,com.sec.android.GeoLookout,com.lguplus.appstore,com.google.android.googlequicksearchbox,com.android.managedprovisioning,com.samsung.klmsagent,com.osp.app.signin,com.sec.android.app.wfdbroker,com.sec.android.app.SmartClipService,com.samsung.android.beaconmanager,com.android.bluetooth,system_server,com.lguplus.pushagent,com.google.android.apps.maps,com.samsung.android.MtpApplication,com.android.contacts,com.samsung.android.providers.context,com.sec.phone,com.android.email,com.sec.android.app.videoplayer,com.sec.android.Kies,com.google.android.gm,com.android.systemui,com.android.phone,com.android.nfc,com.android.providers.calendar,com.android.vending,com.android.mms,com.sec.android.widgetapp.locationwidget,com.google.android.youtube,lg.uplusbox,com.sec.ims.android,com.samsung.android.scloud,eu.chainfire.supersu,com.lguplus.rms,com.samsung.android.intelligenceservice2,com.android.exchange,com.sec.android.widgetapp.activeapplicationwidget,com.samsung.android.app.FileShareServer,com.sec.android.app.camera,com.android.settings,com.samsung.android.app.watchmanagerstub,com.android.incallui,com.sec.android.voltesettings,com.sec.android.daemonapp,com.sec.spp.push,com.sec.android.app.SamsungContentsAgent,com.samsung.android.sm.provider,com.google.android.gms,com.sec.android.app.SPenKeeper,com.sec.android.inputmethod,com.skt.skaf.OA00018282,com.enhance.gameservice,com.samsung.android.service.aircommand,com.sec.android.widgetapp.SPlannerAppWidget,com.visionobjects.resourcemanager,com.sec.android.app.launcher,com.smile.gifmaker,com.trustonic.tuiservice,");
+        dataSection1.put("44", "{\"1\":\"0\",\"2\":\"0\",\"3\":\"KWE_NPN\",\"4\":\"KWE_NPN\",\"5\":\"KWE_NPN\",\"6\":\"KWE_NPN\",\"7\":\"10000\",\"8\":\"\\/ueventd.goldfish.rc,\"}");
+        dataSection1.put("45", "com.joeykrim.rootcheck,eu.chainfire.supersu,com.smile.gifmaker,");
+        dataSection1.put("46", "0");
+        dataSection1.put("47", "{\"1\":\"20:55:31:91:d1:ef\"}");
+        dataSection1.put("48", "KWE_NS");
+        dataSection1.put("49", "{\"1\":\"4:5\",\"2\":\"6:15\",\"3\":\"11:15\",\"4\":\"1:15\",\"5\":\"11:15\"}");
+
+        jsonDataSection1.put(dataSection1);
+        json100102.put("data_section", jsonDataSection1);
+        jsonCarryInfo.put(json100102);
+        return jsonCarryInfo.toString();
+    }
+
+    private String createCarryInfo(String country, String devParam, String egid, String did, String uid, String stat) throws JSONException, InvocationTargetException, IllegalAccessException {
         JSONObject json100102 = new JSONObject();
         JSONObject json100103 = new JSONObject();
         JSONObject dataSection1 = new JSONObject();
@@ -1462,10 +1592,12 @@ public class NativeRespose {
         JSONArray jsonDataSection2 = new JSONArray();
         JSONArray jsonCarryInfo = new JSONArray();
         Map<String, String> devInfo = createDeviceParam(devParam);
+        //Map<String, String> devInfo = createDeviceParam();
         Map<String, String> apiLevel = new HashMap<>();
         apiLevel.put("5.0","21");
         apiLevel.put("5.1","22");
         apiLevel.put("6.0","23");
+        apiLevel.put("6.0.1","23");
         apiLevel.put("7.0","24");
         apiLevel.put("7.1","25");
         apiLevel.put("8.0","26");
@@ -1488,7 +1620,7 @@ public class NativeRespose {
         json100102.put("8", egid);
         json100102.put("9", "1:21");
         json100102.put("10", devInfo.get("k95"));
-        json100102.put("11", did);
+        json100102.put("11", devInfo.get("k7"));
 
         dataSection1.put("1", "KWE_N");
         dataSection1.put("2", "KWE_N");
@@ -1496,7 +1628,13 @@ public class NativeRespose {
         dataSection1.put("4", devInfo.get("k17"));
         dataSection1.put("5", devInfo.get("k108"));
         dataSection1.put("6", "KWE_N");
-        dataSection1.put("7", "KWE_N");
+
+        if(stat.equals("AFTER_LOGIN")) {
+            JSONArray json7 = new JSONArray();
+            dataSection1.put("7", json7);
+        } else {
+            dataSection1.put("7", "KWE_N");
+        }
         dataSection1.put("8", "0");
 
         int batteryChargeInfo = getRandom(0, 4);
@@ -1511,8 +1649,10 @@ public class NativeRespose {
         dataSection1.put("17", "KWE_N");
         dataSection1.put("18", "0");
         dataSection1.put("22", "{\"1\":\"" + devInfo.get("k107") + "\",\"2\":\"" + devInfo.get("k107") + "\",\"3\":\"KWE_N\",\"4\":\"KWE_N\"}");
+//        dataSection1.put("23", "{\"1\":\"KWE_N\",\"2\":\"KWE_N\"}");
+//        dataSection1.put("24", "{\"1\":\"KWE_N\",\"2\":\"KWE_N\",\"3\":\"KWE_N\",\"4\":\"KWE_N\"}");
         dataSection1.put("23", "{\"1\":\"" + devInfo.get("k111") + "\",\"2\":\"" + devInfo.get("k111") + "\"}");
-        dataSection1.put("24", "{\"1\":\"" + devInfo.get("k109") + "\",\"2\":\"" + devInfo.get("k109") + "\",\"3\":\"KWE_N\",\"4\":\"KWE_N\"}");
+        dataSection1.put("24", "{\"1\":\""+ devInfo.get("k109") + "\",\"2\":\""+ devInfo.get("k109") + "\",\"3\":\"KWE_N\",\"4\":\"KWE_N\"}");
 
         String[] wifi = devInfo.get("k41").split(",");
         String mac = wifi[1].substring(0, wifi[1].length()-1);
@@ -1520,7 +1660,7 @@ public class NativeRespose {
         dataSection1.put("26", "{\"1\":\"\\\"" + wifi[0].substring(1) + "\\\"\",\"2\":\"" + wifi[0].substring(1) + "\"}");
         dataSection1.put("27", "{\"1\":\"02:00:00:00:00:00\",\"2\":\"02:00:00:00:00:00\"}");
 
-        String ud = "{\"1\":\"KWE_N\",\"2\":\"" + uid + "\",\"3\":false,\"5\":\"KWE_N\",\"4\":0}";
+        String ud = "{\"1\":\"KWE_N\",\"2\":\"" + "10203" + "\",\"3\":false,\"5\":\"KWE_N\",\"4\":0}";
         dataSection1.put("28", ud);
 
         String batteryRate = String.valueOf(getRandom(25, 100)) + "%";
@@ -1562,19 +1702,22 @@ public class NativeRespose {
         c31.append("\"100\":\"").append("{\"1\":\"" + devInfo.get("k107") + "\",\"2\":\"KWE_N\"}").append("\",");
         c31.append("\"101\":\"").append(devInfo.get("k66")).append("\",");
         c31.append("\"102\":\"").append("{\"1\":\"" + devInfo.get("k109") + "\",\"2\":\"KWE_N\"}").append("\",");
+//        c31.append("\"102\":\"").append("{\"1\":\"KWE_N\",\"2\":\"KWE_N\"}").append("\",");
         c31.append("\"103\":\"").append("KWE_N").append(",");
+//        c31.append("\"104\":\"KWE_N\",");
         c31.append("\"104\":\"").append(devInfo.get("k111")).append("\",");
-        c31.append("\"105\":\"").append("cn\"}\"").append(",");
+        c31.append("\"105\":\"").append("cn\"}\"");
+//        c31.append("\"105\":\"").append("KWE_N\"}\"");
         dataSection1.put("31", c31.toString());
 
         StringBuilder c32 = new StringBuilder();
         c32.append("{");
         c32.append("\"0\":\"com.android.inputmethod.pinyin\\/.PinyinIME\",");
-        c32.append("\"1\":\"com.android.inputmethod.pinyin::com.android.inputmethod.latin\",");
-        c32.append("\"2\":\"}");
+        c32.append("\"1\":\"com.sec.android.inputmethod::com.google.android.googlequicksearchbox::\",");
+        c32.append("\"2\":\"com.google.android.googlequicksearchbox::com.google.android.marvin.talkback::com.sec.android.inputmethod::\"}");
         dataSection1.put("32", c32.toString());
         dataSection1.put("33", "1");
-        dataSection1.put("37", "{\"1\":\"exist\",\"2\":\"exist\"}");
+        dataSection1.put("37", "{\"1\":\"unexist\",\"2\":\"unexist\"}");
 
         String gateway = "IP address HW type Flags HW$" + devInfo.get("k108") + " 0x1 0x2 " + devInfo.get("k112") + " * wlan0$";
         dataSection1.put("38", gateway);
@@ -1585,7 +1728,7 @@ public class NativeRespose {
         dataSection1.put("42", "0");
         dataSection1.put("43", "com.sec.phone,com.sec.location.nsflp2,system,android.process.media,com.android.systemui,com.android.phone,com.sec.sve,com.trustonic.tuiservice,com.smile.gifmaker,");
         dataSection1.put("44", "{\"1\":\"0\",\"2\":\"0\",\"3\":\"KWE_NPN\",\"4\":\"KWE_NPN\",\"5\":\"KWE_NPN\",\"6\":\"KWE_NPN\",\"7\":\"10000\",\"8\":\"KWE_N\"}");
-        dataSection1.put("45", "com.smile.gifmaker");
+        dataSection1.put("45", "com.smile.gifmaker,");
         dataSection1.put("46", "0");
         dataSection1.put("47", "{\"1\":\"" + devInfo.get("k55") + "\"}");
         dataSection1.put("48", "KWE_NS");
@@ -1713,15 +1856,101 @@ public class NativeRespose {
             json100103.put("data_section", jsonDataSection2);
             jsonCarryInfo.put(json100103);
         }
-        System.out.println(jsonCarryInfo.toString());
+        Log.d(TAG, "carry info = " + jsonCarryInfo.toString());
         return jsonCarryInfo.toString();
     }
 
+    private JSONObject createCarryData(String country, Map<String, String> devInfo, String egid, int unknownNumber, String unknownStr) throws JSONException {
+        String samsung_service_list = "hermesservice|sip|telecom|carrier_config|phone|isms|iphonesubinfo|simphonebook|isub|secims|handset|secontroller|nfccontroller|nfc|emergency_service|sec_analytics|edmnativehelper|gamemanager|imms|lpnet|media_projection|voip|launcherapps|fingerprint|trust|media_router|media_session|restrictions|print|graphicsstats|dreams|commontime_management|samplingprofiler|quickconnect|spengestureservice|MSCS|AAS|mDNIe|com.samsung.ucs.ucsservice|diskstats|SecExternalDisplayService|voiceinteraction|appwidget|backup|jobscheduler|kiesusb|serial|usb|DockObserver|audio|wallpaper|dropbox|execute|search|sec_location|country_detector|location|devicestoragemonitor|notification|updatelock|servicediscovery|sb_service|connectivity|ethernet|rttmanager|wifiscanner|wifihs20|wifi|wifip2p|netpolicy|netstats|network_score|textservices|ABTPersistenceService|network_management|clipboardEx|clipboard|statusbar|OTP|enterprise_policy|knox_ccm_policy|knox_timakeystore_policy|enterprise_shared_device_policy|otp_service|enterprise_billing_policy|mum_container_policy|edm_proxy|knox_ucsm_policy|remoteinjection|phone_restriction_policy|wifi_policy|application_policy|enterprise_license_policy|log_manager_service|dlp|sdp_log|sdp|harmony_eas_service|device_policy|deviceidle|lock_settings|uimode|vr|mount|cover|accessibility|input_method|rcp|bluetooth_secure_mode_manager|bluetooth_manager|input|window|CCM|multiwindow_facade|barbeam|scontext|context_aware|alarm|consumer_ir|CustomFrequencyManagerService|emailksproxy|cepproxyks|iccc|tima|vibrator|sedenial|SatsService|EngineeringModeService|DeviceRootKeyService|ReactiveService|DirEncryptService|content|account|media.camera.proxy|SEAMService|persona|telephony.registry|scheduling_policy|webviewupdate|usagestats|battery|mdm.remotedesktop|sensorservice|processinfo|permission|cpuinfo|dbinfo|gfxinfo|meminfo|procstats|activity|user|package|persona_policy|display|power|appops|batterystats|media.radio|media.sound_trigger_hw|media.audio_policy|media.camera|media.resource_manager|media.player|media.audio_flinger|dmb.DMBFrmwrks|drm.drmManager|android.security.keystore|sensorhubservice|batteryproperties|android.service.gatekeeper.IGateKeeperService|SurfaceFlinger|com.samsung.android.jam.IAPAService|Exynos.HWCService|TvoutService_C|com.samsung.android.jam.IAndroidShm|com.samsung.android.jam.IJackService";
+        String mi_service_list = "xiaomi.joyose|ions|gsiservice|sip|dpmservice|miui.sedc|miui.mqsas.MQSService|miui.face.FaceService|miui.contentcatcher.ContentCatcherService|secure_element|com.goodix.FingerprintService|uce|miui.whetstone.power|miui.whetstone.klo|miui.whetstone.mcd|network_stack|telecom|carrier_config|phone|extphone|isms|iphonesubinfo|simphonebook|ircs|isub|contexthub|netd_listener|connmetrics|bluetooth_manager|app_binding|clipboard|autofill|imms|incidentcompanion|statscompanion|media.camera.proxy|slice|media_projection|crossprofileapps|launcherapps|shortcut|biometric|fingerprint|media_router|media_resource_monitor|media_session|restrictions|companiondevice|print|graphicsstats|dreams|network_time_update_service|runtime|diskstats|voiceinteraction|role|appwidget|backup|whetstone.activity|ProcessManager|perfshielder|locationpolicy|MiuiBackup|MiuiInit|security|trust|soundtrigger|jobscheduler|color_display|hardware_properties|serial|usb|midi|DockObserver|audio|wallpaper|search|time_detector|country_detector|location|devicestoragemonitor|notification|updatelock|system_update|servicediscovery|connectivity|ethernet|wifip2p|wifiscanner|wifi|netpolicy|netstats|network_score|textclassification|textservices|ipsec|network_management|content_suggestions|app_prediction|statusbar|device_policy|deviceidle|persistent_data_block|oem_lock|testharness|lock_settings|uimode|storagestats|mount|accessibility|input_method|pinner|network_watchlist|input|window|inputflinger|alarm|consumer_ir|dynamic_system|vibrator|external_vibrator_service|dropbox|device_config|settings|content|account|telephony.registry|scheduling_policy|sec_key_att_app_id_provider|bugreport|rollback|looper_stats|binder_calls_stats|ebviewupdate|usagestats|media.sound_trigger_hw|batteryproperties|battery|media.camera|media.audio_policy|sensorservice|sensor_privacy|overlay|processinfo|permission|cpuinfo|dbinfo|gfxinfo|meminfo|procstats|activity|user|otadexopt|package_native|package|display|recovery|thermalservice|power|appops|batterystats|activity_task|uri_grants|device_identifiers|netd|dnsresolver|SurfaceFlinger|DisplayFeatureControl|media.extractor|miui.shell|drm.drmManager|media.resource_manager|media.player|media.metrics|storaged_pri|storaged|android.service.gatekeeper.IGateKeeperService|stats|vendor.perfservice|android.security.keystore|miuiboosterservice|wificond|media.drm|incident|installd|idmap|miui.fdpp|media.audio_flinger|gpu|ashmem_device_service|suspend_control|apexservice|miui.mqsas.IMQSNative|vold";
+        String huawei_service_list = "secure_element|ions|chr_service|faultdetectservice|nfc|ims_ut|ims_config|com.huawei.mdfs.DistributedFileService|facerecognition|distributedPermission|carrier_config|phone_apdu|phone|hwCarrierConfig|phone_huawei|ihwvsim|IAwareSdkService|isms|iphonesubinfo|simphonebook|ircs|CommunicationManager|IAwareCMSService|EmcomManager|hwthermal|network_stack|telecom|hwaftpolicy|isms_interception|aod_service|hwUsbExService|hwSaveDataService|jankshield|isub|com.huawei.bd.BDService|voicerecognition|IDistributedGatewayService|pluginmanager|trustcircle_manager_service|security_server|media_assist|HwFileMonitorService|appassistant|powergenius|SelfbuildIRService|hwBootanimExService|huawei.android.security.IAppBehaviorDataAnalyzer|system.hsmcore|HiMPEngineService|com.huawei.security.IHwKeystoreService|com.huawei.harassmentinterception.service.HarassmentInterceptionService|com.huawei.permissionmanager.service.holdservice|HsmStat|com.huawei.netassistant.service.netassistantservice|com.huawei.systemmanager.netassistant.netnotify.policy.NatTrafficNotifyService|com.huawei.systemmanager.netassistant.netpolicy.NatNetworkPolicyService|authentication_service|com.huawei.securitycenter.mainservice.HwSecService|cover|HwCommBoosterService|hwAntiTheftService|hwfm_service|hwPcManager|multi_task|hinetwork|contexthub|netd_listener|connmetrics|bluetooth_manager|app_binding|clipboard|autofill|imms|incidentcompanion|statscompanion|media.camera.proxy|slice|media_projection|crossprofileapps|launcherapps|shortcut|biometric|fido_authenticator|fingerprint|media_router|media_resource_monitor|media_session|restrictions|companiondevice|print|graphicsstats|dreams|network_time_update_service|attestation_service|runtime|diskstats|DisplayEngineExService|aps_service|hwGeneralService|hwConnectivityExService|voiceinteraction|role|appwidget|backup|trust|soundtrigger|jobscheduler|color_display|hardware_properties|serial|usb|midi|DockObserver|audio|wallpaper|search|time_detector|country_detector|location|tui|devicestoragemonitor|notification|updatelock|system_update|servicediscovery|connectivity|ethernet|wifip2p|wifiscanner|wifi|DubaiService|netpolicy|netstats|network_score|textclassification|textservices|ipsec|network_management|content_suggestions|app_prediction|statusbar|device_policy|deviceidle|testharness|lock_settings|uimode|storagestats|mount|accessibility|input_method_secure|input_method|hwFaultNotifyService|pinner|network_watchlist|input|window|hwsysresmanager|inputflinger|hwAlarmService|alarm|consumer_ir|dynamic_system|vibrator|external_vibrator_service|dropbox|device_config|settings|content|account|telephony.registry|scheduling_policy|sec_key_att_app_id_provider|bugreport|rollback|looper_stats|binder_calls_stats|webviewupdate|media.camera|usagestats|hwext_device_service|sensorservice|batteryproperties|battery|sensor_privacy|overlay|processinfo|permission|cpuinfo|dbinfo|gfxinfo|meminfo|procstats|activity|user|otadexopt|package_native|package|securityserver|display|recovery|pgservice|thermalservice|power|appops|batterystats|activity_task|uri_grants|device_identifiers|BootAnimationBinderServer|media.sound_trigger_hw|media.aaudio|media.audio_policy|AGPService|ITouchservice|DisplayEngineService|SurfaceFlinger|netd|dnsresolver|jank|ioinfo|powerprofile|hiview|media.extractor|storaged_pri|storaged|stats|media.resource_manager|media.player|android.service.gatekeeper.IGateKeeperService|android.security.keystore|drm.drmManager|media.drm|Binder.Pged|BastetService|hwrmeservice|com.huawei.mdfs.DistributedFileDaemon|idmap|installd|wificond|incident|iGraphicsservice|Hwmedia.monitor|media.metrics|media.audio_flinger|hisi.vrar|vdecoderservice|gpu|displayservice|ashmem_device_service|suspend_control|apexservice|ITeecService|";
+        String service_list;
+
+        if(devInfo.get("k23").toLowerCase().equals("samsung")) {
+            service_list = samsung_service_list;
+        } else if(devInfo.get("k23").toLowerCase().equals("xiaomi")) {
+            service_list = mi_service_list;
+        } else {
+            service_list = huawei_service_list;
+        }
+        JSONObject header = new JSONObject();
+        JSONObject dataSection = new JSONObject();
+        JSONArray dataSectionArray = new JSONArray();
+        String str5;
+        if(country.equals("CN")) {
+            header.put("1", "快手");
+        } else {
+            header.put("1", "Kuaishou");
+        }
+        header.put("2", "com.smile.gifmaker");
+        header.put("3", devInfo.get("k22"));
+        header.put("4", String.valueOf(unknownNumber));
+        header.put("5", Long.valueOf(System.currentTimeMillis()));
+        header.put("6", "KUAISHOU");
+        header.put("7", "1.1.8.0");
+        header.put("8", egid);
+        header.put("9", unknownStr);
+        header.put("10", devInfo.get("k95"));
+        header.put("11", devInfo.get("k7"));
+
+        if(unknownNumber == 900102 && unknownStr.equals("1:5")) {
+            dataSection.put("0", "{}");
+        } else if(unknownNumber == 100106) {
+            dataSection.put("0", devInfo.get("k23"));
+            dataSection.put("1", devInfo.get("k27"));
+            dataSection.put("2", devInfo.get("k35"));
+            dataSection.put("3", service_list);
+        } else if(unknownNumber == 100105) {
+            dataSection.put("0", "0");
+            dataSection.put("1", devInfo.get("k27"));
+            dataSection.put("2", "KWE_N");
+            dataSection.put("3", "KWE_N");
+            dataSection.put("4", "KWE_N");
+
+            str5 = "0#" + devInfo.get("k61").toUpperCase() + ";1#" + devInfo.get("k64") + ";2#" + getRandom(4200, 7999) + ";3#" + String.format("%04x", getRandom(1200, 3000)) + ";";
+            dataSection.put("5", str5);
+            dataSection.put("6", "Inode# 2645;Device# 1030bh/66331d;");
+            dataSection.put("7", "Inode# 1200;Device# 1030bh/66331d;");
+            dataSection.put("8", "KWE_N");
+        } else if(unknownNumber == 900100) {
+            dataSection.put("0", "0");
+            dataSection.put("1", devInfo.get("k7"));
+            dataSection.put("2", "9");
+            dataSection.put("net", "true");
+            dataSection.put("out", egid);
+        } else {
+
+        }
+
+        dataSectionArray.put(dataSection);
+        header.put("data_section", dataSectionArray);
+        return header;
+    }
+
+    private String getCarryInfoFirst(String country, String devParam, String egid) throws InvocationTargetException, IllegalAccessException, JSONException {
+        JSONArray carryInfo = new JSONArray();
+
+        Map<String, String> devInfo = createDeviceParam(devParam);
+
+        carryInfo.put(createCarryData(country, devInfo, egid, 900102, "1:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid,100106, "1:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid,100105, "1:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid, 900102, "1:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid,100106, "1:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid,100105, "1:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid, 900102, "0:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid,100106, "0:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid,100105, "0:5"));
+        carryInfo.put(createCarryData(country, devInfo, egid,900100, "0:5"));
+        System.out.println(carryInfo.toString());
+
+        return carryInfo.toString();
+    }
     private int getRandom(int min, int max) {
         return (int) (Math.random() * (max - min + 1)) + min;
     }
 
-    private String getReportConfigParam(String egid, String appVer) throws JSONException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnsupportedEncodingException {
+    private synchronized String getReportConfigParam(String egid, String appVer) throws JSONException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnsupportedEncodingException {
         JSONObject carry = new JSONObject();
         carry.put("sdkVersion", "1.1.8.0");
         carry.put("appVersion", appVer);
@@ -1766,7 +1995,7 @@ public class NativeRespose {
         return res;
     }
 
-    private String getReportConfig(String conf) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private synchronized String getReportConfig(String conf) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         String res = "";
 
         if(mDeviceInfoClass != null) {
@@ -1792,4 +2021,3 @@ public class NativeRespose {
     }
 
 }
-
